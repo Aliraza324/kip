@@ -77,6 +77,36 @@ export const teachingLearningPortalsMock = {
   ],
 };
 
+export const landingHowItWorksMock = {
+  badge: "HOW IT WORKS",
+  headingLine1: "Getting Started Is ",
+  headingAccent: "Simple.",
+  subtitle: "Three simple steps to begin your online learning experience.",
+  steps: [
+    {
+      id: "step_01",
+      title: "Create Account",
+      description: "Sign up as a student or teacher.",
+      imageKey: "step1",
+      link: "/auth/register",
+    },
+    {
+      id: "step_02",
+      title: "Get Connected",
+      description: "Access your classes and schedule.",
+      imageKey: "step2",
+      link: "/auth/login",
+    },
+    {
+      id: "step_03",
+      title: "Start Learning",
+      description: "Join live classes and collaborate.",
+      imageKey: "step3",
+      link: "/student",
+    },
+  ],
+};
+
 export const landingPortalsMock = [
   {
     id: "student",

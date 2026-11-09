@@ -2,6 +2,7 @@ import heroBgImg from "@/assets/images/heroBg.png";
 import { LandingNavbar } from "../components/LandingNavbar";
 import { LandingHero } from "../components/LandingHero";
 import { LandingPortalCardsSection } from "../components/LandingPortalCardsSection";
+import { LandingHowItWorksSection } from "../components/LandingHowItWorksSection";
 
 export const LandingPage = () => {
   return (
@@ -22,6 +23,9 @@ export const LandingPage = () => {
 
       {/* 2. Choose Your Portal Section (Student & Teacher Interactive Cards) */}
       <LandingPortalCardsSection />
+
+      {/* 3. How It Works Section (Create Account, Get Connected, Start Learning) */}
+      <LandingHowItWorksSection />
     </div>
   );
 };
