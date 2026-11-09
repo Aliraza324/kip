@@ -271,6 +271,41 @@ export const landingVirtualClassroomExperienceMock = {
   ],
 };
 
+export const landingMoreThanVirtualClassroomMock = {
+  badgeAccent: "Powerful",
+  badgeText: "Learning Features",
+  headingMain: "More Than a ",
+  headingAccent: "Virtual Classroom.",
+  subtitle:
+    "Smart tools that make teaching, learning, and progress tracking easier for everyone.",
+  cards: [
+    {
+      id: "ai_learning",
+      title: "AI-Powered Learning",
+      description:
+        "Get personalized learning support, smart recommendations, and instant help.",
+      imageKey: "ai",
+      link: "/student",
+    },
+    {
+      id: "assessments_tests",
+      title: "Assessments & Tests",
+      description:
+        "Create quizzes and tests, automate grading, and give timely feedback.",
+      imageKey: "assessments",
+      link: "/teacher",
+    },
+    {
+      id: "progress_tracking",
+      title: "Student Progress Tracking",
+      description:
+        "Monitor learning progress, performance, and milestone completion in real time.",
+      imageKey: "progress",
+      link: "/student",
+    },
+  ],
+};
+
 export const landingFeaturesMock = [
   {
     id: "feat_01",

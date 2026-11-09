@@ -119,13 +119,13 @@ export const LandingVirtualClassroomExperienceSection = () => {
           </div>
 
           {/* Right Column: Exact Aspect Ratio Image (908 / 606) */}
-          <div className="lg:col-span-6 xl:col-span-7 flex items-center justify-center">
-            <div className="w-full aspect-[908/606] max-w-2xl lg:max-w-none flex items-center justify-center">
+          <div className="lg:col-span-6 xl:col-span-7 flex items-center justify-start">
+            <div className="w-full aspect-[908/606] max-w-2xl lg:max-w-none flex items-center justify-start">
               <img
                 src={classroomLaptopImg}
                 alt="KIPClassin Virtual Classroom Experience"
                 loading="lazy"
-                className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-300 hover:scale-[1.01]"
+                className="w-full h-full object-contain object-left drop-shadow-2xl transition-transform duration-300 hover:scale-[1.01]"
               />
             </div>
           </div>

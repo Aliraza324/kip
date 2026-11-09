@@ -6,4 +6,5 @@ export * from "./components/LandingPortalCardsSection";
 export * from "./components/LandingHowItWorksSection";
 export * from "./components/LandingWhatYouCanDoSection";
 export * from "./components/LandingVirtualClassroomExperienceSection";
+export * from "./components/LandingMoreThanClassroomSection";
 export * from "./pages/LandingPage";

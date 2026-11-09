@@ -5,6 +5,7 @@ import { LandingPortalCardsSection } from "../components/LandingPortalCardsSecti
 import { LandingHowItWorksSection } from "../components/LandingHowItWorksSection";
 import { LandingWhatYouCanDoSection } from "../components/LandingWhatYouCanDoSection";
 import { LandingVirtualClassroomExperienceSection } from "../components/LandingVirtualClassroomExperienceSection";
+import { LandingMoreThanClassroomSection } from "../components/LandingMoreThanClassroomSection";
 
 export const LandingPage = () => {
   return (
@@ -34,6 +35,9 @@ export const LandingPage = () => {
 
       {/* 5. Virtual Classroom Experience Section (Laptop, Chips, Watch Demo) */}
       <LandingVirtualClassroomExperienceSection />
+
+      {/* 6. More Than a Virtual Classroom Section (AI Learning, Assessments, Progress) */}
+      <LandingMoreThanClassroomSection />
     </div>
   );
 };
