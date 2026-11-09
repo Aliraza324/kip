@@ -306,6 +306,71 @@ export const landingMoreThanVirtualClassroomMock = {
   ],
 };
 
+export const landingTestimonialsSliderMock = {
+  badge: "Testimonials",
+  headingMain: "Loved by ",
+  headingAccent: "Students and Teachers.",
+  subtitle:
+    "See what our users say about their learning and teaching experience on KIPClassin.",
+  testimonials: [
+    {
+      id: "testimonial_01",
+      name: "Daniel R.",
+      role: "Student",
+      rating: 5,
+      quote:
+        "KIPClassin makes online learning so easy and interactive. I can join my classes, access materials and stay on track.",
+      imageKey: "daniel",
+      circleBg: "bg-[#d6ebff]",
+      featured: false,
+    },
+    {
+      id: "testimonial_02",
+      name: "Aisha M.",
+      role: "Teacher",
+      rating: 5,
+      quote:
+        "As a teacher, I love how simple it is to create classes, manage students and teach live with all the tools I need in one place.",
+      imageKey: "aisha",
+      circleBg: "bg-[#fef3c7]",
+      featured: true,
+    },
+    {
+      id: "testimonial_03",
+      name: "Omar K.",
+      role: "Student",
+      rating: 5,
+      quote:
+        "The live classes, whiteboard and screen sharing make lessons more engaging and help me understand better.",
+      imageKey: "omar",
+      circleBg: "bg-[#d6ebff]",
+      featured: false,
+    },
+    {
+      id: "testimonial_04",
+      name: "Sarah L.",
+      role: "Teacher",
+      rating: 5,
+      quote:
+        "The automated grading and live classroom breakout rooms save me hours every week while keeping student engagement at its highest.",
+      imageKey: "aisha",
+      circleBg: "bg-[#fef3c7]",
+      featured: true,
+    },
+    {
+      id: "testimonial_05",
+      name: "Zain M.",
+      role: "Student",
+      rating: 5,
+      quote:
+        "Instant access to class notes and recorded lectures made revision effortless before semester finals. I couldn't be happier!",
+      imageKey: "daniel",
+      circleBg: "bg-[#d6ebff]",
+      featured: false,
+    },
+  ],
+};
+
 export const landingFeaturesMock = [
   {
     id: "feat_01",
