@@ -8,5 +8,6 @@ export * from "./components/LandingWhatYouCanDoSection";
 export * from "./components/LandingVirtualClassroomExperienceSection";
 export * from "./components/LandingMoreThanClassroomSection";
 export * from "./components/LandingTestimonialsSliderSection";
+export * from "./components/LandingTrustedBannerSection";
 export * from "./components/LandingFooter";
 export * from "./pages/LandingPage";

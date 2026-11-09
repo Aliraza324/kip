@@ -24,6 +24,9 @@ export default defineConfig({
             }
             return 'vendor'
           }
+          if (id.includes('src/features/auth')) {
+            return 'chunk-auth'
+          }
           if (id.includes('src/features/students') || id.includes('src/features/student')) {
             return 'chunk-student'
           }

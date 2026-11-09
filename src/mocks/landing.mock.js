@@ -406,6 +406,34 @@ export const landingFeaturesMock = [
   },
 ];
 
+export const landingTrustedBannerMock = {
+  badge: "Trusted by Educators & Students",
+  items: [
+    {
+      id: "active_students",
+      label: "Active Students",
+      imageKey: "students",
+    },
+    {
+      id: "teachers",
+      label: "Teachers",
+      imageKey: "teachers",
+    },
+    {
+      id: "classes_held",
+      label: "Classes Held",
+      imageKey: "classes",
+    },
+    {
+      id: "watch_demo",
+      label: "Watch Demo",
+      imageKey: "demo",
+      hasArrow: true,
+      href: "#demo",
+    },
+  ],
+};
+
 export const landingFooterMock = {
   aboutText:
     "KIPClassin is the unified academic operating system designed for modern schools, colleges, and training institutes.",

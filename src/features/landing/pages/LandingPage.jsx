@@ -7,6 +7,7 @@ import { LandingWhatYouCanDoSection } from "../components/LandingWhatYouCanDoSec
 import { LandingVirtualClassroomExperienceSection } from "../components/LandingVirtualClassroomExperienceSection";
 import { LandingMoreThanClassroomSection } from "../components/LandingMoreThanClassroomSection";
 import { LandingTestimonialsSliderSection } from "../components/LandingTestimonialsSliderSection";
+import { LandingTrustedBannerSection } from "../components/LandingTrustedBannerSection";
 import { LandingFooter } from "../components/LandingFooter";
 
 export const LandingPage = () => {
@@ -44,7 +45,10 @@ export const LandingPage = () => {
       {/* 7. Testimonials Slider Section (User Reviews with Decorative Backdrop) */}
       <LandingTestimonialsSliderSection />
 
-      {/* 8. Campus Footer */}
+      {/* 8. Trusted by Educators & Students Metrics Banner */}
+      <LandingTrustedBannerSection />
+
+      {/* 9. Campus Footer */}
       <LandingFooter />
     </div>
   );
