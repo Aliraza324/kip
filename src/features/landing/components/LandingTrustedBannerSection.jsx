@@ -172,3 +172,4 @@ export const LandingTrustedBannerSection = () => {
 };
 
 export default LandingTrustedBannerSection;
+
