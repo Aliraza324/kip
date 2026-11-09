@@ -3,11 +3,11 @@
  * Synchronized with KIPClassin visual specifications
  */
 export const landingNavLinksMock = [
-  { label: "Home", href: "/", isHome: true },
-  { label: "Portals", href: "#portals" },
-  { label: "Features", href: "#features" },
-  { label: "Stats", href: "#stats" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Features", href: "/features" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const landingHeroMock = {

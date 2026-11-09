@@ -2,5 +2,8 @@ export * from "./components/LandingNavbar";
 export * from "./components/LandingHero";
 export * from "./components/LandingHeroContent";
 export * from "./components/LandingHeroImage";
+export * from "./components/LandingPortalsSection";
+export * from "./components/LandingStatsSection";
+export * from "./components/LandingFeaturesSection";
+export * from "./components/LandingFooter";
 export * from "./pages/LandingPage";
-
