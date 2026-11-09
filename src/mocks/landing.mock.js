@@ -32,6 +32,51 @@ export const landingHeroMock = {
   ],
 };
 
+export const teachingLearningPortalsMock = {
+  badge: "CHOOSE YOUR PORTAL",
+  headingLine1: "One Platform for Teaching",
+  headingLine2Prefix: "and ",
+  headingLine2Accent: "Learning",
+  cards: [
+    {
+      id: "student",
+      role: "Student",
+      prefix: "I'm a",
+      description:
+        "Join your classes, connect with teachers and access your learning materials.",
+      loginText: "Student Login",
+      loginLink: "/auth/login?role=student",
+      registerPrompt: "New student?",
+      registerText: "Create an account",
+      registerLink: "/auth/register?role=student",
+      bgColor: "#eff8ff",
+      borderColor: "border-blue-100",
+      iconBg: "bg-[#007be3]",
+      btnStyle: "bg-[#007be3] hover:bg-[#0066c0] text-white shadow-md shadow-blue-500/20",
+      iconType: "GraduationCap",
+      imageType: "boy",
+    },
+    {
+      id: "teacher",
+      role: "Teacher",
+      prefix: "I'm a",
+      description:
+        "Access your classes, manage learning materials and teach interactive live lessons.",
+      loginText: "Teacher Login",
+      loginLink: "/auth/login?role=teacher",
+      registerPrompt: "New teacher?",
+      registerText: "Create an account",
+      registerLink: "/auth/register?role=teacher",
+      bgColor: "#fffbf0",
+      borderColor: "border-amber-100",
+      iconBg: "bg-[#febf11]",
+      btnStyle: "bg-[#febf11] hover:bg-[#e5ab0f] text-[#01287b] shadow-md shadow-amber-500/20",
+      iconType: "Presentation",
+      imageType: "teacher",
+    },
+  ],
+};
+
 export const landingPortalsMock = [
   {
     id: "student",

@@ -1,10 +1,11 @@
 import heroBgImg from "@/assets/images/heroBg.png";
 import { LandingNavbar } from "../components/LandingNavbar";
 import { LandingHero } from "../components/LandingHero";
+import { LandingPortalCardsSection } from "../components/LandingPortalCardsSection";
 
 export const LandingPage = () => {
   return (
-    <div className="w-full bg-[#fcfcfc] text-[#1e293b]">
+    <div className="w-full bg-white text-[#1e293b]">
       {/* 1. Hero Viewport with Exact Brand Background */}
       <div
         className="relative min-h-screen lg:h-screen w-full flex flex-col justify-between overflow-x-hidden bg-[#fdfdfd] bg-no-repeat bg-center"
@@ -19,7 +20,8 @@ export const LandingPage = () => {
         </main>
       </div>
 
-
+      {/* 2. Choose Your Portal Section (Student & Teacher Interactive Cards) */}
+      <LandingPortalCardsSection />
     </div>
   );
 };
