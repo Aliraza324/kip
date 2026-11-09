@@ -158,6 +158,63 @@ export const landingPortalsMock = [
   },
 ];
 
+export const landingWhatYouCanDoMock = {
+  badge: "WHAT YOU CAN DO",
+  headingMain: "Everything You Need for ",
+  headingAccent1: "A Better",
+  headingAccent2: "Virtual Classroom.",
+  cards: [
+    {
+      id: "card_live_classes",
+      title: "Live Online Classes",
+      description:
+        "Connect with teachers and students through live audio and video sessions.",
+      theme: "blue",
+      iconType: "video",
+    },
+    {
+      id: "card_screen_sharing",
+      title: "Screen Sharing",
+      description:
+        "Share presentations, documents and your screen during lessons.",
+      theme: "yellow",
+      iconType: "screenShare",
+    },
+    {
+      id: "card_whiteboard",
+      title: "Interactive Whiteboard",
+      description:
+        "Write, draw and explain ideas together on a shared digital board.",
+      theme: "blue",
+      iconType: "whiteboard",
+    },
+    {
+      id: "card_scheduling",
+      title: "Easy Class Scheduling",
+      description:
+        "Stay updated with upcoming classes and scheduled sessions.",
+      theme: "yellow",
+      iconType: "scheduling",
+    },
+    {
+      id: "card_materials",
+      title: "Learning Materials",
+      description:
+        "Access learning resources shared by your teachers.",
+      theme: "blue",
+      iconType: "materials",
+    },
+    {
+      id: "card_teacher_tools",
+      title: "Teacher Tools",
+      description:
+        "Manage class participants, control permissions and keep lessons focused.",
+      theme: "yellow",
+      iconType: "teacherTools",
+    },
+  ],
+};
+
 export const landingFeaturesMock = [
   {
     id: "feat_01",

@@ -85,11 +85,11 @@ export const LandingHowItWorksSection = () => {
                 {/* Curved Dashed Connector Arrow between cards (Matching Reference Exactly) */}
                 {hasNext && (
                   <div
-                    className="hidden md:block absolute -right-7 sm:-right-8 lg:-right-9 top-18 sm:top-20 lg:top-22 z-20 pointer-events-none w-14 lg:w-16"
+                    className="hidden md:flex items-center justify-center absolute left-full w-6 sm:w-8 lg:w-10 top-[90px] sm:top-[98px] -translate-y-1/2 z-20 pointer-events-none"
                     aria-hidden="true"
                   >
                     <svg
-                      className="w-full h-auto text-[#007be3]"
+                      className="w-14 sm:w-16 h-auto text-[#007be3] shrink-0"
                       viewBox="0 0 64 34"
                       fill="none"
                     >

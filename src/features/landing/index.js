@@ -4,4 +4,5 @@ export * from "./components/LandingHeroContent";
 export * from "./components/LandingHeroImage";
 export * from "./components/LandingPortalCardsSection";
 export * from "./components/LandingHowItWorksSection";
+export * from "./components/LandingWhatYouCanDoSection";
 export * from "./pages/LandingPage";
