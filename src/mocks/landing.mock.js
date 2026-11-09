@@ -215,6 +215,62 @@ export const landingWhatYouCanDoMock = {
   ],
 };
 
+export const landingVirtualClassroomExperienceMock = {
+  badge: "A Better Virtual Classroom",
+  headingPart1: "Better ",
+  headingPart2: "Virtual",
+  headingPart3: "Classroom",
+  headingPart4: "Experience",
+  subtitle:
+    "Bring your online classes to life with tools that make teaching and learning more engaging.",
+  buttonText: "watch demo",
+  buttonLink: "#demo",
+  chips: [
+    {
+      id: "chip_1",
+      icon: "video",
+      color: "blue",
+      line1: "Interactive",
+      line2: "Whiteboard",
+    },
+    {
+      id: "chip_2",
+      icon: "pen",
+      color: "yellow",
+      line1: "Participant",
+      line2: "Management",
+    },
+    {
+      id: "chip_3",
+      icon: "chat",
+      color: "blue",
+      line1: "Live Video &",
+      line2: "Audio",
+    },
+    {
+      id: "chip_4",
+      icon: "screen",
+      color: "blue",
+      line1: "Screen",
+      line2: "Sharing",
+    },
+    {
+      id: "chip_5",
+      icon: "hand",
+      color: "yellow",
+      line1: "Raise",
+      line2: "Hand",
+    },
+    {
+      id: "chip_6",
+      icon: "users",
+      color: "blue",
+      line1: "Participant",
+      line2: "Management",
+    },
+  ],
+};
+
 export const landingFeaturesMock = [
   {
     id: "feat_01",

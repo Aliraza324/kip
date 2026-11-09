@@ -4,6 +4,7 @@ import { LandingHero } from "../components/LandingHero";
 import { LandingPortalCardsSection } from "../components/LandingPortalCardsSection";
 import { LandingHowItWorksSection } from "../components/LandingHowItWorksSection";
 import { LandingWhatYouCanDoSection } from "../components/LandingWhatYouCanDoSection";
+import { LandingVirtualClassroomExperienceSection } from "../components/LandingVirtualClassroomExperienceSection";
 
 export const LandingPage = () => {
   return (
@@ -30,6 +31,9 @@ export const LandingPage = () => {
 
       {/* 4. What You Can Do Section (Everything You Need for A Better Virtual Classroom) */}
       <LandingWhatYouCanDoSection />
+
+      {/* 5. Virtual Classroom Experience Section (Laptop, Chips, Watch Demo) */}
+      <LandingVirtualClassroomExperienceSection />
     </div>
   );
 };
