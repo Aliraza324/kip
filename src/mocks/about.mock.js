@@ -70,3 +70,38 @@ export const aboutMissionVisionMock = [
     imageKey: "vision",
   },
 ];
+
+export const aboutValuesMock = {
+  badge: "Our Values",
+  title: "The Values We Stand For",
+  values: [
+    {
+      id: "accessibility",
+      title: "Accessibility",
+      description: "Learning for everyone, anywhere.",
+      imageKey: "accessibility",
+      theme: "blue",
+    },
+    {
+      id: "collaboration",
+      title: "Collaboration",
+      description: "Bring students and teachers closer together.",
+      imageKey: "collaboration",
+      theme: "amber",
+    },
+    {
+      id: "reliability",
+      title: "Reliability",
+      description: "A secure and stable platform you can trust.",
+      imageKey: "reliability",
+      theme: "blue",
+    },
+    {
+      id: "continuous_growth",
+      title: "Continuous Growth",
+      description: "Evolving with new features and better learning experiences.",
+      imageKey: "continuous_growth",
+      theme: "amber",
+    },
+  ],
+};

@@ -2,6 +2,7 @@ import {
   AboutHeroSection,
   AboutHighlightsBannerSection,
   AboutMissionVisionSection,
+  AboutValuesSection,
 } from "../components/about";
 
 export const AboutPage = () => {
@@ -15,6 +16,9 @@ export const AboutPage = () => {
 
       {/* 3. Our Mission & Vision Cards (Quality Education & Smarter Learning World) */}
       <AboutMissionVisionSection />
+
+      {/* 4. The Values We Stand For (Accessibility, Collaboration, Reliability, Growth) */}
+      <AboutValuesSection />
     </div>
   );
 };
