@@ -24,27 +24,20 @@ export const LandingNavbar = () => {
 
         {/* Desktop Navigation Links - Exact Match to Reference Image */}
         <div className="hidden items-center gap-7 lg:gap-9 md:flex">
-          {landingNavLinksMock.map((item) => {
-            const isHome = item.label === "Home";
-            return isHome ? (
-              <NavLink
-                key={item.label}
-                to={item.href}
-                end
-                className="inline-flex items-center justify-center rounded-2xl bg-[#d6ebff] px-6 py-2 text-sm font-bold text-[#0054da] shadow-xs select-none"
-              >
-                {item.label}
-              </NavLink>
-            ) : (
-              <NavLink
-                key={item.label}
-                to={item.href}
-                className="inline-flex items-center justify-center text-sm font-bold text-[#17295f] transition-colors duration-200 hover:text-[#0054da] select-none"
-              >
-                {item.label}
-              </NavLink>
-            );
-          })}
+          {landingNavLinksMock.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.href}
+              end={item.href === "/"}
+              className={({ isActive }) =>
+                isActive
+                  ? "inline-flex items-center justify-center rounded-2xl bg-[#d6ebff] px-6 py-2 text-sm font-bold text-[#0054da] shadow-xs select-none transition-colors"
+                  : "inline-flex items-center justify-center text-sm font-bold text-[#17295f] transition-colors duration-200 hover:text-[#0054da] select-none"
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
         </div>
 
         {/* Desktop Login Action */}
@@ -75,29 +68,21 @@ export const LandingNavbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white/98 backdrop-blur-md border-b border-slate-200 px-6 py-4 shadow-xl">
           <div className="flex flex-col gap-2">
-            {landingNavLinksMock.map((item) => {
-              const isHome = item.label === "Home";
-              return isHome ? (
-                <NavLink
-                  key={item.label}
-                  to={item.href}
-                  end
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-xl bg-[#d6ebff] px-4 py-2.5 text-base font-bold text-[#0054da]"
-                >
-                  {item.label}
-                </NavLink>
-              ) : (
-                <NavLink
-                  key={item.label}
-                  to={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-xl px-4 py-2.5 text-base font-bold text-[#17295f] hover:text-[#0054da] transition-colors"
-                >
-                  {item.label}
-                </NavLink>
-              );
-            })}
+            {landingNavLinksMock.map((item) => (
+              <NavLink
+                key={item.label}
+                to={item.href}
+                end={item.href === "/"}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  isActive
+                    ? "rounded-xl bg-[#d6ebff] px-4 py-2.5 text-base font-bold text-[#0054da]"
+                    : "rounded-xl px-4 py-2.5 text-base font-bold text-[#17295f] hover:text-[#0054da] transition-colors"
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
             <Link
               to="/auth/login"
               onClick={() => setMobileMenuOpen(false)}

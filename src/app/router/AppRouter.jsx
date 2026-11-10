@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // Lazy-loaded route chunks adhering to design.md code-splitting rules
 const PublicLayout = lazy(() => import("@/layouts/PublicLayout"));
 const LandingPage = lazy(() => import("@/features/landing/pages/LandingPage"));
+const AboutPage = lazy(() => import("@/features/landing/pages/AboutPage"));
 
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
@@ -25,6 +26,7 @@ export const AppRouter = () => {
           {/* Public Landing Pages with Shared Navbar & Footer Layout */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutPage />} />
           </Route>
 
           {/* Fallback Catch-All */}
