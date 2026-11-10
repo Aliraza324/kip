@@ -434,6 +434,72 @@ export const landingTrustedBannerMock = {
   ],
 };
 
+export const landingFaqMock = {
+  badge: "FAQ",
+  headingLine1: "Frequently",
+  headingLine2Prefix: "Asked ",
+  headingLine2Accent: "Questions",
+  subtitle: "Find quick answers to common questions about KIPClassin.",
+  items: [
+    {
+      id: "faq_1",
+      question: "What is KIPClassin?",
+      answer:
+        "KIPClassin is an online learning platform that helps students and teachers connect, conduct live classes, share materials and collaborate in a virtual classroom.",
+      icon: "BookOpen",
+      theme: "blue",
+    },
+    {
+      id: "faq_2",
+      question: "How do I receive my login details?",
+      answer:
+        "Your official login credentials are sent to your registered email address upon enrollment or registration. You can also contact your campus administrator if you haven't received them.",
+      icon: "User",
+      theme: "yellow",
+    },
+    {
+      id: "faq_3",
+      question: "Can I use the platform on a phone or tablet?",
+      answer:
+        "Yes, KIPClassin is fully responsive and accessible via modern web browsers on smartphones, tablets, laptops, and desktop computers with complete cross-device support.",
+      icon: "Video",
+      theme: "blue",
+    },
+    {
+      id: "faq_4",
+      question: "Do I need to download an application?",
+      answer:
+        "No installation is required. KIPClassin works directly in any standard web browser such as Chrome, Firefox, Safari, or Edge without needing additional software.",
+      icon: "Laptop",
+      theme: "yellow",
+    },
+    {
+      id: "faq_5",
+      question: "What should I do if my microphone is not working?",
+      answer:
+        "Check your browser's audio permissions to ensure KIPClassin is permitted to access your microphone. You can also test and select your input device in the classroom settings menu.",
+      icon: "Calendar",
+      theme: "blue",
+    },
+    {
+      id: "faq_6",
+      question: "Where can I find the learning materials?",
+      answer:
+        "All recorded lessons, lecture slides, digital notes, and homework files are organized inside the 'Learning Materials' tab on your student or teacher portal dashboard.",
+      icon: "CreditCard",
+      theme: "yellow",
+    },
+    {
+      id: "faq_7",
+      question: "Who should I contact for technical support?",
+      answer:
+        "You can reach out to our campus liaison IT team at support@kip.edu.pk or use the live chat help widget available inside your portal workspace.",
+      icon: "Headphones",
+      theme: "blue",
+    },
+  ],
+};
+
 export const landingFooterMock = {
   aboutText:
     "KIPClassin is the unified academic operating system designed for modern schools, colleges, and training institutes.",

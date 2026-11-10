@@ -8,6 +8,7 @@ import { LandingVirtualClassroomExperienceSection } from "../components/LandingV
 import { LandingMoreThanClassroomSection } from "../components/LandingMoreThanClassroomSection";
 import { LandingTestimonialsSliderSection } from "../components/LandingTestimonialsSliderSection";
 import { LandingTrustedBannerSection } from "../components/LandingTrustedBannerSection";
+import { LandingFaqSection } from "../components/LandingFaqSection";
 import { LandingFooter } from "../components/LandingFooter";
 
 export const LandingPage = () => {
@@ -48,7 +49,10 @@ export const LandingPage = () => {
       {/* 8. Trusted by Educators & Students Metrics Banner */}
       <LandingTrustedBannerSection />
 
-      {/* 9. Campus Footer */}
+      {/* 9. Frequently Asked Questions (FAQ) Section */}
+      <LandingFaqSection />
+
+      {/* 10. Campus Footer */}
       <LandingFooter />
     </div>
   );
