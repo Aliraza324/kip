@@ -19,3 +19,29 @@ export const aboutHeroMock = {
   },
 };
 
+export const aboutHighlightsMock = [
+  {
+    id: "smart_learning",
+    titleLine1: "Smart Learning",
+    titleLine2: "with AI",
+    imageKey: "smart_learning",
+  },
+  {
+    id: "built_for",
+    titleLine1: "Built for",
+    titleLine2: "Students & Teachers",
+    imageKey: "built_for",
+  },
+  {
+    id: "all_in_one",
+    titleLine1: "All-in-One",
+    titleLine2: "Classroom",
+    imageKey: "all_in_one",
+  },
+  {
+    id: "secure_reliable",
+    titleLine1: "Secure &",
+    titleLine2: "Reliable",
+    imageKey: "secure_reliable",
+  },
+];
