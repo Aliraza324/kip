@@ -1,6 +1,7 @@
 import {
   AboutHeroSection,
   AboutHighlightsBannerSection,
+  AboutMissionVisionSection,
 } from "../components/about";
 
 export const AboutPage = () => {
@@ -11,6 +12,9 @@ export const AboutPage = () => {
 
       {/* 2. Highlights Banner (Smart Learning, Built for All, All-in-One, Secure) */}
       <AboutHighlightsBannerSection />
+
+      {/* 3. Our Mission & Vision Cards (Quality Education & Smarter Learning World) */}
+      <AboutMissionVisionSection />
     </div>
   );
 };

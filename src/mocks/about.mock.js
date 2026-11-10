@@ -45,3 +45,28 @@ export const aboutHighlightsMock = [
     imageKey: "secure_reliable",
   },
 ];
+
+export const aboutMissionVisionMock = [
+  {
+    id: "mission",
+    badge: "Our Mission",
+    iconType: "Target",
+    headingLine1: "Make Quality",
+    headingLine2: "Education Accessible.",
+    accentWord: null,
+    description:
+      "To empower educators and learners with smart, easy and effective online learning tools that create real impact.",
+    imageKey: "mission",
+  },
+  {
+    id: "vision",
+    badge: "Our Vision",
+    iconType: "Eye",
+    headingLine1: "A Smarter",
+    headingLine2: "Learning ",
+    accentWord: "World.",
+    description:
+      "A world where everyone can teach, learn and grow with the support of intelligent, inclusive and engaging technology.",
+    imageKey: "vision",
+  },
+];
