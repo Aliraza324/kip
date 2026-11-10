@@ -1,4 +1,8 @@
-import { ContactHeroSection, ContactFormSection } from "../components/contact";
+import {
+  ContactHeroSection,
+  ContactFormSection,
+  ContactDemoSection,
+} from "../components/contact";
 
 export const ContactPage = () => {
   return (
@@ -8,6 +12,9 @@ export const ContactPage = () => {
 
       {/* 2. Contact Form & Reach Us Section */}
       <ContactFormSection />
+
+      {/* 3. Book a Quick Demo Banner Section */}
+      <ContactDemoSection />
     </div>
   );
 };

@@ -3,3 +3,4 @@ export * from "./ContactHeroSection";
 export * from "./ContactChannels";
 export * from "./ContactInputField";
 export * from "./ContactFormSection";
+export * from "./ContactDemoSection";

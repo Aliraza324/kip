@@ -118,4 +118,13 @@ export const contactFormSectionMock = {
   },
 };
 
+export const contactDemoBannerMock = {
+  title: "Book a Quick Demo",
+  description:
+    "Want to see KIPClassin in action? Schedule a free demo with our team.",
+  buttonText: "Schedule a Demo",
+  buttonHref: "#demo",
+};
+
+
 
