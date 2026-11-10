@@ -3,3 +3,7 @@ export * from "./AboutHighlightsBannerSection";
 export * from "./AboutMissionVisionSection";
 export * from "./AboutValuesSection";
 export * from "./AboutCommunityCtaSection";
+export * from "../home/LandingFaqSection";
+export * from "../home/FaqItem";
+export * from "../home/LandingNextExperienceSection";
+export * from "../home/LandingFeaturesSection";

@@ -4,7 +4,11 @@ import {
   AboutMissionVisionSection,
   AboutValuesSection,
   AboutCommunityCtaSection,
+
+  LandingNextExperienceSection,
+  LandingFaqSection,
 } from "../components/about";
+import { LandingTestimonialsSliderSection, LandingTrustedBannerSection } from "../components/home";
 
 export const AboutPage = () => {
   return (
@@ -23,6 +27,11 @@ export const AboutPage = () => {
 
       {/* 5. Join Our Learning Community CTA Banner */}
       <AboutCommunityCtaSection />
+      <LandingTestimonialsSliderSection />
+      <LandingTrustedBannerSection />
+      <LandingFaqSection />
+      <LandingNextExperienceSection />
+
     </div>
   );
 };

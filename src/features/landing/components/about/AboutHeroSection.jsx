@@ -97,26 +97,26 @@ export const AboutHeroSection = () => {
               {description}
             </motion.p>
 
-            {/* Call to Action Buttons */}
+            {/* Call to Action Buttons - Single Line on Small Screens down to 320px */}
             <motion.div
               variants={fadeInUp}
-              className="mt-8 flex flex-row flex-wrap sm:flex-nowrap items-center gap-3.5 sm:gap-4"
+              className="mt-7 sm:mt-8 flex flex-row flex-nowrap items-center gap-2 sm:gap-4"
             >
               {/* Primary: Create an Account with Arrow */}
               <Link
                 to={primaryCta.href}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#007be3] hover:bg-[#0066c0] px-7 sm:px-8 py-3.5 text-sm sm:text-base font-bold text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-[0.98] focus:outline-hidden"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-[#007be3] hover:bg-[#0066c0] px-3 sm:px-7 lg:px-8 py-2.5 sm:py-3.5 text-xs sm:text-base font-bold text-white shadow-md shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-[0.98] focus:outline-hidden whitespace-nowrap shrink-0"
               >
                 <span>{primaryCta.text}</span>
-                <ArrowRight className="h-4 w-4 stroke-[2.5]" />
+                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 stroke-[2.5] shrink-0" />
               </Link>
 
               {/* Secondary: Watch Demo with Play Icon */}
               <a
                 href={secondaryCta.href}
-                className="inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-slate-300 hover:border-[#007be3] bg-white hover:bg-slate-50 px-6 sm:px-8 py-3.5 text-sm sm:text-base font-bold text-[#01287b] transition-all hover:scale-[1.02] active:scale-[0.98] focus:outline-hidden"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2.5 rounded-full border-2 border-slate-300 hover:border-[#007be3] bg-white hover:bg-slate-50 px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 text-xs sm:text-base font-bold text-[#01287b] transition-all hover:scale-[1.02] active:scale-[0.98] focus:outline-hidden whitespace-nowrap shrink-0"
               >
-                <Play className="h-4 w-4 text-[#01287b] fill-[#01287b]/10 stroke-[2.2]" />
+                <Play className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#01287b] fill-[#01287b]/10 stroke-[2.2] shrink-0" />
                 <span>{secondaryCta.text}</span>
               </a>
             </motion.div>
