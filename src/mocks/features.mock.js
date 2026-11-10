@@ -125,3 +125,35 @@ export const featuresActionMock = {
   },
 };
 
+export const featuresWhyMock = {
+  badge: "WHY KIPCLASSIN",
+  headingPrefix: "Why Choose ",
+  headingAccent: "KIPClassin?",
+  cards: [
+    {
+      id: "all_in_one",
+      title: "All-in-One Platform",
+      description: "Teach, learn and manage in one place.",
+      imageKey: "image 29",
+    },
+    {
+      id: "easy_to_use",
+      title: "Easy to Use",
+      description: "A clean, simple and user-friendly experience.",
+      imageKey: "image 29 (1)",
+    },
+    {
+      id: "built_for_everyone",
+      title: "Built for Everyone",
+      description: "Designed for both students and teachers.",
+      imageKey: "image 27 (1)",
+    },
+    {
+      id: "reliable_secure",
+      title: "Reliable & Secure",
+      description: "A stable, secure and trusted learning platform.",
+      imageKey: "image 27 (3)",
+    },
+  ],
+};
+
