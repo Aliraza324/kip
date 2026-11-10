@@ -1,6 +1,7 @@
 import {
   HowItWorksHeroSection,
   HowItWorksProcessSection,
+  HowItWorksRolesSection,
 } from "../components/how-it-works";
 
 export const HowItWorksPage = () => {
@@ -11,6 +12,9 @@ export const HowItWorksPage = () => {
 
       {/* 2. The Process: How KIPClassin Works (4 Step Cards) */}
       <HowItWorksProcessSection />
+
+      {/* 3. For Teachers & For Students (Roles Showcase) */}
+      <HowItWorksRolesSection />
     </div>
   );
 };

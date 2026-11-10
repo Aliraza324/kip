@@ -57,3 +57,38 @@ export const howItWorksProcessMock = {
   ],
 };
 
+export const howItWorksRolesMock = {
+  teacherCard: {
+    badge: "FOR TEACHERS",
+    badgeIcon: "Monitor",
+    headingPrefix: "A Smarter Way to ",
+    headingAccent: "Teach.",
+    description:
+      "Access your classes, manage learning materials and teach interactive live lessons.",
+    checklistCol1: [
+      "Create and manage classes with ease.",
+      "Assign homework, quizzes and assessments.",
+    ],
+    checklistCol2: [
+      "Use interactive tools like whiteboard, screen share.",
+      "Track student performance and engagement.",
+    ],
+  },
+  studentCard: {
+    badge: "FOR STUDENTS",
+    badgeIcon: "GraduationCap",
+    headingPrefix: "A Better Way to ",
+    headingAccent: "Learn.",
+    description:
+      "Join your classes, connect with teachers and access your learning materials.",
+    checklistCol1: [
+      "Join live, interactive classes anytime.",
+      "Access notes, recordings and learning.",
+    ],
+    checklistCol2: [
+      "Collaborate with teachers and classmates.",
+      "Track your progress and see real improvement.",
+    ],
+  },
+};
+
