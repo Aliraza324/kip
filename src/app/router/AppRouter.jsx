@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 const PublicLayout = lazy(() => import("@/layouts/PublicLayout"));
 const LandingPage = lazy(() => import("@/features/landing/pages/LandingPage"));
 const AboutPage = lazy(() => import("@/features/landing/pages/AboutPage"));
-
+const FeaturesPage = lazy(() => import("@/features/landing/pages/FeaturesPage"));
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-white">
@@ -27,6 +27,7 @@ export const AppRouter = () => {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
           </Route>
 
           {/* Fallback Catch-All */}

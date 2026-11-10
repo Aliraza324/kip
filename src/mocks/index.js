@@ -5,6 +5,7 @@
 export * from "./auth.mock.js";
 export * from "./landing.mock.js";
 export * from "./about.mock.js";
+export * from "./features.mock.js";
 export * from "./student.mock.js";
 export * from "./teacher.mock.js";
 export * from "./admin.mock.js";

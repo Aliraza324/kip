@@ -28,12 +28,12 @@ export const AboutHeroSection = () => {
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Left Column: Pill Badge, Story Headline, Description, & CTAs */}
+          {/* Content Column: Heading, Badge, Description, & CTAs (Order 2 on mobile, Order 1 on desktop) */}
           <motion.div
             variants={staggerContainer(0.12, 0.05)}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-6 xl:col-span-5 text-left"
+            className="order-2 lg:order-1 lg:col-span-6 xl:col-span-5 text-left"
           >
             {/* Category Pill Badge */}
             <motion.div
@@ -122,12 +122,12 @@ export const AboutHeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: 3D Laptop Composite with Concentric Circular Backdrop */}
+          {/* Image Column: 3D Laptop Composite (Order 1 on mobile, Order 2 on desktop) */}
           <motion.div
             variants={scaleIn}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-6 xl:col-span-7 flex items-center justify-center lg:justify-end"
+            className="order-1 lg:order-2 lg:col-span-6 xl:col-span-7 flex items-center justify-center lg:justify-end"
           >
             <img
               src={laptopCompositeImg}
