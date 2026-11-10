@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { Zap, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import step1Img from "@/assets/images/image 33.png";
 import step2Img from "@/assets/images/image 34.png";
 import step3Img from "@/assets/images/image 35.png";
 import { landingHowItWorksMock } from "@/mocks";
+import { fadeInUp, staggerContainer, scrollViewport } from "@/animations";
 
 const stepImages = {
   step1: step1Img,
@@ -23,7 +25,13 @@ export const LandingHowItWorksSection = () => {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center mb-14 sm:mb-20">
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="mx-auto max-w-2xl text-center mb-14 sm:mb-20"
+        >
           {/* Top Pill Badge */}
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 py-1.5 shadow-xs mb-3">
             <Zap className="h-3.5 w-3.5 text-[#007be3] fill-[#007be3]" />
@@ -72,16 +80,22 @@ export const LandingHowItWorksSection = () => {
           <p className="mt-4 text-base sm:text-lg text-slate-600">
             {subtitle}
           </p>
-        </div>
+        </motion.div>
 
         {/* 3 Step Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 max-w-6xl mx-auto relative">
+        <motion.div
+          variants={staggerContainer(0.18)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 max-w-6xl mx-auto relative"
+        >
           {steps.map((step, idx) => {
             const imgSrc = stepImages[step.imageKey];
             const hasNext = idx < steps.length - 1;
 
             return (
-              <div key={step.id} className="relative">
+              <motion.div key={step.id} variants={fadeInUp} className="relative">
                 {/* Curved Dashed Connector Arrow between cards (Matching Reference Exactly) */}
                 {hasNext && (
                   <div
@@ -146,10 +160,10 @@ export const LandingHowItWorksSection = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

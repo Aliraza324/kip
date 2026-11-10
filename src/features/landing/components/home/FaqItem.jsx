@@ -9,6 +9,8 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import { fadeInUp } from "@/animations";
 
 const iconMap = {
   BookOpen,
@@ -25,7 +27,8 @@ export const FaqItem = ({ item, isOpen, onToggle }) => {
   const isYellow = item.theme === "yellow";
 
   return (
-    <div
+    <motion.div
+      variants={fadeInUp}
       className={`rounded-2xl transition-all duration-300 overflow-hidden ${
         isOpen
           ? "bg-[#eef7ff] border border-[#bfe0fc] shadow-sm"
@@ -80,7 +83,7 @@ export const FaqItem = ({ item, isOpen, onToggle }) => {
           </p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

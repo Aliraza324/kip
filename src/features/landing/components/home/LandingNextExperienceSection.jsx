@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, User } from "lucide-react";
+import { motion } from "framer-motion";
 import decorativeBgImg from "@/assets/images/Decorative.png";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import laptopCompositeImg from "@/assets/images/b58e334b69cf4c6922d77d48dc1ea4603c997701.png";
 import { landingNextLearningExperienceMock } from "@/mocks";
+import { fadeInUp, scaleIn, viewportConfig } from "@/animations";
 
 export const LandingNextExperienceSection = () => {
   const {
@@ -27,7 +29,13 @@ export const LandingNextExperienceSection = () => {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Logo, Heading, Details, and CTA Buttons */}
-          <div className="lg:col-span-5 xl:col-span-5 text-left">
+          <motion.div
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportConfig}
+            className="lg:col-span-5 xl:col-span-5 text-left"
+          >
             {/* KIPClassin Brand Logo */}
             <div className="mb-6 flex justify-start">
               <img
@@ -99,19 +107,23 @@ export const LandingNextExperienceSection = () => {
                 <span>{secondaryCta.text}</span>
               </Link>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: 3D Laptop Composite with Concentric Circular Backdrop */}
-          <div className="lg:col-span-7 xl:col-span-7 relative flex items-center justify-center lg:justify-end">
-
-
+          <motion.div
+            variants={scaleIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportConfig}
+            className="lg:col-span-7 xl:col-span-7 relative flex items-center justify-center lg:justify-end"
+          >
             {/* 3D Laptop Composite Illustration (Plant, Laptop, Books, Mortarboard) */}
             <img
               src={laptopCompositeImg}
               alt="Interactive Virtual Classroom Experience"
               className="relative z-10 w-full max-w-lg lg:max-w-2xl xl:max-w-3xl h-auto object-contain select-none drop-shadow-md"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

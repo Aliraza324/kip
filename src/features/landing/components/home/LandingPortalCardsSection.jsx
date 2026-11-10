@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { User, GraduationCap, Presentation, Users } from "lucide-react";
+import { motion } from "framer-motion";
 import boyImg from "@/assets/images/image 13.png";
 import teacherImg from "@/assets/images/image 14.png";
 import { teachingLearningPortalsMock } from "@/mocks";
+import { fadeInUp, staggerContainer, viewportConfig } from "@/animations";
 
 const roleImages = {
   boy: boyImg,
@@ -22,7 +24,13 @@ export const LandingPortalCardsSection = () => {
     <section className="relative z-10 bg-white py-14 sm:py-20 lg:py-24 border-t border-slate-100 overflow-x-clip">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center mb-10 sm:mb-14">
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="mx-auto max-w-2xl text-center mb-10 sm:mb-14"
+        >
           {/* Top Pill Badge */}
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 py-1.5 shadow-xs mb-3">
             <Users className="h-3.5 w-3.5 text-[#007be3]" />
@@ -54,17 +62,24 @@ export const LandingPortalCardsSection = () => {
             <span>{headingLine2Prefix}</span>
             <span className="text-[#007be3]">{headingLine2Accent}</span>
           </h2>
-        </div>
+        </motion.div>
 
         {/* Portals Cards Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 max-w-6xl mx-auto">
+        <motion.div
+          variants={staggerContainer(0.15)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 max-w-6xl mx-auto"
+        >
           {cards.map((card) => {
             const Icon = roleIcons[card.iconType] || GraduationCap;
             const imgSrc = roleImages[card.imageType];
 
             return (
-              <div
+              <motion.div
                 key={card.id}
+                variants={fadeInUp}
                 className={`relative flex flex-col sm:flex-row items-end justify-between overflow-hidden rounded-3xl border ${card.borderColor} p-6 sm:p-7 sm:pt-8 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
                 style={{ backgroundColor: card.bgColor }}
               >
@@ -118,10 +133,10 @@ export const LandingPortalCardsSection = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

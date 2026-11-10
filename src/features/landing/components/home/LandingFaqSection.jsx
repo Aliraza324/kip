@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { HelpCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import decorativeBgImg from "@/assets/images/Decorative.png";
 import faqIllustrationImg from "@/assets/images/Frame 10.png";
 import { landingFaqMock } from "@/mocks";
+import { fadeInUp, staggerContainer, scrollViewport } from "@/animations";
 import { FaqItem } from "./FaqItem";
 
 export const LandingFaqSection = () => {
@@ -33,7 +35,13 @@ export const LandingFaqSection = () => {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Heading, Details, and 3D Mortarboard/Chat Illustration */}
-          <div className="lg:col-span-5 text-left">
+          <motion.div
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollViewport}
+            className="lg:col-span-5 text-left"
+          >
             {/* Top FAQ Badge */}
             <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-3.5 py-1.5 shadow-xs mb-4">
               <HelpCircle className="h-4 w-4 text-[#007be3]" />
@@ -94,10 +102,16 @@ export const LandingFaqSection = () => {
                 className="w-64 sm:w-72 lg:w-80 h-auto object-contain select-none drop-shadow-sm"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: 7 Interactive Accordion Cards */}
-          <div className="lg:col-span-7 flex flex-col gap-3 sm:gap-3.5">
+          <motion.div
+            variants={staggerContainer(0.08)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollViewport}
+            className="lg:col-span-7 flex flex-col gap-3 sm:gap-3.5"
+          >
             {items.map((item) => (
               <FaqItem
                 key={item.id}
@@ -106,7 +120,7 @@ export const LandingFaqSection = () => {
                 onToggle={() => handleToggle(item.id)}
               />
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

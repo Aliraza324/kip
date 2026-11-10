@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import aiImg from "@/assets/images/Feature illustration.png";
 import assessmentsImg from "@/assets/images/Feature illustration (1).png";
 import progressImg from "@/assets/images/Feature illustration (2).png";
 import { landingMoreThanVirtualClassroomMock } from "@/mocks";
+import { fadeInUp, staggerContainer, scrollViewport } from "@/animations";
 
 const cardImages = {
   ai: aiImg,
@@ -22,7 +24,13 @@ export const LandingMoreThanClassroomSection = () => {
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16">
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="mx-auto max-w-3xl text-center mb-12 sm:mb-16"
+        >
           {/* Top Pill Badge */}
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 py-1.5 shadow-xs mb-3">
             <Sparkles className="h-4 w-4 text-[#007be3] fill-[#007be3]" />
@@ -74,16 +82,23 @@ export const LandingMoreThanClassroomSection = () => {
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
             {subtitle}
           </p>
-        </div>
+        </motion.div>
 
         {/* 3 Feature Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 max-w-6xl mx-auto">
+        <motion.div
+          variants={staggerContainer(0.18)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 max-w-6xl mx-auto"
+        >
           {cards.map((card) => {
             const imgSrc = cardImages[card.imageKey];
 
             return (
-              <div
+              <motion.div
                 key={card.id}
+                variants={fadeInUp}
                 className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] border border-slate-200/80 bg-white p-7 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-xl hover:border-blue-200 hover:-translate-y-1.5 h-full"
               >
                 {/* Top Illustration */}
@@ -116,10 +131,10 @@ export const LandingMoreThanClassroomSection = () => {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

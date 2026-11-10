@@ -1,10 +1,12 @@
 import { ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import pillBgImg from "@/assets/images/Background+Border+Shadow.png";
 import studentsIconImg from "@/assets/images/Background.png";
 import teachersIconImg from "@/assets/images/Background (1).png";
 import classesIconImg from "@/assets/images/Background (2).png";
 import demoIconImg from "@/assets/images/Background (3).png";
 import { landingTrustedBannerMock } from "@/mocks";
+import { fadeInUp, scaleIn, viewportConfig } from "@/animations";
 
 const iconMap = {
   students: studentsIconImg,
@@ -33,7 +35,13 @@ export const LandingTrustedBannerSection = () => {
     >
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Top Centered Pill Badge with Radiating Yellow Rays */}
-        <div className="flex justify-center mb-8 sm:mb-10">
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="flex justify-center mb-8 sm:mb-10"
+        >
           <div className="relative inline-flex items-center pr-3 sm:pr-4">
             {/* Pill Container */}
             <div className="inline-flex items-center gap-2 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 sm:px-5 py-2 shadow-xs">
@@ -65,10 +73,16 @@ export const LandingTrustedBannerSection = () => {
               <line x1="24" y1="26" x2="29" y2="13" />
             </svg>
           </div>
-        </div>
+        </motion.div>
 
         {/* Desktop & Tablet Stadium Pill Container (md+) */}
-        <div className="hidden md:block relative w-full aspect-[1253/287]">
+        <motion.div
+          variants={scaleIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="hidden md:block relative w-full aspect-[1253/287]"
+        >
           {/* Exact Background Pill Graphic with Border, Shadow, and Corner Accents */}
           <img
             src={pillBgImg}
@@ -132,10 +146,16 @@ export const LandingTrustedBannerSection = () => {
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Mobile View (2x2 Grid Card) */}
-        <div className="md:hidden relative w-full rounded-3xl bg-white border border-[#e2e8f0] p-6 shadow-lg shadow-blue-500/5 overflow-hidden">
+        <motion.div
+          variants={scaleIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="md:hidden relative w-full rounded-3xl bg-white border border-[#e2e8f0] p-6 shadow-lg shadow-blue-500/5 overflow-hidden"
+        >
           <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-[#febf11]/15 blur-xl pointer-events-none" />
           <div className="absolute -bottom-10 -left-10 w-24 h-24 rounded-full bg-[#007be3]/15 blur-xl pointer-events-none" />
 
@@ -165,7 +185,7 @@ export const LandingTrustedBannerSection = () => {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

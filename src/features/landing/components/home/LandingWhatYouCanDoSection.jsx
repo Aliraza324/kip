@@ -1,4 +1,6 @@
+import { motion } from "framer-motion";
 import { landingWhatYouCanDoMock } from "@/mocks";
+import { fadeInUp, staggerContainer, viewportConfig } from "@/animations";
 import { WhatYouCanDoCardIcon } from "./WhatYouCanDoIcons";
 
 export const LandingWhatYouCanDoSection = () => {
@@ -12,7 +14,13 @@ export const LandingWhatYouCanDoSection = () => {
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16">
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="mx-auto max-w-3xl text-center mb-12 sm:mb-16"
+        >
           {/* Top Pill Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 py-1.5 shadow-xs mb-4">
             <svg
@@ -40,16 +48,23 @@ export const LandingWhatYouCanDoSection = () => {
             <span className="text-[#007be3]">{headingAccent1}</span>
             <div className="text-[#007be3] mt-1">{headingAccent2}</div>
           </h2>
-        </div>
+        </motion.div>
 
         {/* 6 Feature Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 max-w-6xl mx-auto">
+        <motion.div
+          variants={staggerContainer(0.1)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 max-w-6xl mx-auto"
+        >
           {cards.map((card) => {
             const isBlue = card.theme === "blue";
 
             return (
-              <div
+              <motion.div
                 key={card.id}
+                variants={fadeInUp}
                 className={`group relative flex flex-col items-center text-center p-8 sm:p-9 rounded-[32px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl ${
                   isBlue
                     ? "bg-[#f4f9ff] border border-[#e3effd] shadow-xs hover:border-blue-200 hover:shadow-blue-500/10"
@@ -76,10 +91,10 @@ export const LandingWhatYouCanDoSection = () => {
                 <p className="text-sm sm:text-[15px] leading-relaxed text-slate-500 max-w-[280px] mx-auto">
                   {card.description}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

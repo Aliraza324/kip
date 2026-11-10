@@ -1,7 +1,9 @@
 import { ArrowRight, Monitor } from "lucide-react";
+import { motion } from "framer-motion";
 import classroomBgImg from "@/assets/images/A better virtual classroom.png";
 import classroomLaptopImg from "@/assets/images/image 19.png";
 import { landingVirtualClassroomExperienceMock } from "@/mocks";
+import { fadeInUp, scaleIn, viewportConfig } from "@/animations";
 import { ClassroomChipIcon } from "./ClassroomChipIcons";
 
 export const LandingVirtualClassroomExperienceSection = () => {
@@ -29,7 +31,13 @@ export const LandingVirtualClassroomExperienceSection = () => {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Content, Chips, CTA */}
-          <div className="lg:col-span-6 xl:col-span-5 text-left">
+          <motion.div
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportConfig}
+            className="lg:col-span-6 xl:col-span-5 text-left"
+          >
             {/* Top Pill Badge */}
             <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 py-1.5 shadow-xs mb-4">
               <Monitor className="h-3.5 w-3.5 text-[#007be3]" />
@@ -116,10 +124,16 @@ export const LandingVirtualClassroomExperienceSection = () => {
                 <ArrowRight className="h-4 w-4 stroke-[2.5]" />
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Exact Aspect Ratio Image (908 / 606) */}
-          <div className="lg:col-span-6 xl:col-span-7 flex items-center justify-start">
+          <motion.div
+            variants={scaleIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportConfig}
+            className="lg:col-span-6 xl:col-span-7 flex items-center justify-start"
+          >
             <div className="w-full aspect-[908/606] max-w-2xl lg:max-w-none flex items-center justify-start">
               <img
                 src={classroomLaptopImg}
@@ -128,7 +142,7 @@ export const LandingVirtualClassroomExperienceSection = () => {
                 className="w-full h-full object-contain object-left drop-shadow-2xl transition-transform duration-300 hover:scale-[1.01]"
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

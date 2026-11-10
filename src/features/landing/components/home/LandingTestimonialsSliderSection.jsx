@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import backdropBgImg from "@/assets/images/Decorative backdrop.png";
 import danielImg from "@/assets/images/Reference photograph.png";
 import aishaImg from "@/assets/images/Reference photograph (1).png";
 import omarImg from "@/assets/images/Reference photograph (2).png";
 import { landingTestimonialsSliderMock } from "@/mocks";
+import { fadeInUp, scaleIn, scrollViewport } from "@/animations";
 import { TestimonialCard } from "./TestimonialCard";
 
 const testimonialImages = {
@@ -78,7 +80,13 @@ export const LandingTestimonialsSliderSection = () => {
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16">
+        <motion.div
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          className="mx-auto max-w-3xl text-center mb-12 sm:mb-16"
+        >
           {/* Top Pill Badge */}
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 py-1.5 shadow-xs mb-3">
             <svg
@@ -118,10 +126,14 @@ export const LandingTestimonialsSliderSection = () => {
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
             {subtitle}
           </p>
-        </div>
+        </motion.div>
 
         {/* Carousel Slider Viewport */}
-        <div
+        <motion.div
+          variants={scaleIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
           className="overflow-hidden w-full max-w-6xl mx-auto py-2"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -146,7 +158,7 @@ export const LandingTestimonialsSliderSection = () => {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Bottom Carousel Controls: Prev, Dots, Next */}
         <div className="flex items-center justify-center gap-4 mt-8 sm:mt-10">
