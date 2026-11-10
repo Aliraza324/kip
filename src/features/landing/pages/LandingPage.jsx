@@ -9,6 +9,7 @@ import { LandingMoreThanClassroomSection } from "../components/LandingMoreThanCl
 import { LandingTestimonialsSliderSection } from "../components/LandingTestimonialsSliderSection";
 import { LandingTrustedBannerSection } from "../components/LandingTrustedBannerSection";
 import { LandingFaqSection } from "../components/LandingFaqSection";
+import { LandingNextExperienceSection } from "../components/LandingNextExperienceSection";
 import { LandingFooter } from "../components/LandingFooter";
 
 export const LandingPage = () => {
@@ -52,7 +53,10 @@ export const LandingPage = () => {
       {/* 9. Frequently Asked Questions (FAQ) Section */}
       <LandingFaqSection />
 
-      {/* 10. Campus Footer */}
+      {/* 10. Next Learning Experience Call to Action Banner */}
+      <LandingNextExperienceSection />
+
+      {/* 11. Campus Footer */}
       <LandingFooter />
     </div>
   );

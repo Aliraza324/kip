@@ -500,6 +500,22 @@ export const landingFaqMock = {
   ],
 };
 
+export const landingNextLearningExperienceMock = {
+  headingLine1: "Your Next Learning",
+  headingLine2Prefix: "Experience ",
+  headingLine2Accent: "Starts Here.",
+  subtitle:
+    "Join your classroom, connect with your teacher and make learning more interactive.",
+  primaryCta: {
+    text: "Get Started Today",
+    href: "/auth/register",
+  },
+  secondaryCta: {
+    text: "Login to Your Portal",
+    href: "/auth/login",
+  },
+};
+
 export const landingFooterMock = {
   aboutText:
     "KIPClassin is the unified academic operating system designed for modern schools, colleges, and training institutes.",
