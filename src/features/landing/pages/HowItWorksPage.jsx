@@ -3,7 +3,8 @@ import {
   HowItWorksProcessSection,
   HowItWorksRolesSection,
 } from "../components/how-it-works";
-
+import { FeaturesWhySection } from "../components/features";
+import { AboutCommunityCtaSection, LandingNextExperienceSection } from "../components/about";
 export const HowItWorksPage = () => {
   return (
     <div className="w-full bg-white text-[#1e293b]">
@@ -15,6 +16,9 @@ export const HowItWorksPage = () => {
 
       {/* 3. For Teachers & For Students (Roles Showcase) */}
       <HowItWorksRolesSection />
+      <FeaturesWhySection />
+      <AboutCommunityCtaSection />
+      <LandingNextExperienceSection />
     </div>
   );
 };
