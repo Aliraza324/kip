@@ -38,7 +38,7 @@ export const FeaturesSuiteSection = () => {
   return (
     <section
       id="features-suite"
-      className="relative z-10 w-full bg-white py-16 sm:py-20 lg:py-24 overflow-hidden"
+      className="relative z-10 w-full bg-white pt-12 sm:pt-16 lg:pt-20 pb-4 sm:pb-6 lg:pb-8 overflow-hidden"
     >
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
         {/* Category Pill Badge */}

@@ -106,3 +106,22 @@ export const featuresSuiteMock = {
   ],
 };
 
+export const featuresActionMock = {
+  badge: "FEATURE IN ACTION",
+  headingLine1: "See KIPClassin",
+  headingLine2Prefix: "in ",
+  headingLine2Accent: "Action.",
+  description:
+    "Explore how our key features work together to create a smarter, more engaging learning experience.",
+  checklist: [
+    "Join a live class",
+    "Use the interactive whiteboard",
+    "Access learning materials",
+    "Track your progress",
+  ],
+  cta: {
+    text: "Watch Full Demo",
+    href: "#demo",
+  },
+};
+
