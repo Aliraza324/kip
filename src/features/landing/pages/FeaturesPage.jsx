@@ -1,13 +1,18 @@
-import { FeaturesHeroSection } from "../components/features";
+import {
+  FeaturesHeroSection,
+  FeaturesSuiteSection,
+} from "../components/features";
 
 export const FeaturesPage = () => {
   return (
     <div className="w-full bg-white text-[#1e293b]">
       {/* 1. Features Hero Section */}
       <FeaturesHeroSection />
+
+      {/* 2. Complete Learning Suite (9 Feature Cards Grid) */}
+      <FeaturesSuiteSection />
     </div>
   );
 };
 
 export default FeaturesPage;
-
