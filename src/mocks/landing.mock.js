@@ -10,6 +10,18 @@ export const landingNavLinksMock = [
   { label: "Contact", href: "/contact" },
 ];
 
+export const loaderMock = {
+  brandName: "KIPClassin",
+  steps: [
+    { threshold: 0, text: "Initializing KIPClassin..." },
+    { threshold: 30, text: "Loading interactive classrooms..." },
+    { threshold: 65, text: "Preparing learning materials..." },
+    { threshold: 90, text: "Almost ready..." },
+    { threshold: 100, text: "Welcome to KIPClassin!" },
+  ],
+};
+
+
 export const landingHeroMock = {
   badge: "YOUR ONLINE LEARNING SPACE",
   headingLine1: "Learn Together.",
