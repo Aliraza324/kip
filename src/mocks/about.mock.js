@@ -105,3 +105,18 @@ export const aboutValuesMock = {
     },
   ],
 };
+
+export const aboutCommunityCtaMock = {
+  headingLine1: "Join Our Learning",
+  headingAccent: "Community",
+  description:
+    "Be part of a growing community of learners and educators using AI to make education more effective and engaging.",
+  primaryCta: {
+    text: "Get Started Today",
+    href: "/auth/register",
+  },
+  secondaryCta: {
+    text: "Login to Your Portal",
+    href: "/auth/login",
+  },
+};

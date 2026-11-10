@@ -3,6 +3,7 @@ import {
   AboutHighlightsBannerSection,
   AboutMissionVisionSection,
   AboutValuesSection,
+  AboutCommunityCtaSection,
 } from "../components/about";
 
 export const AboutPage = () => {
@@ -19,6 +20,9 @@ export const AboutPage = () => {
 
       {/* 4. The Values We Stand For (Accessibility, Collaboration, Reliability, Growth) */}
       <AboutValuesSection />
+
+      {/* 5. Join Our Learning Community CTA Banner */}
+      <AboutCommunityCtaSection />
     </div>
   );
 };
