@@ -6,6 +6,7 @@ const PublicLayout = lazy(() => import("@/layouts/PublicLayout"));
 const LandingPage = lazy(() => import("@/features/landing/pages/LandingPage"));
 const AboutPage = lazy(() => import("@/features/landing/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/features/landing/pages/FeaturesPage"));
+const HowItWorksPage = lazy(() => import("@/features/landing/pages/HowItWorksPage"));
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-white">
@@ -28,6 +29,7 @@ export const AppRouter = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
           </Route>
 
           {/* Fallback Catch-All */}
