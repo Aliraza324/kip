@@ -35,7 +35,7 @@ export const LandingWhatYouCanDoSection = () => {
           </div>
 
           {/* Heading */}
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight leading-tight break-words">
             <span className="text-[#01287b]">{headingMain}</span>
             <span className="text-[#007be3]">{headingAccent1}</span>
             <div className="text-[#007be3] mt-1">{headingAccent2}</div>

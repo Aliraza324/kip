@@ -35,13 +35,13 @@ export const LandingMoreThanClassroomSection = () => {
           </div>
 
           {/* Heading with Yellow Spark Rays & Curved Swoosh */}
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#01287b] leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#01287b] leading-tight break-words">
             <span>{headingMain}</span>
-            <span className="relative inline-block text-[#007be3]">
+            <span className="relative inline-block text-[#007be3] pr-4 sm:pr-8">
               {headingAccent}
               {/* Radiating 3 Yellow Spark Rays */}
               <svg
-                className="absolute -top-4 -right-6 sm:-top-5 sm:-right-8 w-7 h-7 sm:w-8 sm:h-8 text-[#febf11]"
+                className="absolute -top-3.5 right-0 sm:-top-5 sm:-right-2 w-5 h-5 sm:w-8 sm:h-8 text-[#febf11] pointer-events-none"
                 viewBox="0 0 32 32"
                 fill="none"
                 stroke="currentColor"

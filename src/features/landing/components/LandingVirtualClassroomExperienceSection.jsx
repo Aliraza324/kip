@@ -20,7 +20,7 @@ export const LandingVirtualClassroomExperienceSection = () => {
   return (
     <section
       id="classroom-experience"
-      className="relative z-10 w-full py-16 sm:py-24 border-t border-slate-100 bg-[#fbfdff] bg-no-repeat bg-center"
+      className="relative z-10 w-full py-16 sm:py-24 border-t border-slate-100 bg-[#fbfdff] bg-no-repeat bg-center overflow-x-clip"
       style={{
         backgroundImage: `url("${classroomBgImg}")`,
         backgroundSize: "100% 100%",
@@ -39,18 +39,18 @@ export const LandingVirtualClassroomExperienceSection = () => {
             </div>
 
             {/* Headline with Yellow Rays & Swoosh */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight break-words">
               <div>
                 <span className="text-[#01287b]">{headingPart1}</span>
                 <span className="text-[#007be3]">{headingPart2}</span>
               </div>
-              <div className="relative inline-block mt-1">
-                <span className="text-[#007be3]">{headingPart3}</span>
+              <div className="relative inline-block mt-1 pr-4 sm:pr-8">
+                <span className="text-[#007be3]">{headingPart3} </span>
                 <span className="text-[#01287b]">{headingPart4}</span>
 
                 {/* Radiating Yellow Rays */}
                 <svg
-                  className="absolute -top-5 -right-6 sm:-top-6 sm:-right-7 w-7 h-7 sm:w-8 sm:h-8 text-[#febf11]"
+                  className="absolute -top-3.5 right-0 sm:-top-6 sm:-right-2 w-5 h-5 sm:w-8 sm:h-8 text-[#febf11] pointer-events-none"
                   viewBox="0 0 32 32"
                   fill="none"
                   stroke="currentColor"

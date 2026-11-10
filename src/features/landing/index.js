@@ -12,5 +12,6 @@ export * from "./components/LandingTrustedBannerSection";
 export * from "./components/FaqItem";
 export * from "./components/LandingFaqSection";
 export * from "./components/LandingNextExperienceSection";
+export * from "./components/FooterSocialIcons";
 export * from "./components/LandingFooter";
 export * from "./pages/LandingPage";

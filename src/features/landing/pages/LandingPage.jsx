@@ -14,7 +14,7 @@ import { LandingFooter } from "../components/LandingFooter";
 
 export const LandingPage = () => {
   return (
-    <div className="w-full bg-white text-[#1e293b]">
+    <div className="w-full min-h-screen bg-white text-[#1e293b] overflow-x-hidden">
       {/* 1. Hero Viewport with Exact Brand Background */}
       <div
         className="relative min-h-screen lg:h-screen w-full flex flex-col justify-between overflow-x-hidden bg-[#fdfdfd] bg-no-repeat bg-center"

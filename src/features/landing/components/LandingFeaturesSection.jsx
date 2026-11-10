@@ -10,7 +10,7 @@ const featureIcons = {
 
 export const LandingFeaturesSection = () => {
   return (
-    <section id="features" className="relative z-10 bg-[#fbfdff] py-16 sm:py-24 border-t border-slate-100">
+    <section id="features" className="relative z-10 bg-[#fbfdff] py-16 sm:py-24 border-t border-slate-100 overflow-x-clip">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-2xl text-center mb-12 sm:mb-16">
@@ -21,7 +21,7 @@ export const LandingFeaturesSection = () => {
             </span>
           </div>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#01287b] sm:text-4xl lg:text-5xl leading-tight">
+          <h2 className="text-2xl font-extrabold tracking-tight text-[#01287b] sm:text-4xl lg:text-5xl leading-tight break-words">
             Everything You Need for Modern Learning
           </h2>
           <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-600 max-w-xl mx-auto">

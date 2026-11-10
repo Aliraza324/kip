@@ -34,9 +34,9 @@ export const LandingTrustedBannerSection = () => {
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Top Centered Pill Badge with Radiating Yellow Rays */}
         <div className="flex justify-center mb-8 sm:mb-10">
-          <div className="relative inline-flex items-center">
+          <div className="relative inline-flex items-center pr-3 sm:pr-4">
             {/* Pill Container */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-5 py-2 shadow-xs">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#d2e6fc] bg-[#eaf3fe] px-4 sm:px-5 py-2 shadow-xs">
               <svg
                 className="h-4.5 w-4.5 text-[#007be3] shrink-0"
                 viewBox="0 0 24 24"
@@ -52,7 +52,7 @@ export const LandingTrustedBannerSection = () => {
 
             {/* Radiating 3 Yellow Spark Rays */}
             <svg
-              className="absolute -top-3.5 -right-5 sm:-top-4 sm:-right-6 w-6 h-6 sm:w-7 sm:h-7 text-[#febf11] pointer-events-none"
+              className="absolute -top-3 right-0 sm:-top-4 sm:-right-1 w-5 h-5 sm:w-7 sm:h-7 text-[#febf11] pointer-events-none"
               viewBox="0 0 32 32"
               fill="none"
               stroke="currentColor"

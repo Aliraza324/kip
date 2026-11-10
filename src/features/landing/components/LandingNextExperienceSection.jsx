@@ -18,7 +18,7 @@ export const LandingNextExperienceSection = () => {
   return (
     <section
       id="next-learning-experience"
-      className="relative z-10 w-full py-16 sm:py-24 border-t border-slate-100 bg-[#fbfdff] bg-no-repeat bg-center overflow-hidden"
+      className="relative z-10 w-full py-16 sm:py-24 border-t border-slate-100 bg-[#fbfdff] bg-no-repeat bg-center overflow-x-clip"
       style={{
         backgroundImage: `url("${decorativeBgImg}")`,
         backgroundSize: "100% 100%",
@@ -38,15 +38,15 @@ export const LandingNextExperienceSection = () => {
             </div>
 
             {/* Headline with Radiating Rays & Playful Swoosh */}
-            <h2 className="text-3xl sm:text-4xl lg:text-[44px] xl:text-5xl font-extrabold tracking-tight leading-[1.18]">
+            <h2 className="text-2xl sm:text-4xl lg:text-[44px] xl:text-5xl font-extrabold tracking-tight leading-[1.18] break-words">
               <div className="text-[#01287b]">{headingLine1}</div>
               <div className="mt-1">
                 <span className="text-[#01287b]">{headingLine2Prefix}</span>
-                <span className="relative inline-block text-[#007be3]">
+                <span className="relative inline-block text-[#007be3] pr-4 sm:pr-8">
                   {headingLine2Accent}
                   {/* Radiating 3 Yellow Spark Rays */}
                   <svg
-                    className="absolute -top-4 -right-6 sm:-top-5 sm:-right-8 w-7 h-7 sm:w-8 sm:h-8 text-[#febf11]"
+                    className="absolute -top-3.5 right-0 sm:-top-5 sm:-right-2 w-5 h-5 sm:w-8 sm:h-8 text-[#febf11] pointer-events-none"
                     viewBox="0 0 32 32"
                     fill="none"
                     stroke="currentColor"
@@ -103,17 +103,7 @@ export const LandingNextExperienceSection = () => {
 
           {/* Right Column: 3D Laptop Composite with Concentric Circular Backdrop */}
           <div className="lg:col-span-7 xl:col-span-7 relative flex items-center justify-center lg:justify-end">
-            {/* Outer Golden-Yellow Circular Ring Accent */}
-            <div
-              className="absolute w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] lg:w-[480px] lg:h-[480px] xl:w-[540px] xl:h-[540px] rounded-full border-[7px] lg:border-[8px] border-[#febf11] pointer-events-none translate-x-4 lg:translate-x-10 -translate-y-2 opacity-95"
-              aria-hidden="true"
-            />
 
-            {/* Inner Vibrant Blue Circular Disc Accent */}
-            <div
-              className="absolute w-[270px] h-[270px] sm:w-[370px] sm:h-[370px] lg:w-[430px] lg:h-[430px] xl:w-[480px] xl:h-[480px] rounded-full bg-[#007be3] pointer-events-none translate-x-8 lg:translate-x-16"
-              aria-hidden="true"
-            />
 
             {/* 3D Laptop Composite Illustration (Plant, Laptop, Books, Mortarboard) */}
             <img

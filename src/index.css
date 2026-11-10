@@ -38,58 +38,16 @@
   color-scheme: light;
 }
 
+html,
 body {
   background-color: #ffffff;
   color: #1e293b;
   font-family: var(--font-sans);
   margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@theme {
-  /* Core Brand Colors (extracted from design palette) */
-  --color-brand-navy: #01287b;
-  --color-brand-blue: #007be3;
-  --color-brand-yellow: #febf11;
-  --color-brand-slate: #3b4756;
-
-  /* Semantic UI Tokens */
-  --color-primary: #01287b;
-  --color-primary-hover: #011d59;
-  --color-primary-light: #e8edf8;
-
-  --color-secondary: #007be3;
-  --color-secondary-hover: #0066c0;
-  --color-secondary-light: #e5f3fc;
-
-  --color-accent: #febf11;
-  --color-accent-hover: #e2a808;
-  --color-accent-light: #fff8e7;
-
-  --color-bg-base: #ffffff;
-  --color-bg-surface: #fcfcfc;
-  --color-bg-muted: #f1f5f9;
-
-  --color-text-heading: #01287b;
-  --color-text-body: #1e293b;
-  --color-text-muted: #64748b;
-  --color-text-on-primary: #ffffff;
-
-  --color-border-subtle: #e2e8f0;
-  --color-border-focus: #007be3;
-}
-
-:root {
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color-scheme: light;
-}
-
-body {
-  background-color: #ffffff;
-  color: #1e293b;
-  font-family: var(--font-sans);
-  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

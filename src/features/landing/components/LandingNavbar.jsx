@@ -9,7 +9,7 @@ export const LandingNavbar = () => {
 
   return (
     <header className="relative z-30 w-full">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
         {/* Brand Logo & Subtle Vertical Divider */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center focus:outline-none">

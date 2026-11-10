@@ -517,23 +517,51 @@ export const landingNextLearningExperienceMock = {
 };
 
 export const landingFooterMock = {
-  aboutText:
-    "KIPClassin is the unified academic operating system designed for modern schools, colleges, and training institutes.",
+  description:
+    "A modern online learning platform that helps students and teachers connect, teach and learn together.",
+  socials: [
+    { label: "Facebook", href: "#facebook", icon: "facebook" },
+    { label: "Instagram", href: "#instagram", icon: "instagram" },
+    { label: "YouTube", href: "#youtube", icon: "youtube" },
+    { label: "LinkedIn", href: "#linkedin", icon: "linkedin" },
+  ],
   quickLinks: [
-    { label: "Student Portal", href: "/student" },
-    { label: "Teacher Workspace", href: "/teacher" },
-    { label: "Admin Hub", href: "/admin" },
-    { label: "Admissions 2026", href: "/auth/register" },
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Features", href: "/features" },
+    { label: "How It Works", href: "/how-it-works" },
+    { label: "Contact", href: "/contact" },
   ],
-  supportLinks: [
-    { label: "Help Center", href: "#help" },
-    { label: "System Status", href: "#status" },
-    { label: "Privacy Policy", href: "#privacy" },
-    { label: "Terms of Service", href: "#terms" },
+  userLinks: [
+    {
+      label: "Student Login",
+      href: "/auth/login?role=student",
+      icon: "GraduationCap",
+    },
+    {
+      label: "Teacher Login",
+      href: "/auth/login?role=teacher",
+      icon: "Users",
+    },
+    {
+      label: "Create an Account",
+      href: "/auth/register",
+      icon: "UserPlus",
+    },
+    {
+      label: "Help & Support",
+      href: "#faq",
+      icon: "HelpCircle",
+    },
   ],
-  contact: {
-    email: "admissions@kip.edu.pk",
-    phone: "+92 42 111 547 547",
-    address: "KIP Campus, Education City, Lahore, Pakistan",
+  companyLinks: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+  ],
+  newsletter: {
+    title: "Stay in the Loop",
+    subtitle: "Get updates, new features and learning tips from KIPClassin.",
+    placeholder: "Enter your email",
   },
+  copyright: "© 2026 KIPClassin. All rights reserved.",
 };

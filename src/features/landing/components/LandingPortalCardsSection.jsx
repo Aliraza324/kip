@@ -19,7 +19,7 @@ export const LandingPortalCardsSection = () => {
     teachingLearningPortalsMock;
 
   return (
-    <section className="relative z-10 bg-white py-14 sm:py-20 lg:py-24 border-t border-slate-100">
+    <section className="relative z-10 bg-white py-14 sm:py-20 lg:py-24 border-t border-slate-100 overflow-x-clip">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-2xl text-center mb-10 sm:mb-14">
@@ -32,12 +32,12 @@ export const LandingPortalCardsSection = () => {
           </div>
 
           {/* Section Main Title with Sparkle Rays */}
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#01287b] sm:text-4xl lg:text-5xl leading-tight">
-            <span className="relative inline-block">
+          <h2 className="text-2xl font-extrabold tracking-tight text-[#01287b] sm:text-4xl lg:text-5xl leading-tight break-words">
+            <span className="relative inline-block pr-4 sm:pr-8">
               {headingLine1}
               {/* Radiating Yellow Spark Rays */}
               <svg
-                className="absolute -top-4 -right-6 sm:-top-5 sm:-right-8 w-7 h-7 sm:w-8 sm:h-8 text-[#febf11]"
+                className="absolute -top-3.5 right-0 sm:-top-5 sm:-right-2 w-5 h-5 sm:w-8 sm:h-8 text-[#febf11] pointer-events-none"
                 viewBox="0 0 32 32"
                 fill="none"
                 stroke="currentColor"
