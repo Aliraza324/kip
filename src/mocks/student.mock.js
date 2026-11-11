@@ -1,81 +1,153 @@
 /**
- * Mock data for Student Portal
+ * Mock data for Student Portal & Dashboard
+ * Centralized mock data matching reference design
  */
-export const studentCoursesMock = [
-  {
-    id: "crs_cs301",
-    code: "CS-301",
-    title: "Data Structures & Algorithms",
-    instructor: "Prof. Ayesha Siddiqui",
-    progress: 74,
-    grade: "A-",
-    nextClass: "Mon 10:00 AM",
-    room: "Lab 3B",
-  },
-  {
-    id: "crs_cs304",
-    code: "CS-304",
-    title: "Database Management Systems",
-    instructor: "Dr. Tariq Mahmood",
-    progress: 88,
-    grade: "A",
-    nextClass: "Tue 11:30 AM",
-    room: "Auditorium A",
-  },
-  {
-    id: "crs_cs308",
-    code: "CS-308",
-    title: "Web Engineering & Cloud Systems",
-    instructor: "Engr. Salman Farooq",
-    progress: 62,
-    grade: "B+",
-    nextClass: "Wed 09:00 AM",
-    room: "Software Center",
-  },
-];
-
-export const studentAssignmentsMock = [
-  {
-    id: "asg_01",
-    course: "CS-301",
-    title: "AVL Trees & Balanced Search Tree Implementation",
-    dueDate: "2026-11-15T23:59:00",
-    status: "pending",
-    points: 100,
-  },
-  {
-    id: "asg_02",
-    course: "CS-304",
-    title: "Normalization & Index Optimization Project",
-    dueDate: "2026-11-20T23:59:00",
-    status: "submitted",
-    points: 50,
-  },
-];
-
-export const studentStatsMock = {
-  gpa: 3.82,
-  attendancePercentage: 94.5,
-  creditsCompleted: 68,
-  pendingAssignments: 2,
-};
 
 export const studentDashboardMock = {
   greeting: "Good Morning, Alex 👋",
-  subtitle: "Here is what's happening with your learning journey today.",
+  subtitle: "Ready to learn something new today?",
+  user: {
+    name: "Alex Student",
+    shortName: "Alex",
+    role: "Student",
+    avatar: "AL",
+  },
   stats: [
-    { id: "classes", label: "My Classes", value: "4", icon: "GraduationCap", color: "#007be3", bg: "#eff6ff" },
-    { id: "assignments", label: "Assignments", value: "12", icon: "FileText", color: "#febf11", bg: "#fefce8" },
-    { id: "progress", label: "Progress", value: "85%", icon: "TrendingUp", color: "#10b981", bg: "#ecfdf5" },
-    { id: "gpa", label: "Current GPA", value: "3.82", icon: "Award", color: "#8b5cf6", bg: "#f5f3ff" },
+    {
+      id: "classes",
+      label: "My Classes",
+      value: "4",
+      iconType: "play",
+      color: "#0080f6",
+      bg: "#e0f0fe",
+    },
+    {
+      id: "assignments",
+      label: "Assignments",
+      value: "12",
+      iconType: "clipboard",
+      color: "#f59e0b",
+      bg: "#fef7e0",
+    },
+    {
+      id: "materials",
+      label: "Learning Materials",
+      value: "28",
+      iconType: "book",
+      color: "#22c55e",
+      bg: "#e7f9ee",
+    },
+    {
+      id: "progress",
+      label: "My Progress",
+      value: "85%",
+      iconType: "chart",
+      color: "#a855f7",
+      bg: "#f3e8ff",
+    },
   ],
   upcomingClass: {
+    cardTitle: "Upcoming Class",
     subject: "Math – Live Class",
     time: "Today, 10:00 AM",
-    instructor: "Prof. Sarah Jenkins",
+    duration: "45 Minutes",
     actionText: "Join Class",
     link: "#",
   },
+  myClasses: {
+    cardTitle: "My Classes",
+    viewAllLink: "/student/classes",
+    items: [
+      {
+        id: "math",
+        title: "Mathematics",
+        symbol: "√x",
+        isSymbol: true,
+        details: "4 Lessons • 2 Assignments",
+        colorClass: "bg-purple-100 text-purple-600",
+      },
+      {
+        id: "science",
+        title: "Science",
+        iconType: "flask",
+        isSymbol: false,
+        details: "6 Lessons • 3 Assignments",
+        colorClass: "bg-sky-100 text-sky-500",
+      },
+      {
+        id: "english",
+        title: "English",
+        iconType: "book",
+        isSymbol: false,
+        details: "5 Lessons • 2 Assignments",
+        colorClass: "bg-amber-100 text-amber-500",
+      },
+    ],
+  },
+  recentAssignments: {
+    cardTitle: "Recent Assignments",
+    viewAllLink: "/student/assignments",
+    items: [
+      {
+        id: "asg_1",
+        title: "Algebra Practice Set",
+        due: "Due: Tomorrow",
+        status: "Not Started",
+        badgeStyle: "bg-emerald-50 text-emerald-600 border-emerald-100",
+      },
+      {
+        id: "asg_2",
+        title: "Science Lab Report",
+        due: "Due: Nov 5",
+        status: "In Progress",
+        badgeStyle: "bg-sky-50 text-sky-600 border-sky-100",
+      },
+      {
+        id: "asg_3",
+        title: "English Essay",
+        due: "Due: Nov 8",
+        status: "Not Started",
+        badgeStyle: "bg-slate-100 text-slate-500 border-slate-200/80",
+      },
+    ],
+  },
+  learningMaterials: {
+    cardTitle: "Learning Materials",
+    viewAllLink: "/student/materials",
+    items: [
+      {
+        id: "mat_1",
+        title: "Math Notes",
+        meta: "PDF • 2.4 MB",
+        iconType: "book",
+        color: "#f43f5e",
+        bg: "bg-rose-50",
+      },
+      {
+        id: "mat_2",
+        title: "Science Lecture",
+        meta: "Video • 18 Min",
+        iconType: "video",
+        color: "#0080f6",
+        bg: "bg-blue-50",
+      },
+      {
+        id: "mat_3",
+        title: "English Guide",
+        meta: "PDF • 1.8 MB",
+        iconType: "doc",
+        color: "#a855f7",
+        bg: "bg-purple-50",
+      },
+    ],
+  },
+  helpCard: {
+    title: "Need Help?",
+    subtitle: "Contact your teacher for support.",
+    buttonText: "Get Support →",
+    link: "/contact",
+  },
 };
 
-
+export const studentCoursesMock = studentDashboardMock.myClasses.items;
+export const studentAssignmentsMock = studentDashboardMock.recentAssignments.items;
