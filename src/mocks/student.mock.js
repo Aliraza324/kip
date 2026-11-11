@@ -60,3 +60,22 @@ export const studentStatsMock = {
   pendingAssignments: 2,
 };
 
+export const studentDashboardMock = {
+  greeting: "Good Morning, Alex 👋",
+  subtitle: "Here is what's happening with your learning journey today.",
+  stats: [
+    { id: "classes", label: "My Classes", value: "4", icon: "GraduationCap", color: "#007be3", bg: "#eff6ff" },
+    { id: "assignments", label: "Assignments", value: "12", icon: "FileText", color: "#febf11", bg: "#fefce8" },
+    { id: "progress", label: "Progress", value: "85%", icon: "TrendingUp", color: "#10b981", bg: "#ecfdf5" },
+    { id: "gpa", label: "Current GPA", value: "3.82", icon: "Award", color: "#8b5cf6", bg: "#f5f3ff" },
+  ],
+  upcomingClass: {
+    subject: "Math – Live Class",
+    time: "Today, 10:00 AM",
+    instructor: "Prof. Sarah Jenkins",
+    actionText: "Join Class",
+    link: "#",
+  },
+};
+
+

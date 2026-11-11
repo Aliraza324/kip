@@ -8,6 +8,15 @@ const AboutPage = lazy(() => import("@/features/landing/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/features/landing/pages/FeaturesPage"));
 const HowItWorksPage = lazy(() => import("@/features/landing/pages/HowItWorksPage"));
 const ContactPage = lazy(() => import("@/features/landing/pages/ContactPage"));
+
+// Auth Routes
+const StudentLoginPage = lazy(() => import("@/features/auth/pages/StudentLoginPage"));
+const TeacherComingSoonPage = lazy(() => import("@/features/auth/pages/TeacherComingSoonPage"));
+
+// Student Portal Routes
+const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
+const StudentDashboardPage = lazy(() => import("@/features/students/pages/StudentDashboardPage"));
+
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-white">
@@ -34,6 +43,19 @@ export const AppRouter = () => {
             <Route path="/contact" element={<ContactPage />} />
           </Route>
 
+          {/* Authentication Routes */}
+          <Route path="/auth/login" element={<StudentLoginPage />} />
+          <Route path="/auth/student-login" element={<StudentLoginPage />} />
+          <Route path="/login" element={<StudentLoginPage />} />
+          <Route path="/auth/teacher-login" element={<TeacherComingSoonPage />} />
+          <Route path="/teacher" element={<TeacherComingSoonPage />} />
+
+          {/* Student Portal Protected Workspace */}
+          <Route path="/student" element={<StudentLayout />}>
+            <Route index element={<StudentDashboardPage />} />
+            <Route path="*" element={<Navigate to="/student" replace />} />
+          </Route>
+
           {/* Fallback Catch-All */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -43,4 +65,3 @@ export const AppRouter = () => {
 };
 
 export default AppRouter;
-

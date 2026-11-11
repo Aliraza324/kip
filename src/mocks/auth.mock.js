@@ -30,3 +30,38 @@ export const mockUsers = [
   },
 ];
 
+export const studentLoginMock = {
+  title: "Student Login",
+  subtitle: "Access your classes, assignments, and learning materials.",
+  teacherTitle: "Teacher Portal",
+  teacherSubtitle:
+    "Our advanced teaching suite, interactive whiteboard, and gradebook are currently under development.",
+  teacherBadge: "COMING SOON",
+  teacherBackText: "Switch to Student Login",
+  teacherPrompt: "Are you a teacher?",
+  teacherComingSoon: "Teacher Portal Coming Soon",
+  fields: {
+    username: {
+      id: "username",
+      placeholder: "Username",
+      type: "text",
+    },
+    password: {
+      id: "password",
+      placeholder: "Password",
+      type: "password",
+    },
+  },
+  submitButton: {
+    label: "Login to Dashboard",
+  },
+  backToHome: "Back to Home",
+  validation: {
+    usernameRequired: "Username is required",
+    passwordRequired: "Password is required",
+    passwordMin: "Password must be at least 6 characters",
+  },
+};
+
+
+
