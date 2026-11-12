@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Video, Calendar, Clock, X, AlertCircle } from "lucide-react";
 
-export const StudentJoinClassModal = ({ isOpen, onClose, classData }) => {
+export const StudentJoinClassModal = ({ isOpen, onClose, classData, onJoinSuccess }) => {
   const [isJoined, setIsJoined] = useState(false);
   // Allow toggling for testing time conditions
   const [activeOverride, setActiveOverride] = useState(null);
@@ -77,7 +77,13 @@ export const StudentJoinClassModal = ({ isOpen, onClose, classData }) => {
           {isTimeActive ? (
             <button
               type="button"
-              onClick={() => setIsJoined(true)}
+              onClick={() => {
+                setIsJoined(true);
+                setTimeout(() => {
+                  onJoinSuccess?.(classData);
+                  onClose();
+                }, 300);
+              }}
               className="flex-1 py-2.5 px-5 rounded-full bg-gradient-to-r from-[#0060d0] to-[#0080f6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 hover:opacity-95 transition-all cursor-pointer"
             >
               <Video className="w-4 h-4" />

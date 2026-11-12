@@ -8,3 +8,4 @@ export { StudentClassDetailView } from "./classes/StudentClassDetailView";
 export { StudentClassNotesView } from "./classes/StudentClassNotesView";
 export { StudentJoinClassModal } from "./classes/StudentJoinClassModal";
 export { StudentNotePreviewModal } from "./classes/StudentNotePreviewModal";
+export * from "./classroom";

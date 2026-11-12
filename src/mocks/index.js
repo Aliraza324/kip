@@ -10,6 +10,7 @@ export * from "./how-it-works.mock.js";
 export * from "./contact.mock.js";
 export * from "./student.mock.js";
 export * from "./studentClasses.mock.js";
+export * from "./studentClassroom.mock.js";
 export * from "./teacher.mock.js";
 export * from "./admin.mock.js";
 

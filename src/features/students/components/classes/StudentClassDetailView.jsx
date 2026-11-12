@@ -3,7 +3,7 @@ import { ArrowLeft, User, Calendar, Clock, Layers, Video } from "lucide-react";
 import { StudentClassNotesView } from "./StudentClassNotesView";
 import { StudentJoinClassModal } from "./StudentJoinClassModal";
 
-export const StudentClassDetailView = ({ classData, onBack }) => {
+export const StudentClassDetailView = ({ classData, onBack, onJoinLiveClass }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
@@ -136,6 +136,7 @@ export const StudentClassDetailView = ({ classData, onBack }) => {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
         classData={classData}
+        onJoinSuccess={onJoinLiveClass}
       />
     </div>
   );

@@ -3,12 +3,23 @@ import { Search, Calendar, User, Layers, ChevronDown } from "lucide-react";
 import { studentClassesListMock } from "@/mocks";
 import { StudentClassCard } from "../components/classes/StudentClassCard";
 import { StudentClassDetailView } from "../components/classes/StudentClassDetailView";
+import { LiveClassroomView } from "../components/classroom/LiveClassroomView";
 
 export const StudentClassesPage = () => {
   const [selectedClass, setSelectedClass] = useState(null);
+  const [isLiveClassOpen, setIsLiveClassOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [teacherFilter, setTeacherFilter] = useState("all");
+
+  // If student joins online live class, render Live Virtual Classroom View
+  if (isLiveClassOpen) {
+    return (
+      <LiveClassroomView
+        onLeaveClass={() => setIsLiveClassOpen(false)}
+      />
+    );
+  }
 
   // If a class is selected via "Enter Class", render Screen 2
   if (selectedClass) {
@@ -16,17 +27,16 @@ export const StudentClassesPage = () => {
       <StudentClassDetailView
         classData={selectedClass}
         onBack={() => setSelectedClass(null)}
+        onJoinLiveClass={() => setIsLiveClassOpen(true)}
       />
     );
   }
 
   // Filter logic
   const filteredClasses = studentClassesListMock.filter((item) => {
-    // Tab filter
     if (activeTab === "in-progress" && item.status !== "In Progress") return false;
     if (activeTab === "completed" && item.status !== "Completed") return false;
 
-    // Search query
     if (
       searchQuery &&
       !item.fullName.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -35,7 +45,6 @@ export const StudentClassesPage = () => {
       return false;
     }
 
-    // Teacher filter
     if (teacherFilter !== "all" && !item.teacher.includes(teacherFilter)) return false;
 
     return true;
@@ -53,7 +62,7 @@ export const StudentClassesPage = () => {
         </p>
       </div>
 
-      {/* Tabs: All Classes, In Progress, Completed Matching Image 1 */}
+      {/* Tabs: All Classes, In Progress, Completed */}
       <div className="flex flex-wrap items-center gap-2.5">
         <button
           type="button"
@@ -90,9 +99,8 @@ export const StudentClassesPage = () => {
         </button>
       </div>
 
-      {/* Filter Row Matching Image 1: Search, Date/Time, Teacher, Course */}
+      {/* Filter Row: Search, Date/Time, Teacher, Course */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
-        {/* Search Input */}
         <div className="lg:col-span-6 relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -104,7 +112,6 @@ export const StudentClassesPage = () => {
           />
         </div>
 
-        {/* Date / Time Filter Pill */}
         <div className="lg:col-span-2">
           <button
             type="button"
@@ -115,7 +122,6 @@ export const StudentClassesPage = () => {
           </button>
         </div>
 
-        {/* Teacher Dropdown Filter */}
         <div className="lg:col-span-2 relative">
           <select
             value={teacherFilter}
@@ -129,7 +135,6 @@ export const StudentClassesPage = () => {
           <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
         </div>
 
-        {/* Course Dropdown Filter */}
         <div className="lg:col-span-2 relative">
           <select className="w-full appearance-none bg-white border border-slate-200/80 rounded-2xl pl-9 pr-8 py-2.5 text-xs font-semibold text-slate-600 outline-none focus:border-[#0080f6] shadow-2xs cursor-pointer">
             <option value="all">Course</option>
@@ -163,4 +168,3 @@ export const StudentClassesPage = () => {
 };
 
 export default StudentClassesPage;
-
