@@ -5,6 +5,7 @@ import { ClassroomVideoFeeds } from "./ClassroomVideoFeeds";
 import { ClassroomChatPanel } from "./ClassroomChatPanel";
 import { ClassroomParticipantsPanel } from "./ClassroomParticipantsPanel";
 import { ClassroomBottomToolbar } from "./ClassroomBottomToolbar";
+import { LeaveClassModal } from "./LeaveClassModal";
 
 export const LiveClassroomView = ({ onLeaveClass }) => {
   const [isMuted, setIsMuted] = useState(true);
@@ -12,6 +13,7 @@ export const LiveClassroomView = ({ onLeaveClass }) => {
   const [isHandRaised, setIsHandRaised] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   // Default to chat open as shown in reference image
   const [activePanel, setActivePanel] = useState("chat");
 
@@ -29,13 +31,18 @@ export const LiveClassroomView = ({ onLeaveClass }) => {
     }
   };
 
+  const handleConfirmLeave = () => {
+    setIsLeaveModalOpen(false);
+    onLeaveClass?.();
+  };
+
   return (
     <div className="space-y-4 max-w-[1600px] mx-auto min-h-full flex flex-col justify-between">
       {/* Top Header Bar with Live Indicator & Timer */}
       <ClassroomTopBar
         title="Mathematics – Live Class"
         participantsCount={24}
-        onLeave={onLeaveClass}
+        onLeave={() => setIsLeaveModalOpen(true)}
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
       />
@@ -81,7 +88,14 @@ export const LiveClassroomView = ({ onLeaveClass }) => {
         onToggleScreenShare={() => setIsScreenSharing(!isScreenSharing)}
         activePanel={activePanel}
         onTogglePanel={handleTogglePanel}
-        onLeaveClass={onLeaveClass}
+        onLeaveClass={() => setIsLeaveModalOpen(true)}
+      />
+
+      {/* Confirmation Leave Class Modal */}
+      <LeaveClassModal
+        isOpen={isLeaveModalOpen}
+        onClose={() => setIsLeaveModalOpen(false)}
+        onConfirm={handleConfirmLeave}
       />
     </div>
   );

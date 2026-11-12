@@ -4,5 +4,6 @@ export { ClassroomVideoFeeds } from "./ClassroomVideoFeeds";
 export { ClassroomChatPanel } from "./ClassroomChatPanel";
 export { ClassroomParticipantsPanel } from "./ClassroomParticipantsPanel";
 export { ClassroomBottomToolbar } from "./ClassroomBottomToolbar";
+export { LeaveClassModal } from "./LeaveClassModal";
 export { LiveClassroomView } from "./LiveClassroomView";
 
