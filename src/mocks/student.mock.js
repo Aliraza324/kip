@@ -31,7 +31,7 @@ export const studentDashboardMock = {
     },
     {
       id: "materials",
-      label: "Learning Materials",
+      label: "Lectures",
       value: "28",
       iconType: "book",
       color: "#22c55e",
@@ -39,8 +39,8 @@ export const studentDashboardMock = {
     },
     {
       id: "progress",
-      label: "My Progress",
-      value: "85%",
+      label: "Progress",
+      value: "86%",
       iconType: "chart",
       color: "#a855f7",
       bg: "#f3e8ff",
