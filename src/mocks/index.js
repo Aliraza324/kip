@@ -14,6 +14,7 @@ export * from "./studentClassroom.mock.js";
 export * from "./studentAssignments.mock.js";
 export * from "./studentMaterials.mock.js";
 export * from "./studentProgress.mock.js";
+export * from "./studentNotifications.mock.js";
 export * from "./teacher.mock.js";
 export * from "./admin.mock.js";
 
