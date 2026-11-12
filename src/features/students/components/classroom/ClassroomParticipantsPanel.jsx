@@ -42,7 +42,7 @@ export const ClassroomParticipantsPanel = ({ onClose, isStudentHandRaised = fals
         </div>
 
         {/* Participants List */}
-        <div className="mt-4 space-y-2 overflow-y-auto max-h-[380px] pr-1">
+        <div className="mt-4 space-y-2 overflow-y-auto max-h-[50vh] lg:max-h-[380px] pr-1">
           {filtered.map((p) => {
             const handRaised = p.isHost ? false : p.name.includes("You") ? isStudentHandRaised : p.isHandRaised;
 

@@ -14,7 +14,8 @@ export const ClassroomChatPanel = ({ onClose }) => {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
+    const text = inputText.trim();
+    if (!text) return;
 
     const newMsg = {
       id: `msg-${Date.now()}`,
@@ -22,22 +23,36 @@ export const ClassroomChatPanel = ({ onClose }) => {
       initials: "AL",
       avatarColor: "bg-[#0080f6] text-white",
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      text: inputText.trim(),
+      text,
       isMe: true,
     };
 
     setMessages((prev) => [...prev, newMsg]);
     setInputText("");
+
+    // Simulated Teacher / Classmate Reply after 1.4s
+    setTimeout(() => {
+      const reply = {
+        id: `reply-${Date.now()}`,
+        sender: "Mr. James Wilson (Teacher)",
+        initials: "JW",
+        avatarColor: "bg-purple-600 text-white",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        text: "Great point, Alex! Let's focus on step 2 of the algebraic identity.",
+        isMe: false,
+      };
+      setMessages((prev) => [...prev, reply]);
+    }, 1400);
   };
 
   return (
-    <div className="w-full lg:w-80 xl:w-96 bg-white border border-slate-100 rounded-3xl p-4 sm:p-5 shadow-2xs flex flex-col justify-between h-full min-h-[500px]">
+    <div className="w-full lg:w-80 xl:w-96 bg-white border border-slate-100 rounded-3xl p-4 sm:p-5 shadow-xl flex flex-col justify-between h-full min-h-[460px] max-h-[620px]">
       {/* Header */}
       <div>
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2 text-slate-900">
             <MessageSquare className="w-5 h-5 text-[#0080f6]" />
-            <h3 className="font-bold text-base">Messages</h3>
+            <h3 className="font-bold text-base">In-call Messages</h3>
           </div>
           <button
             type="button"
@@ -45,7 +60,7 @@ export const ClassroomChatPanel = ({ onClose }) => {
             className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Close chat"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -77,7 +92,7 @@ export const ClassroomChatPanel = ({ onClose }) => {
       </div>
 
       {/* Messages Scroll View */}
-      <div className="flex-1 my-3 overflow-y-auto space-y-3 pr-1 text-xs sm:text-sm max-h-[360px]">
+      <div className="flex-1 my-3 overflow-y-auto space-y-3 pr-1 text-xs sm:text-sm">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -98,7 +113,7 @@ export const ClassroomChatPanel = ({ onClose }) => {
             )}
 
             <div
-              className={`p-3 rounded-2xl max-w-[85%] leading-relaxed ${
+              className={`p-3 rounded-2xl max-w-[88%] leading-relaxed ${
                 msg.isMe
                   ? "bg-[#0080f6] text-white rounded-br-xs"
                   : "bg-slate-100 text-slate-800 rounded-bl-xs"
@@ -124,7 +139,7 @@ export const ClassroomChatPanel = ({ onClose }) => {
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Type a message..."
+          placeholder="Send a message to everyone..."
           className="w-full bg-slate-50 border border-slate-200/80 rounded-full pl-4 pr-12 py-2.5 text-xs text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-all shadow-2xs"
         />
         <button
@@ -140,4 +155,3 @@ export const ClassroomChatPanel = ({ onClose }) => {
 };
 
 export default ClassroomChatPanel;
-
