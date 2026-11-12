@@ -3,4 +3,8 @@ export { StudentUpcomingClassCard } from "./StudentUpcomingClassCard";
 export { StudentMyClassesCard } from "./StudentMyClassesCard";
 export { StudentRecentAssignmentsCard } from "./StudentRecentAssignmentsCard";
 export { StudentLearningMaterialsCard } from "./StudentLearningMaterialsCard";
-
+export { StudentClassCard } from "./classes/StudentClassCard";
+export { StudentClassDetailView } from "./classes/StudentClassDetailView";
+export { StudentClassNotesView } from "./classes/StudentClassNotesView";
+export { StudentJoinClassModal } from "./classes/StudentJoinClassModal";
+export { StudentNotePreviewModal } from "./classes/StudentNotePreviewModal";

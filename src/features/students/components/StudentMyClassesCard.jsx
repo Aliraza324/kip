@@ -1,9 +1,10 @@
 import { Layers, ArrowRight, Play, FlaskConical, BookOpen } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/animations";
 
 export const StudentMyClassesCard = ({ myClasses }) => {
+  const navigate = useNavigate();
   if (!myClasses) return null;
 
   return (
@@ -67,6 +68,7 @@ export const StudentMyClassesCard = ({ myClasses }) => {
             {/* Play Button */}
             <button
               type="button"
+              onClick={() => navigate("/student/classes")}
               className="w-7 h-7 rounded-full border border-blue-200 text-[#0060d0] flex items-center justify-center hover:bg-blue-50 transition-colors shrink-0 cursor-pointer"
               aria-label={`Open ${item.title}`}
             >

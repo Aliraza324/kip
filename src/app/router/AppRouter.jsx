@@ -16,6 +16,7 @@ const TeacherComingSoonPage = lazy(() => import("@/features/auth/pages/TeacherCo
 // Student Portal Routes
 const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
 const StudentDashboardPage = lazy(() => import("@/features/students/pages/StudentDashboardPage"));
+const StudentClassesPage = lazy(() => import("@/features/students/pages/StudentClassesPage"));
 
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
@@ -53,6 +54,7 @@ export const AppRouter = () => {
           {/* Student Portal Protected Workspace */}
           <Route path="/student" element={<StudentLayout />}>
             <Route index element={<StudentDashboardPage />} />
+            <Route path="classes" element={<StudentClassesPage />} />
             <Route path="*" element={<Navigate to="/student" replace />} />
           </Route>
 

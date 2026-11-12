@@ -1,9 +1,11 @@
 import { Calendar, Clock, CalendarDays } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import classroomImg from "@/assets/images/image 19.png";
 import { fadeInUp } from "@/animations";
 
 export const StudentUpcomingClassCard = ({ upcomingClass }) => {
+  const navigate = useNavigate();
   if (!upcomingClass) return null;
 
   return (
@@ -51,6 +53,7 @@ export const StudentUpcomingClassCard = ({ upcomingClass }) => {
           {/* Join Class Pill Button */}
           <button
             type="button"
+            onClick={() => navigate("/student/classes")}
             className="w-full py-2.5 px-6 rounded-full bg-gradient-to-r from-[#0060d0] to-[#0080f6] text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 hover:opacity-95 transition-all text-center cursor-pointer active:scale-[0.99]"
           >
             {upcomingClass.actionText || "Join Class"}
