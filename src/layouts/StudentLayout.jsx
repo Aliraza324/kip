@@ -1,25 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import {
-  Home,
-  Layers,
-  ClipboardList,
-  BookOpen,
-  BarChart2,
-  Bell,
-  Search,
-  Headphones,
-  User,
-  ChevronDown,
-  Menu,
-  X,
-  ArrowRight,
-  LogOut,
-  Settings,
+  Home, Layers, ClipboardList, BookOpen, BarChart2, Bell,
+  Search, Headphones, User, ChevronDown, Menu, X, ArrowRight,
 } from "lucide-react";
 import logoImg from "@/assets/images/KIPClassin logo.png";
+import studentAvatarImg from "@/assets/images/Reference photograph (2).png";
 import { studentDashboardMock, studentNotificationsMock } from "@/mocks";
 import { NotificationDropdown } from "@/features/students/components/notifications";
+import { StudentProfileDropdown } from "@/features/students/components/profile";
 
 const navItems = [
   { label: "Dashboard", href: "/student", icon: Home, end: true },
@@ -27,6 +16,7 @@ const navItems = [
   { label: "Assignments", href: "/student/assignments", icon: ClipboardList },
   { label: "Learning Materials", href: "/student/materials", icon: BookOpen },
   { label: "My Progress", href: "/student/progress", icon: BarChart2 },
+  { label: "My Profile", href: "/student/profile", icon: User },
   { label: "Notifications", href: "/student/notifications", icon: Bell },
 ];
 
@@ -37,19 +27,20 @@ export const StudentLayout = () => {
   const [notifications, setNotifications] = useState(studentNotificationsMock);
   const dropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
-  const navigate = useNavigate();
   const { user, helpCard } = studentDashboardMock;
+
+  const profileUser = {
+    name: user?.name || "Alex Student",
+    role: user?.role || "Student",
+    avatar: studentAvatarImg,
+  };
 
   const unreadCount = notifications.filter((n) => n.isUnread).length;
 
   useEffect(() => {
     const handleOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setProfileDropdownOpen(false);
-      }
-      if (notifDropdownRef.current && !notifDropdownRef.current.contains(e.target)) {
-        setNotificationDropdownOpen(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setProfileDropdownOpen(false);
+      if (notifDropdownRef.current && !notifDropdownRef.current.contains(e.target)) setNotificationDropdownOpen(false);
     };
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
@@ -108,10 +99,7 @@ export const StudentLayout = () => {
                 >
                   {({ isActive }) => (
                     <>
-                      <Icon
-                        className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-[#0080f6]"}`}
-                        strokeWidth={isActive ? 2.2 : 2}
-                      />
+                      <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-[#0080f6]"}`} strokeWidth={isActive ? 2.2 : 2} />
                       <span>{item.label}</span>
                     </>
                   )}
@@ -181,36 +169,15 @@ export const StudentLayout = () => {
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center gap-2.5 py-1 px-2 rounded-2xl hover:bg-white/80 transition-all cursor-pointer"
               >
-                <div className="w-9 h-9 rounded-full bg-[#0080f6] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <User className="w-4 h-4 fill-white text-white" />
-                </div>
+                <img src={studentAvatarImg} alt={user.name} className="w-9 h-9 rounded-full object-cover shrink-0 shadow-xs border border-blue-200" />
                 <span className="text-sm font-bold text-slate-800 whitespace-nowrap">{user.name}</span>
                 <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`} />
               </div>
-
-              {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white border border-slate-100 shadow-lg py-1.5 z-50 text-xs">
-                  <div className="px-4 py-2 border-b border-slate-100">
-                    <p className="font-bold text-slate-800">{user.name}</p>
-                    <p className="text-[11px] text-slate-400">{user.role}</p>
-                  </div>
-                  <Link
-                    to="/student"
-                    onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:bg-slate-50"
-                  >
-                    <Settings className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Account Settings</span>
-                  </Link>
-                  <button
-                    onClick={() => navigate("/auth/login")}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-rose-600 hover:bg-rose-50 cursor-pointer"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Log Out</span>
-                  </button>
-                </div>
-              )}
+              <StudentProfileDropdown
+                isOpen={profileDropdownOpen}
+                onClose={() => setProfileDropdownOpen(false)}
+                user={profileUser}
+              />
             </div>
           </div>
         </header>
