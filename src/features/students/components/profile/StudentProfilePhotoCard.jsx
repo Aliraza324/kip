@@ -28,14 +28,14 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-2xs space-y-4">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-100 shadow-2xs space-y-3.5">
       {/* Header */}
-      <div className="flex items-center gap-2.5 pb-1 border-b border-slate-100">
-        <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center">
+      <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+        <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center shrink-0">
           <Image className="w-4 h-4 stroke-[2.2]" />
         </div>
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+          <h3 className="text-sm sm:text-lg font-bold text-slate-900 leading-tight">
             Profile Photo
           </h3>
           <p className="text-[11px] text-slate-400">
@@ -45,11 +45,11 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
       </div>
 
       {/* Row: Avatar + Buttons */}
-      <div className="flex flex-wrap items-center gap-4 pt-1">
+      <div className="flex items-center gap-3.5 pt-1">
         <img
           src={avatar}
           alt="Avatar Preview"
-          className="w-16 h-16 rounded-full object-cover border-2 border-slate-100 shadow-sm shrink-0"
+          className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-slate-100 shadow-sm shrink-0"
         />
 
         <input
@@ -60,11 +60,11 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
           onChange={handleFileSelect}
         />
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 flex items-center gap-1.5 transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial px-3.5 sm:px-4 py-2 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer text-center"
           >
             <Upload className="w-3.5 h-3.5" />
             <span>Change Photo</span>
@@ -73,7 +73,7 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
           <button
             type="button"
             onClick={handleRemove}
-            className="px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-3.5 sm:px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
           >
             <X className="w-3.5 h-3.5" />
             <span>Remove</span>
@@ -85,4 +85,3 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
 };
 
 export default StudentProfilePhotoCard;
-

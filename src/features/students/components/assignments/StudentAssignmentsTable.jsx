@@ -19,15 +19,15 @@ export const StudentAssignmentsTable = ({
   return (
     <div className="space-y-4">
       {/* Filters row: Tab Pills + Sort by Due Date */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Left Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
+        {/* Left Tabs: Fits neatly in 1 single line on mobile */}
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => onTabChange(tab.id)}
-              className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === tab.id
                   ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
                   : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50"
@@ -42,7 +42,7 @@ export const StudentAssignmentsTable = ({
         <button
           type="button"
           onClick={onToggleSort}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 rounded-full bg-white border border-slate-200/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs whitespace-nowrap shrink-0"
         >
           <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
           <span>Due date</span>
@@ -50,7 +50,7 @@ export const StudentAssignmentsTable = ({
         </button>
       </div>
 
-      {/* Table Layout */}
+      {/* Table / Cards Layout */}
       <div className="space-y-3">
         {/* Header row for medium+ screens */}
         <div className="hidden md:flex items-center justify-between px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -73,8 +73,8 @@ export const StudentAssignmentsTable = ({
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl p-12 text-center border border-slate-100 shadow-2xs">
-            <ClipboardList className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+          <div className="bg-white rounded-3xl p-10 sm:p-12 text-center border border-slate-100 shadow-2xs">
+            <ClipboardList className="w-10 h-10 text-slate-300 mx-auto mb-2.5" />
             <h4 className="text-base font-bold text-slate-800">
               No assignments found
             </h4>
@@ -89,4 +89,3 @@ export const StudentAssignmentsTable = ({
 };
 
 export default StudentAssignmentsTable;
-

@@ -40,19 +40,19 @@ export const StudentAccountSecurityCard = () => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-2xs space-y-5">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-100 shadow-2xs space-y-4 sm:space-y-5">
       {/* Header */}
-      <div className="flex items-center gap-2.5 pb-1 border-b border-slate-100">
-        <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center">
+      <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+        <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center shrink-0">
           <Shield className="w-4 h-4 stroke-[2.2]" />
         </div>
-        <h3 className="text-base sm:text-lg font-bold text-slate-900">
+        <h3 className="text-sm sm:text-lg font-bold text-slate-900">
           Account &amp; Security
         </h3>
       </div>
 
       {/* Inputs Form */}
-      <form onSubmit={handleUpdate} className="space-y-4">
+      <form onSubmit={handleUpdate} className="space-y-3.5 sm:space-y-4">
         {/* New Password */}
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700">New Password</label>
@@ -63,7 +63,7 @@ export const StudentAccountSecurityCard = () => {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
-              className="w-full bg-slate-50 border border-slate-200/90 rounded-2xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
+              className="w-full bg-slate-50 border border-slate-200/90 rounded-2xl pl-10 pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
             />
             <button
               type="button"
@@ -75,14 +75,14 @@ export const StudentAccountSecurityCard = () => {
           </div>
           {newPassword && (
             <div className="flex items-center justify-between pt-1">
-              <div className="w-32 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div className="w-28 sm:w-32 bg-slate-100 rounded-full h-1.5 overflow-hidden">
                 <div
                   className={`h-full ${strength.color}`}
                   style={{ width: `${(strength.score / 5) * 100}%` }}
                 />
               </div>
               <span className="text-[11px] text-slate-400 font-semibold">
-                Password strength: {strength.text}
+                Strength: {strength.text}
               </span>
             </div>
           )}
@@ -98,7 +98,7 @@ export const StudentAccountSecurityCard = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm new password"
-              className="w-full bg-slate-50 border border-slate-200/90 rounded-2xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
+              className="w-full bg-slate-50 border border-slate-200/90 rounded-2xl pl-10 pr-10 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
             />
             <button
               type="button"
@@ -111,12 +111,12 @@ export const StudentAccountSecurityCard = () => {
         </div>
 
         {/* Password Rules Box Matching Image */}
-        <div className="p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100 text-[11px] text-slate-600 space-y-1.5">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100 text-[11px] text-slate-600 space-y-1">
           <div className="flex items-center gap-1.5 font-bold text-slate-800">
-            <Info className="w-3.5 h-3.5 text-blue-500" />
+            <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
             <span>Password must contain:</span>
           </div>
-          <ul className="space-y-1 text-slate-500 pl-5 list-disc">
+          <ul className="space-y-0.5 text-slate-500 pl-5 list-disc leading-tight">
             <li>At least 8 characters</li>
             <li>One uppercase letter (A–Z)</li>
             <li>One lowercase letter (a–z)</li>
@@ -126,17 +126,17 @@ export const StudentAccountSecurityCard = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-2.5 pt-2">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+            className="flex-1 sm:flex-initial px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs sm:text-sm font-semibold transition-colors cursor-pointer text-center"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+            className="whitespace-nowrap flex-1 sm:flex-initial px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 text-center"
           >
             <Check className="w-4 h-4" />
             <span>Update Password</span>

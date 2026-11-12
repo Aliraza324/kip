@@ -6,8 +6,7 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...profile });
 
-  const handleSave = (e) => {
-    e.preventDefault();
+  const handleSave = () => {
     onUpdateProfile(formData);
     setIsEditing(false);
     toast.success("Profile saved successfully!");
@@ -23,14 +22,14 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
   ];
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-2xs space-y-5">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-100 shadow-2xs space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center shrink-0">
             <User className="w-4 h-4 stroke-[2.2]" />
           </div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900">
+          <h3 className="text-sm sm:text-lg font-bold text-slate-900">
             Personal Information
           </h3>
         </div>
@@ -39,12 +38,12 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
           type="button"
           onClick={() => {
             if (isEditing) {
-              onUpdateProfile(formData);
-              toast.success("Profile saved successfully!");
+              handleSave();
+            } else {
+              setIsEditing(true);
             }
-            setIsEditing(!isEditing);
           }}
-          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
             isEditing
               ? "bg-[#0080f6] text-white shadow-sm"
               : "border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -65,16 +64,18 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
       </div>
 
       {/* Fields List */}
-      <div className="space-y-4">
+      <div className="divide-y divide-slate-100/70">
         {infoFields.map((field) => {
           const Icon = field.icon;
           return (
             <div
               key={field.key}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-1"
+              className={`flex items-center justify-between gap-3 py-2.5 ${
+                isEditing ? "flex-col items-start gap-1.5" : ""
+              }`}
             >
-              <div className="flex items-center gap-2.5 text-slate-500 sm:w-44 shrink-0">
-                <Icon className="w-4 h-4 text-slate-400" />
+              <div className="flex items-center gap-2 text-slate-500 shrink-0">
+                <Icon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span className="text-xs sm:text-sm font-medium">{field.label}</span>
               </div>
 
@@ -85,10 +86,10 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, [field.key]: e.target.value })
                   }
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
                 />
               ) : (
-                <span className="text-xs sm:text-sm font-bold text-slate-900 text-left sm:text-right flex-1 truncate">
+                <span className="text-xs sm:text-sm font-bold text-slate-900 text-right truncate min-w-0 max-w-[55%] sm:max-w-none">
                   {formData[field.key]}
                 </span>
               )}
@@ -101,4 +102,3 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
 };
 
 export default StudentPersonalInfoCard;
-

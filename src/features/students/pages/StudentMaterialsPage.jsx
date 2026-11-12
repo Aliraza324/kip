@@ -63,14 +63,14 @@ export const StudentMaterialsPage = () => {
         </p>
       </div>
 
-      {/* Categories Filter Tabs Matching Image */}
-      <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+      {/* Categories Filter Tabs - Single row horizontal scroll without scrollbar on small screens */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
             type="button"
             onClick={() => setSelectedCategory(cat)}
-            className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
               selectedCategory === cat
                 ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
                 : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50"

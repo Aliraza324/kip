@@ -22,8 +22,8 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl bg-white rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3.5 sm:p-4 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 sm:space-y-5 animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3 min-w-0">
@@ -81,11 +81,11 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+            className="flex-1 sm:flex-initial px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer text-center"
           >
             Close
           </button>
@@ -93,16 +93,16 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
             <button
               type="button"
               onClick={handleOpenBrowserTab}
-              className="px-5 py-2.5 rounded-full border border-blue-200 bg-blue-50/60 text-[#0080f6] text-xs sm:text-sm font-bold flex items-center gap-2 hover:bg-blue-100 transition-colors cursor-pointer"
+              className="flex-1 sm:flex-initial px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-blue-200 bg-blue-50/60 text-[#0080f6] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors cursor-pointer text-center"
             >
               <ExternalLink className="w-4 h-4" />
-              <span>Open in Browser Tab</span>
+              <span>Open in Browser</span>
             </button>
           )}
           <button
             type="button"
             onClick={handleDownload}
-            className="px-5 py-2.5 rounded-full bg-[#0080f6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center gap-2 hover:bg-[#0060d0] transition-all cursor-pointer active:scale-95"
+            className="w-full sm:w-auto px-5 py-2 sm:py-2.5 rounded-full bg-[#0080f6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-[#0060d0] transition-all cursor-pointer active:scale-95 text-center"
           >
             <Download className="w-4 h-4" />
             <span>Download ({material.format})</span>

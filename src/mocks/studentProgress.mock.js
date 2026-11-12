@@ -10,6 +10,7 @@ export const studentProgressMock = {
     {
       id: "assignments",
       label: "Assignments Submitted",
+      shortLabel: "Assignments",
       value: "3 / 4",
       iconType: "clipboard",
       colorClass: "bg-blue-50 text-[#0080f6]",
@@ -17,6 +18,7 @@ export const studentProgressMock = {
     {
       id: "lectures",
       label: "Lectures Completed",
+      shortLabel: "Lectures",
       value: "28",
       iconType: "play",
       colorClass: "bg-emerald-50 text-emerald-500",
@@ -24,6 +26,7 @@ export const studentProgressMock = {
     {
       id: "progress",
       label: "Overall Progress",
+      shortLabel: "Overall",
       value: "85%",
       iconType: "book",
       colorClass: "bg-purple-50 text-purple-500",
@@ -67,9 +70,6 @@ export const studentProgressMock = {
     absent: 0,
     totalClasses: 26,
     monthName: "October 2026",
-    // Daily records for October 2026 (1 to 31)
-    // 1: Wed (Present), 2: Thu (Present), 3: Fri (Present), 4: Sat (Weekend), 5: Sun (Weekend)
-    // 15: Leave, 24: Leave
     records: {
       1: "present",
       2: "present",
@@ -106,3 +106,49 @@ export const studentProgressMock = {
   },
 };
 
+export const calendarCellsMock = [
+  { day: 28, isPrev: true },
+  { day: 29, isPrev: true },
+  { day: 30, isPrev: true },
+  { day: 1, status: "present" },
+  { day: 2, status: "present" },
+  { day: 3, status: "present" },
+  { day: 4, isWeekend: true },
+  { day: 5, isWeekend: true },
+  { day: 6, status: "present" },
+  { day: 7, status: "present" },
+  { day: 8, status: "present" },
+  { day: 9, status: "present" },
+  { day: 10, status: "present" },
+  { day: 11, isWeekend: true },
+  { day: 12, isWeekend: true },
+  { day: 13, status: "present" },
+  { day: 14, status: "present" },
+  { day: 15, status: "leave" },
+  { day: 16, status: "present" },
+  { day: 17, status: "present" },
+  { day: 18, isWeekend: true },
+  { day: 19, isWeekend: true },
+  { day: 20, status: "present" },
+  { day: 21, status: "present" },
+  { day: 22, status: "present" },
+  { day: 23, status: "present" },
+  { day: 24, status: "leave" },
+  { day: 25, isWeekend: true },
+  { day: 26, isWeekend: true },
+  { day: 27, status: "present" },
+  { day: 28, status: "present" },
+  { day: 29, status: "present" },
+  { day: 30, status: "present" },
+  { day: 31, isWeekend: true },
+  { day: 1, isNext: true },
+];
+
+export const attendanceLogMock = [
+  { date: "Sep 30, 2026", day: "Wednesday", status: "present", time: "10:00 AM" },
+  { date: "Sep 29, 2026", day: "Tuesday", status: "present", time: "10:00 AM" },
+  { date: "Sep 28, 2026", day: "Monday", status: "present", time: "10:00 AM" },
+  { date: "Sep 24, 2026", day: "Thursday", status: "leave", time: "Approved Leave" },
+  { date: "Sep 23, 2026", day: "Wednesday", status: "present", time: "10:00 AM" },
+  { date: "Sep 15, 2026", day: "Tuesday", status: "leave", time: "Approved Leave" },
+];
