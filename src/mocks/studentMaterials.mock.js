@@ -1,0 +1,140 @@
+/**
+ * Student Learning Materials Mock Data
+ * Matching reference image:
+ * All Materials, Mathematics, Science, English, Physics, Chemistry, Computer Science
+ */
+
+export const studentMaterialsListMock = [
+  {
+    id: "mat_math_algebra",
+    title: "Algebra Notes",
+    subject: "Mathematics",
+    type: "pdf",
+    format: "PDF",
+    size: "2.4 MB",
+    meta: "PDF · 2.4 MB",
+    iconBg: "bg-rose-50 text-rose-500",
+    description:
+      "Comprehensive revision notes covering polynomial equations, quadratic formulas, factorizations, and Cartesian coordinate graphing.",
+    totalPages: 14,
+    uploadedDate: "Nov 2, 2026",
+    author: "Mr. James Wilson",
+    previewContent: [
+      "Topic 1: Quadratic Equations and Factorization",
+      "Standard form: ax² + bx + c = 0",
+      "Quadratic formula: x = (-b ± √(b² - 4ac)) / (2a)",
+      "Topic 2: Polynomial Identities and Expansions",
+      "(a + b)² = a² + 2ab + b²",
+      "(a - b)² = a² - 2ab + b²",
+      "(a + b)(a - b) = a² - b²",
+      "Topic 3: Systems of Linear Equations & Graphical Solutions",
+    ],
+  },
+  {
+    id: "mat_sci_lab",
+    title: "Lab Report Guide",
+    subject: "Science",
+    type: "pdf",
+    format: "PDF",
+    size: "1.8 MB",
+    meta: "PDF · 1.8 MB",
+    iconBg: "bg-emerald-50 text-emerald-500",
+    description:
+      "Official laboratory guidelines covering hypothesis structuring, observation recording, error analysis, and safety protocols.",
+    totalPages: 8,
+    uploadedDate: "Nov 3, 2026",
+    author: "Dr. Sarah Adams",
+    previewContent: [
+      "Section 1: Scientific Hypothesis & Objective",
+      "Section 2: Apparatus Setup & Safety Procedures",
+      "Section 3: Empirical Observation Data Tables",
+      "Section 4: Data Calculations and Graphical Charts",
+      "Section 5: Scientific Conclusions and Error Margins",
+    ],
+  },
+  {
+    id: "mat_eng_essay",
+    title: "Essay Writing Tips",
+    subject: "English",
+    type: "pdf",
+    format: "PDF",
+    size: "2.1 MB",
+    meta: "PDF · 2.1 MB",
+    iconBg: "bg-amber-50 text-amber-500",
+    description:
+      "Structured reference manual on crafting thesis statements, persuasive narrative flows, and analytical conclusions.",
+    totalPages: 10,
+    uploadedDate: "Nov 5, 2026",
+    author: "Ms. Elena Rostova",
+    previewContent: [
+      "Module 1: The Anatomy of a Powerful Thesis Statement",
+      "Module 2: Paragraph Cohesion & Transitional Phrases",
+      "Module 3: Evidence Integration & MLA/APA Citations",
+      "Module 4: Editing Strategies for Conciseness and Clarity",
+    ],
+  },
+  {
+    id: "mat_phy_motion",
+    title: "Motion & Forces",
+    subject: "Physics",
+    type: "video",
+    format: "Video",
+    size: "18 Min",
+    meta: "Video · 18 Min",
+    iconBg: "bg-purple-50 text-purple-500",
+    description:
+      "Recorded video lecture on Newton's laws of motion, friction vectors, and free body diagrams with worked examples.",
+    duration: "18:24",
+    uploadedDate: "Nov 6, 2026",
+    author: "Prof. Alan Turing",
+    previewContent: [
+      "Lecture Segment 1: Newton's 1st & 2nd Laws (00:00 - 05:40)",
+      "Lecture Segment 2: Free Body Diagrams & Friction (05:41 - 12:15)",
+      "Lecture Segment 3: Kinetic Energy & Momentum (12:16 - 18:24)",
+    ],
+  },
+  {
+    id: "mat_chem_o2",
+    title: "O₂ Practice Worksheet",
+    subject: "Chemistry",
+    type: "pdf",
+    format: "PDF",
+    size: "1.5 MB",
+    meta: "PDF · 1.5 MB",
+    iconBg: "bg-blue-50 text-blue-500",
+    description:
+      "Practice questions on oxygen molecular orbitals, combustion equations, and redox stoichiometry with full solutions.",
+    totalPages: 6,
+    uploadedDate: "Nov 8, 2026",
+    author: "Dr. Marie Curie",
+    previewContent: [
+      "Worksheet 1: Electronic Configuration of Oxygen",
+      "Worksheet 2: Oxidation State Calculations",
+      "Worksheet 3: Balancing Combustion Reaction Equations",
+      "Worksheet 4: Mole Concept and Stoichiometric Yields",
+    ],
+  },
+  {
+    id: "mat_cs_prog",
+    title: "Programming Basics",
+    subject: "Computer Science",
+    type: "pdf",
+    format: "PDF",
+    size: "3.2 MB",
+    meta: "PDF · 3.2 MB",
+    iconBg: "bg-indigo-50 text-indigo-500",
+    description:
+      "Core computing foundations: data types, control flow structures, functions, memory references, and basic algorithms.",
+    totalPages: 22,
+    uploadedDate: "Nov 9, 2026",
+    author: "Mr. Linus Dev",
+    previewContent: [
+      "Chapter 1: Variables, Types, and Expressions",
+      "Chapter 2: Conditional Statements (if-else, switch)",
+      "Chapter 3: Iteration and Loops (for, while)",
+      "Chapter 4: Functions, Scope, and Return Types",
+      "Chapter 5: Arrays and Linear Data Structures",
+    ],
+  },
+];
+
