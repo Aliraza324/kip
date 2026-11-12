@@ -19,6 +19,7 @@ const StudentDashboardPage = lazy(() => import("@/features/students/pages/Studen
 const StudentClassesPage = lazy(() => import("@/features/students/pages/StudentClassesPage"));
 const StudentAssignmentsPage = lazy(() => import("@/features/students/pages/StudentAssignmentsPage"));
 const StudentMaterialsPage = lazy(() => import("@/features/students/pages/StudentMaterialsPage"));
+const StudentProgressPage = lazy(() => import("@/features/students/pages/StudentProgressPage"));
 
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
@@ -59,6 +60,7 @@ export const AppRouter = () => {
             <Route path="classes" element={<StudentClassesPage />} />
             <Route path="assignments" element={<StudentAssignmentsPage />} />
             <Route path="materials" element={<StudentMaterialsPage />} />
+            <Route path="progress" element={<StudentProgressPage />} />
             <Route path="*" element={<Navigate to="/student" replace />} />
           </Route>
 
