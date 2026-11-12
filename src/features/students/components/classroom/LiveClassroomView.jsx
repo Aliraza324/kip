@@ -49,6 +49,7 @@ export const LiveClassroomView = ({ onLeaveClass }) => {
         <ClassroomVideoFeeds
           isStudentMuted={isMuted}
           isStudentCameraOn={isCameraOn}
+          isStudentHandRaised={isHandRaised}
         />
 
         {/* Dynamic Right Side Panel (Google Meet style: Messages / Participants) */}

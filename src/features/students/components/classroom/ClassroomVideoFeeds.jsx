@@ -1,8 +1,12 @@
-import { MicOff, Wifi, User } from "lucide-react";
+import { MicOff, Wifi, User, Hand } from "lucide-react";
 import teacherImg from "@/assets/images/Reference photograph.png";
 import studentImg from "@/assets/images/Reference photograph (2).png";
 
-export const ClassroomVideoFeeds = ({ isStudentMuted = true, isStudentCameraOn = true }) => {
+export const ClassroomVideoFeeds = ({
+  isStudentMuted = true,
+  isStudentCameraOn = true,
+  isStudentHandRaised = false,
+}) => {
   return (
     <div className="flex flex-col gap-4 w-full lg:w-60 xl:w-64 shrink-0">
       {/* Teacher Video Tile */}
@@ -24,6 +28,16 @@ export const ClassroomVideoFeeds = ({ isStudentMuted = true, isStudentCameraOn =
 
       {/* Student Video Tile (Alex You) */}
       <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-100 shadow-2xs aspect-4/3 group">
+        {/* Hand Raised Badge on Top-Right Corner */}
+        {isStudentHandRaised && (
+          <div
+            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-amber-400 text-slate-950 shadow-md flex items-center justify-center z-10 ring-2 ring-amber-300/60 animate-bounce"
+            title="Hand Raised"
+          >
+            <Hand className="w-4 h-4 fill-slate-950 text-slate-950" />
+          </div>
+        )}
+
         {isStudentCameraOn ? (
           <img
             src={studentImg}
