@@ -11,6 +11,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  optimizeDeps: {
+    include: [
+      '@fullcalendar/react',
+      '@fullcalendar/react/daygrid',
+      '@fullcalendar/react/timegrid',
+      '@fullcalendar/react/list',
+      '@fullcalendar/core',
+    ],
+  },
   build: {
     rollupOptions: {
       output: {
