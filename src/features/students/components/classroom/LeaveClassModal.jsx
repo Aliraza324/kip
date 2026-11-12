@@ -32,18 +32,18 @@ export const LeaveClassModal = ({ isOpen, onClose, onConfirm }) => {
         </div>
 
         {/* Action Buttons: Cancel & Leave Class */}
-        <div className="pt-2 flex items-center justify-center gap-3 w-full">
+        <div className="pt-2 flex items-center justify-center gap-2.5 sm:gap-3 w-full">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 px-6 rounded-full border border-slate-200 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-50 transition-all cursor-pointer"
+            className="flex-1 py-2.5 sm:py-3 px-4 sm:px-6 rounded-full border border-slate-200 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-50 transition-all cursor-pointer whitespace-nowrap"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="flex-1 py-3 px-6 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm shadow-md shadow-rose-500/25 transition-all cursor-pointer active:scale-95"
+            className="flex-1 py-2.5 sm:py-3 px-4 sm:px-6 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm shadow-md shadow-rose-500/25 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
           >
             Leave Class
           </button>
