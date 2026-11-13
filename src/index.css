@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@excalidraw/excalidraw/index.css";
 
 @theme {
   /* Global Font Family */
@@ -64,4 +65,71 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Excalidraw Classroom Whiteboard Custom Enhancements */
+.excalidraw {
+  --color-primary: #0080f6 !important;
+  --color-primary-darker: #0060d0 !important;
+  --color-primary-darkest: #004bb5 !important;
+  --color-primary-light: #e8f4fd !important;
+}
+
+/* Ensure the native top shapes toolbar is always visible, centered, and accessible */
+.excalidraw .layer-ui__wrapper {
+  pointer-events: none !important;
+  z-index: 20 !important;
+}
+
+.excalidraw .App-menu_top {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  position: absolute !important;
+  top: 10px !important;
+  left: 0 !important;
+  right: 0 !important;
+  pointer-events: none !important;
+}
+
+.excalidraw .App-menu_top > * {
+  pointer-events: auto !important;
+}
+
+.excalidraw .shapes-section,
+.excalidraw .App-toolbar-container,
+.excalidraw .App-toolbar {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.excalidraw .App-toolbar {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 14px !important;
+}
+
+.excalidraw .Island {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 14px !important;
+}
+
+.excalidraw .App-top-bar {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  position: absolute !important;
+  top: 8px !important;
+  left: 0 !important;
+  z-index: 20 !important;
+  pointer-events: none !important;
+}
+
+.excalidraw .App-top-bar > * {
+  pointer-events: auto !important;
 }

@@ -5,5 +5,6 @@ export { ClassroomChatPanel } from "./ClassroomChatPanel";
 export { ClassroomParticipantsPanel } from "./ClassroomParticipantsPanel";
 export { ClassroomBottomToolbar } from "./ClassroomBottomToolbar";
 export { LeaveClassModal } from "./LeaveClassModal";
+export { ClassroomExcalidrawWhiteboard } from "./ClassroomExcalidrawWhiteboard";
 export { LiveClassroomView } from "./LiveClassroomView";
 

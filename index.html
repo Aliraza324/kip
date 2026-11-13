@@ -15,6 +15,11 @@
       rel="stylesheet"
     />
     <title>KIPClassin - Online Teaching & Learning Platform</title>
+    <script>
+      window.global = window;
+      window.process = window.process || { env: { NODE_ENV: 'development', IS_PREACT: 'false' } };
+      window.EXCALIDRAW_ASSET_PATH = '/';
+    </script>
   </head>
   <body>
     <div id="root"></div>

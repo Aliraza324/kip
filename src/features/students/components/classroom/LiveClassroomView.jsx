@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ClassroomTopBar } from "./ClassroomTopBar";
 import { ClassroomWhiteboardPresentation } from "./ClassroomWhiteboardPresentation";
+import { ClassroomExcalidrawWhiteboard } from "./ClassroomExcalidrawWhiteboard";
 import { ClassroomVideoFeeds } from "./ClassroomVideoFeeds";
 import { ClassroomChatPanel } from "./ClassroomChatPanel";
 import { ClassroomParticipantsPanel } from "./ClassroomParticipantsPanel";
@@ -17,6 +18,7 @@ export const LiveClassroomView = ({
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isHandRaised, setIsHandRaised] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isWhiteboardOpen, setIsWhiteboardOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   // Default to showing participants (students) when joining class as requested
@@ -24,6 +26,17 @@ export const LiveClassroomView = ({
 
   const handleTogglePanel = (panelName) => {
     setActivePanel((prev) => (prev === panelName ? null : panelName));
+  };
+
+  const handleToggleWhiteboard = () => {
+    const next = !isWhiteboardOpen;
+    setIsWhiteboardOpen(next);
+    if (next) {
+      setActivePanel(null);
+    }
+    toast(next ? "Excalidraw Whiteboard opened" : "Returned to presentation slides", {
+      icon: next ? "🎨" : "📊",
+    });
   };
 
   const handleToggleScreenShare = () => {
@@ -78,36 +91,45 @@ export const LiveClassroomView = ({
 
       {/* Main Classroom Stage */}
       <div className="flex-1 flex flex-col lg:flex-row items-stretch gap-3.5 sm:gap-5 min-h-[440px] relative">
-        {/* Whiteboard / Screen Share View */}
-        <ClassroomWhiteboardPresentation
-          isScreenSharing={isScreenSharing}
-          onStopScreenShare={() => {
-            setIsScreenSharing(false);
-            toast("You stopped presenting", { icon: "🛑" });
-          }}
-        />
-
-        {/* Video Feeds (Teacher + Student) */}
-        <ClassroomVideoFeeds
-          isStudentMuted={isMuted}
-          isStudentCameraOn={isCameraOn}
-          isStudentHandRaised={isHandRaised}
-        />
-
-        {/* Desktop Side Panels (Google Meet style) */}
-        {activePanel === "chat" && (
-          <div className="hidden lg:block shrink-0 animate-in fade-in slide-in-from-right-4 duration-200">
-            <ClassroomChatPanel onClose={() => setActivePanel(null)} />
-          </div>
-        )}
-
-        {activePanel === "participants" && (
-          <div className="hidden lg:block shrink-0 animate-in fade-in slide-in-from-right-4 duration-200">
-            <ClassroomParticipantsPanel
-              isStudentHandRaised={isHandRaised}
-              onClose={() => setActivePanel(null)}
+        {/* Toggle between Full-Stage Excalidraw Whiteboard and Slides Presentation */}
+        {isWhiteboardOpen ? (
+          <ClassroomExcalidrawWhiteboard
+            title={`${title} • Whiteboard`}
+            onClose={() => setIsWhiteboardOpen(false)}
+          />
+        ) : (
+          <>
+            <ClassroomWhiteboardPresentation
+              isScreenSharing={isScreenSharing}
+              onStopScreenShare={() => {
+                setIsScreenSharing(false);
+                toast("You stopped presenting", { icon: "🛑" });
+              }}
             />
-          </div>
+
+            {/* Video Feeds (Teacher + Student) */}
+            <ClassroomVideoFeeds
+              isStudentMuted={isMuted}
+              isStudentCameraOn={isCameraOn}
+              isStudentHandRaised={isHandRaised}
+            />
+
+            {/* Desktop Side Panels (Google Meet style) */}
+            {activePanel === "chat" && (
+              <div className="hidden lg:block shrink-0 animate-in fade-in slide-in-from-right-4 duration-200">
+                <ClassroomChatPanel onClose={() => setActivePanel(null)} />
+              </div>
+            )}
+
+            {activePanel === "participants" && (
+              <div className="hidden lg:block shrink-0 animate-in fade-in slide-in-from-right-4 duration-200">
+                <ClassroomParticipantsPanel
+                  isStudentHandRaised={isHandRaised}
+                  onClose={() => setActivePanel(null)}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -137,6 +159,8 @@ export const LiveClassroomView = ({
         onToggleHand={handleToggleHand}
         isScreenSharing={isScreenSharing}
         onToggleScreenShare={handleToggleScreenShare}
+        isWhiteboardOpen={isWhiteboardOpen}
+        onToggleWhiteboard={handleToggleWhiteboard}
         activePanel={activePanel}
         onTogglePanel={handleTogglePanel}
         onLeaveClass={() => setIsLeaveModalOpen(true)}

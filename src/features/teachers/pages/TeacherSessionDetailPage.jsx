@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import {
   teacherInitialSessionsMock,
   teacherSessionStudentsMock,
@@ -20,6 +20,7 @@ import {
 
 export const TeacherSessionDetailPage = () => {
   const { sessionId } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const initialSession =
@@ -30,7 +31,9 @@ export const TeacherSessionDetailPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [students, setStudents] = useState(teacherSessionStudentsMock);
   const [materials, setMaterials] = useState(teacherSessionMaterialsMock);
-  const [isLiveClassOpen, setIsLiveClassOpen] = useState(false);
+  const [isLiveClassOpen, setIsLiveClassOpen] = useState(
+    searchParams.get("live") === "true"
+  );
   const [activeLiveTitle, setActiveLiveTitle] = useState(session.title);
 
   // Modals

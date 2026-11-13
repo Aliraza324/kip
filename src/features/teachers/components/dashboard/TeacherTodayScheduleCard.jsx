@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Calendar, Video, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 export const TeacherTodayScheduleCard = ({ schedule = [] }) => {
+  const navigate = useNavigate();
+
   const handleStartClass = (item) => {
     toast.success(`Starting live session for ${item.title}...`);
+    navigate("/teacher/sessions/session-1?live=true");
   };
 
   return (

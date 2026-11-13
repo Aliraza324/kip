@@ -1,10 +1,11 @@
 import {
-  Mic, MicOff, Video, VideoOff, ScreenShare, Hand, MessageSquare, Users, MoreHorizontal,
+  Mic, MicOff, Video, VideoOff, ScreenShare, Hand, MessageSquare, Users, MoreHorizontal, PenTool,
 } from "lucide-react";
 
 export const ClassroomBottomToolbar = ({
   isMuted, onToggleMute, isCameraOn, onToggleCamera,
   isHandRaised, onToggleHand, isScreenSharing, onToggleScreenShare,
+  isWhiteboardOpen, onToggleWhiteboard,
   activePanel, onTogglePanel, onLeaveClass,
 }) => {
   return (
@@ -22,7 +23,6 @@ export const ClassroomBottomToolbar = ({
           >
             {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </button>
-
           <button
             type="button"
             onClick={onToggleCamera}
@@ -32,7 +32,6 @@ export const ClassroomBottomToolbar = ({
           >
             {isCameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
           </button>
-
           <button
             type="button"
             onClick={onToggleScreenShare}
@@ -42,7 +41,6 @@ export const ClassroomBottomToolbar = ({
           >
             <ScreenShare className="w-5 h-5" />
           </button>
-
           <button
             type="button"
             onClick={onToggleHand}
@@ -52,7 +50,6 @@ export const ClassroomBottomToolbar = ({
           >
             <Hand className={`w-5 h-5 ${isHandRaised ? "fill-amber-500" : ""}`} />
           </button>
-
           <button
             type="button"
             onClick={() => onTogglePanel("chat")}
@@ -64,8 +61,8 @@ export const ClassroomBottomToolbar = ({
           </button>
         </div>
 
-        {/* Row 2: Participants & More Options */}
-        <div className="flex items-center gap-4 px-2">
+        {/* Row 2: Participants, Whiteboard & More Options */}
+        <div className="flex items-center gap-2.5 px-2">
           <button
             type="button"
             onClick={() => onTogglePanel("participants")}
@@ -74,6 +71,16 @@ export const ClassroomBottomToolbar = ({
             }`}
           >
             <Users className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            onClick={onToggleWhiteboard}
+            className={`h-10 px-3.5 rounded-2xl flex items-center gap-1.5 transition-all text-xs font-bold cursor-pointer ${
+              isWhiteboardOpen ? "bg-purple-600 text-white shadow-xs" : "bg-purple-50 text-purple-600"
+            }`}
+          >
+            <PenTool className="w-4 h-4" />
+            <span>{isWhiteboardOpen ? "Slides" : "Whiteboard"}</span>
           </button>
           <button type="button" className="w-10 h-10 rounded-2xl text-slate-500 hover:bg-slate-50 flex items-center justify-center cursor-pointer">
             <MoreHorizontal className="w-5 h-5" />
@@ -85,7 +92,7 @@ export const ClassroomBottomToolbar = ({
           <button
             type="button"
             onClick={onLeaveClass}
-            className="w-full py-2.5 px-6 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-xs transition-all cursor-pointer shadow-2xs"
+            className="w-full py-2 px-6 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-xs transition-all cursor-pointer shadow-2xs"
           >
             Leave Class
           </button>
@@ -104,7 +111,6 @@ export const ClassroomBottomToolbar = ({
           >
             {isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
           </button>
-
           <button
             type="button"
             onClick={onToggleCamera}
@@ -123,7 +129,21 @@ export const ClassroomBottomToolbar = ({
             }`}
           >
             <ScreenShare className="w-4 h-4" />
-            <span>{isScreenSharing ? "Sharing" : "Share Screen"}</span>
+            <span>{isScreenSharing ? "Sharing" : "Share"}</span>
+          </button>
+
+          {/* Whiteboard Button per user instruction */}
+          <button
+            type="button"
+            onClick={onToggleWhiteboard}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl cursor-pointer text-xs font-semibold transition-all ${
+              isWhiteboardOpen
+                ? "bg-purple-600 text-white shadow-xs"
+                : "text-slate-600 hover:bg-slate-50 hover:text-purple-600"
+            }`}
+          >
+            <PenTool className="w-4 h-4" />
+            <span>{isWhiteboardOpen ? "Slide View" : "Whiteboard"}</span>
           </button>
 
           <button
@@ -134,7 +154,7 @@ export const ClassroomBottomToolbar = ({
             }`}
           >
             <Hand className={`w-4 h-4 ${isHandRaised ? "fill-amber-500" : ""}`} />
-            <span>{isHandRaised ? "Hand Raised" : "Raise Hand"}</span>
+            <span>{isHandRaised ? "Hand" : "Raise Hand"}</span>
           </button>
 
           <button
@@ -147,7 +167,6 @@ export const ClassroomBottomToolbar = ({
             <MessageSquare className="w-4 h-4" />
             <span>Messages</span>
           </button>
-
           <button
             type="button"
             onClick={() => onTogglePanel("participants")}
@@ -158,7 +177,6 @@ export const ClassroomBottomToolbar = ({
             <Users className="w-4 h-4" />
             <span>Participants</span>
           </button>
-
           <button type="button" className="w-9 h-9 rounded-2xl text-slate-500 hover:bg-slate-100 flex items-center justify-center cursor-pointer">
             <MoreHorizontal className="w-4 h-4" />
           </button>

@@ -2,7 +2,10 @@ import { useState } from "react";
 import { Monitor, ChevronLeft, ChevronRight, Minus, Plus, Maximize, ScreenShare, StopCircle } from "lucide-react";
 import { classroomMock } from "@/mocks";
 
-export const ClassroomWhiteboardPresentation = ({ isScreenSharing, onStopScreenShare }) => {
+export const ClassroomWhiteboardPresentation = ({
+  isScreenSharing,
+  onStopScreenShare,
+}) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(100);
 
@@ -72,11 +75,12 @@ export const ClassroomWhiteboardPresentation = ({ isScreenSharing, onStopScreenS
   return (
     <div className="relative flex-1 bg-white border border-slate-100 rounded-3xl p-5 sm:p-7 shadow-2xs flex flex-col justify-between overflow-hidden min-h-[360px] sm:min-h-[440px]">
       {/* Top Banner: Presenter Info & Fullscreen */}
-      <div className="flex items-center justify-between z-10">
+      <div className="flex items-center justify-between z-10 flex-wrap gap-2">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 backdrop-blur-md text-white text-[11px] font-semibold shadow-xs">
           <Monitor className="w-3.5 h-3.5 text-blue-400" />
           <span>Mr. James Wilson is presenting</span>
         </div>
+
         <button
           type="button"
           title="Expand Presentation"

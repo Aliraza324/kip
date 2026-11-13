@@ -5,6 +5,14 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    headers: {
+      'Permissions-Policy': 'unload=(self)',
+    },
+  },
+  define: {
+    'process.env.IS_PREACT': JSON.stringify('false'),
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

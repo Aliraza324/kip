@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Video, Calendar, UploadCloud, Zap } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -23,7 +24,17 @@ const actionStyles = {
 };
 
 export const TeacherQuickActionsBar = ({ actions = [] }) => {
+  const navigate = useNavigate();
+
   const handleClick = (action) => {
+    if (action.id === "start-live") {
+      navigate("/teacher/sessions/session-1?live=true");
+      return;
+    }
+    if (action.id === "schedule") {
+      navigate("/teacher/sessions");
+      return;
+    }
     toast.success(`Action triggered: ${action.label}`);
   };
 
