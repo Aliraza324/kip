@@ -20,6 +20,10 @@ const TeacherSessionsPage = lazy(() => import("@/features/teachers/pages/Teacher
 const TeacherSessionDetailPage = lazy(() => import("@/features/teachers/pages/TeacherSessionDetailPage"));
 const TeacherClassesPage = lazy(() => import("@/features/teachers/pages/TeacherClassesPage"));
 const TeacherClassDetailPage = lazy(() => import("@/features/teachers/pages/TeacherClassDetailPage"));
+const TeacherAssignmentsPage = lazy(() => import("@/features/teachers/pages/TeacherAssignmentsPage"));
+const TeacherCreateAssignmentPage = lazy(() => import("@/features/teachers/pages/TeacherCreateAssignmentPage"));
+const TeacherAssignmentSubmissionsPage = lazy(() => import("@/features/teachers/pages/TeacherAssignmentSubmissionsPage"));
+const TeacherGradeSubmissionPage = lazy(() => import("@/features/teachers/pages/TeacherGradeSubmissionPage"));
 
 // Student Portal Routes
 const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
@@ -77,6 +81,10 @@ export const AppRouter = () => {
             <Route path="sessions/:sessionId" element={<TeacherSessionDetailPage />} />
             <Route path="classes" element={<TeacherClassesPage />} />
             <Route path="classes/:classId" element={<TeacherClassDetailPage />} />
+            <Route path="assignments" element={<TeacherAssignmentsPage />} />
+            <Route path="assignments/create" element={<TeacherCreateAssignmentPage />} />
+            <Route path="assignments/:assignmentId/submissions" element={<TeacherAssignmentSubmissionsPage />} />
+            <Route path="assignments/:assignmentId/submissions/:submissionId/grade" element={<TeacherGradeSubmissionPage />} />
             <Route path="*" element={<Navigate to="/teacher" replace />} />
           </Route>
 
