@@ -17,5 +17,6 @@ export * from "./studentProgress.mock.js";
 export * from "./studentNotifications.mock.js";
 export * from "./studentProfile.mock.js";
 export * from "./teacher.mock.js";
+export * from "./teacherAuth.mock.js";
 export * from "./admin.mock.js";
 

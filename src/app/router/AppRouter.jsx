@@ -11,7 +11,7 @@ const ContactPage = lazy(() => import("@/features/landing/pages/ContactPage"));
 
 // Auth Routes
 const StudentLoginPage = lazy(() => import("@/features/auth/pages/StudentLoginPage"));
-const TeacherComingSoonPage = lazy(() => import("@/features/auth/pages/TeacherComingSoonPage"));
+const TeacherAuthPage = lazy(() => import("@/features/auth/pages/TeacherAuthPage"));
 
 // Student Portal Routes
 const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
@@ -53,8 +53,14 @@ export const AppRouter = () => {
           <Route path="/auth/login" element={<StudentLoginPage />} />
           <Route path="/auth/student-login" element={<StudentLoginPage />} />
           <Route path="/login" element={<StudentLoginPage />} />
-          <Route path="/auth/teacher-login" element={<TeacherComingSoonPage />} />
-          <Route path="/teacher" element={<TeacherComingSoonPage />} />
+
+          {/* Teacher Authentication Routes */}
+          <Route path="/auth/teacher-login" element={<TeacherAuthPage mode="login" />} />
+          <Route path="/auth/teacher-register" element={<TeacherAuthPage mode="register" />} />
+          <Route path="/auth/teacher-verify" element={<TeacherAuthPage mode="verify" />} />
+          <Route path="/auth/teacher-success" element={<TeacherAuthPage mode="success" />} />
+          <Route path="/auth/teacher-forgot-password" element={<TeacherAuthPage mode="forgot" />} />
+          <Route path="/teacher" element={<Navigate to="/auth/teacher-login" replace />} />
 
           {/* Student Portal Protected Workspace */}
           <Route path="/student" element={<StudentLayout />}>

@@ -74,11 +74,11 @@ export const teachingLearningPortalsMock = {
       prefix: "I'm a",
       description:
         "Access your classes, manage learning materials and teach interactive live lessons.",
-      loginText: "Coming Soon",
-      loginLink: "/auth/login?role=teacher",
+      loginText: "Teacher Login",
+      loginLink: "/auth/teacher-login",
       registerPrompt: "Teacher registration?",
-      registerText: "Coming Soon",
-      registerLink: "/auth/login?role=teacher",
+      registerText: "Register as Teacher",
+      registerLink: "/auth/teacher-register",
       bgColor: "#fffbf0",
       borderColor: "border-amber-100",
       iconBg: "bg-[#febf11]",
@@ -552,7 +552,7 @@ export const landingFooterMock = {
     },
     {
       label: "Teacher Login",
-      href: "/auth/login?role=teacher",
+      href: "/auth/teacher-login",
       icon: "Users",
     },
     {

@@ -1,9 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, Navigate } from "react-router-dom";
 import bgImg from "@/assets/images/student-login-bg.png";
 import { StudentLoginForm } from "../components/StudentLoginForm";
 import { studentLoginMock } from "@/mocks";
 
 export const StudentLoginPage = () => {
+  const [searchParams] = useSearchParams();
+
+  if (searchParams.get("role") === "teacher") {
+    return <Navigate to="/auth/teacher-login" replace />;
+  }
+
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center lg:justify-end px-4 sm:px-8 lg:pr-16 xl:pr-24 py-10 overflow-hidden select-none">
       {/* 1. Full Cover Fixed Background Image */}
