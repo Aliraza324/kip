@@ -125,20 +125,20 @@ export const StudentAccountSecurityCard = () => {
           </ul>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-2.5 pt-2">
+        {/* Action Buttons Matching Image 4 */}
+        <div className="flex items-center justify-between pt-3">
           <button
             type="button"
             onClick={handleCancel}
-            className="flex-1 sm:flex-initial px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs sm:text-sm font-semibold transition-colors cursor-pointer text-center"
+            className="px-2 py-2 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="whitespace-nowrap flex-1 sm:flex-initial px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 text-center"
+            className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
           >
-            <Check className="w-4 h-4" />
+            <Check className="w-4 h-4 stroke-[2.5]" />
             <span>Update Password</span>
           </button>
         </div>

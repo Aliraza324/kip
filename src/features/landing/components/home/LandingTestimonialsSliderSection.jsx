@@ -9,11 +9,7 @@ import { landingTestimonialsSliderMock } from "@/mocks";
 import { fadeInUp, scaleIn, scrollViewport } from "@/animations";
 import { TestimonialCard } from "./TestimonialCard";
 
-const testimonialImages = {
-  daniel: danielImg,
-  aisha: aishaImg,
-  omar: omarImg,
-};
+const testimonialImages = { daniel: danielImg, aisha: aishaImg, omar: omarImg };
 
 export const LandingTestimonialsSliderSection = () => {
   const { badge, headingMain, headingAccent, subtitle, testimonials } =

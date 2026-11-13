@@ -13,6 +13,10 @@ const ContactPage = lazy(() => import("@/features/landing/pages/ContactPage"));
 const StudentLoginPage = lazy(() => import("@/features/auth/pages/StudentLoginPage"));
 const TeacherAuthPage = lazy(() => import("@/features/auth/pages/TeacherAuthPage"));
 
+// Teacher Portal Routes
+const TeacherLayout = lazy(() => import("@/layouts/TeacherLayout"));
+const TeacherDashboardPage = lazy(() => import("@/features/teachers/pages/TeacherDashboardPage"));
+
 // Student Portal Routes
 const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
 const StudentDashboardPage = lazy(() => import("@/features/students/pages/StudentDashboardPage"));
@@ -60,7 +64,13 @@ export const AppRouter = () => {
           <Route path="/auth/teacher-verify" element={<TeacherAuthPage mode="verify" />} />
           <Route path="/auth/teacher-success" element={<TeacherAuthPage mode="success" />} />
           <Route path="/auth/teacher-forgot-password" element={<TeacherAuthPage mode="forgot" />} />
-          <Route path="/teacher" element={<Navigate to="/auth/teacher-login" replace />} />
+
+          {/* Teacher Portal Protected Workspace */}
+          <Route path="/teacher" element={<TeacherLayout />}>
+            <Route index element={<TeacherDashboardPage />} />
+            <Route path="dashboard" element={<TeacherDashboardPage />} />
+            <Route path="*" element={<Navigate to="/teacher" replace />} />
+          </Route>
 
           {/* Student Portal Protected Workspace */}
           <Route path="/student" element={<StudentLayout />}>

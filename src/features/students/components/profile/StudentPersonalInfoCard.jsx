@@ -64,19 +64,14 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
       </div>
 
       {/* Fields List */}
-      <div className="divide-y divide-slate-100/70">
+      <div className="space-y-4 sm:space-y-5 pt-1">
         {infoFields.map((field) => {
           const Icon = field.icon;
           return (
-            <div
-              key={field.key}
-              className={`flex items-center justify-between gap-3 py-2.5 ${
-                isEditing ? "flex-col items-start gap-1.5" : ""
-              }`}
-            >
-              <div className="flex items-center gap-2 text-slate-500 shrink-0">
-                <Icon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">{field.label}</span>
+            <div key={field.key} className="space-y-1">
+              <div className="flex items-center gap-2 text-slate-500">
+                <Icon className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="text-xs font-medium">{field.label}</span>
               </div>
 
               {isEditing ? (
@@ -86,12 +81,12 @@ export const StudentPersonalInfoCard = ({ profile, onUpdateProfile }) => {
                   onChange={(e) =>
                     setFormData({ ...formData, [field.key]: e.target.value })
                   }
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white transition-colors"
                 />
               ) : (
-                <span className="text-xs sm:text-sm font-bold text-slate-900 text-right truncate min-w-0 max-w-[55%] sm:max-w-none">
+                <p className="text-sm sm:text-base font-bold text-slate-900 pl-0.5">
                   {formData[field.key]}
-                </span>
+                </p>
               )}
             </div>
           );

@@ -44,13 +44,15 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
         </div>
       </div>
 
-      {/* Row: Avatar + Buttons */}
-      <div className="flex items-center gap-3.5 pt-1">
-        <img
-          src={avatar}
-          alt="Avatar Preview"
-          className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-slate-100 shadow-sm shrink-0"
-        />
+      {/* Centered Avatar + Action Buttons Matching Image 3 */}
+      <div className="flex flex-col items-center justify-center pt-2 pb-1 space-y-4">
+        <div className="w-24 h-24 rounded-full bg-[#e0f2fe] flex items-center justify-center p-1 shadow-xs">
+          <img
+            src={avatar}
+            alt="Avatar Preview"
+            className="w-full h-full rounded-full object-cover"
+          />
+        </div>
 
         <input
           ref={fileInputRef}
@@ -60,11 +62,11 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
           onChange={handleFileSelect}
         />
 
-        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1">
+        <div className="flex items-center justify-center gap-3 w-full">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex-1 sm:flex-initial px-3.5 sm:px-4 py-2 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer text-center"
+            className="px-5 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer text-center"
           >
             <Upload className="w-3.5 h-3.5" />
             <span>Change Photo</span>
@@ -73,9 +75,9 @@ export const StudentProfilePhotoCard = ({ avatar, onAvatarChange }) => {
           <button
             type="button"
             onClick={handleRemove}
-            className="px-3.5 sm:px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
+            className="px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3.5 h-3.5 text-slate-500" />
             <span>Remove</span>
           </button>
         </div>
