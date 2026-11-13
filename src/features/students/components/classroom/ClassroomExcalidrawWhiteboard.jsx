@@ -59,7 +59,8 @@ export const ClassroomExcalidrawWhiteboard = ({
   const [theme, setTheme] = useState("light");
   const [excalidrawApi, setExcalidrawApi] = useState(null);
   const [activeTool, setActiveTool] = useState("freedraw");
-  const [isMaximized, setIsMaximized] = useState(false);
+  // Default to maximized full-screen whiteboard per user requirement
+  const [isMaximized, setIsMaximized] = useState(true);
 
   const handleSelectTool = (toolId) => {
     setActiveTool(toolId);
