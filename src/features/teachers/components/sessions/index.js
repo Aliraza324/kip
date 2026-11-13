@@ -10,4 +10,5 @@ export { TeacherSessionStudentsTab } from "./TeacherSessionStudentsTab";
 export { TeacherSessionMaterialsTab } from "./TeacherSessionMaterialsTab";
 export { TeacherSessionScheduleTab } from "./TeacherSessionScheduleTab";
 export { SessionMaterialUploadInput } from "./SessionMaterialUploadInput";
+export { SessionSchedulePicker } from "./SessionSchedulePicker";
 

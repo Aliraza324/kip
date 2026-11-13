@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { X, BookOpen, Calendar } from "lucide-react";
+import { X, BookOpen } from "lucide-react";
 import { teacherGradesAndSubjectsMock } from "@/mocks";
 import { SessionMaterialUploadInput } from "./SessionMaterialUploadInput";
+import { SessionSchedulePicker } from "./SessionSchedulePicker";
 import toast from "react-hot-toast";
 
 export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEdit }) => {
@@ -9,7 +10,9 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
   const [type, setType] = useState("scheduled");
   const [selectedGrade, setSelectedGrade] = useState("Grade 9");
   const [selectedSubject, setSelectedSubject] = useState("Mathematics");
-  const [duration, setDuration] = useState("10:00 AM – 10:45 AM");
+  const [selectedDays, setSelectedDays] = useState(["Mon", "Wed", "Fri"]);
+  const [startTime, setStartTime] = useState("10:00 AM");
+  const [endTime, setEndTime] = useState("10:45 AM");
   const [attachedFiles, setAttachedFiles] = useState([]);
 
   useEffect(() => {
@@ -18,15 +21,14 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
       setType(sessionToEdit.type === "instant" ? "instant" : "scheduled");
       setSelectedGrade(sessionToEdit.grade || "Grade 9");
       setSelectedSubject(sessionToEdit.course || "Mathematics");
-      setDuration(sessionToEdit.duration || "10:00 AM – 10:45 AM");
+      setSelectedDays(sessionToEdit.scheduleDays ? sessionToEdit.scheduleDays.split(", ") : ["Mon", "Wed", "Fri"]);
+      const [sTime, eTime] = (sessionToEdit.duration || "10:00 AM – 10:45 AM").split(" – ");
+      setStartTime(sTime || "10:00 AM");
+      setEndTime(eTime || "10:45 AM");
       setAttachedFiles(sessionToEdit.materials || []);
     } else {
-      setTitle("");
-      setType("scheduled");
-      setSelectedGrade("Grade 9");
-      setSelectedSubject("Mathematics");
-      setDuration("10:00 AM – 10:45 AM");
-      setAttachedFiles([]);
+      setTitle(""); setType("scheduled"); setSelectedGrade("Grade 9"); setSelectedSubject("Mathematics");
+      setSelectedDays(["Mon", "Wed", "Fri"]); setStartTime("10:00 AM"); setEndTime("10:45 AM"); setAttachedFiles([]);
     }
   }, [sessionToEdit, isOpen]);
 
@@ -42,6 +44,7 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error("Please enter a session name.");
+    const durationString = type === "instant" ? "Instant Live" : `${startTime} – ${endTime}`;
     const sessionData = {
       id: sessionToEdit ? sessionToEdit.id : `sess_${Date.now()}`,
       title: title.trim(),
@@ -49,7 +52,9 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
       course: selectedSubject,
       type,
       statusBadge: type === "instant" ? "Instant" : "Scheduled",
-      duration: type === "instant" ? "Instant Live" : duration,
+      duration: durationString,
+      scheduleDays: type === "scheduled" ? selectedDays.join(", ") : "Instant",
+      repeatRule: type === "scheduled" ? `Weekly (${selectedDays.join(", ")})` : "One-time Live",
       studentsCount: sessionToEdit ? sessionToEdit.studentsCount : 0,
       materialsCount: (sessionToEdit?.materialsCount || 0) + attachedFiles.length,
       scheduledCount: type === "scheduled" ? 1 : 0,
@@ -144,20 +149,18 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
             </div>
           </div>
 
+          {/* Scheduled Details: Week Days + Durations Dropdown */}
           {type === "scheduled" && (
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700">Session Durations *</label>
-              <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  placeholder="10:00 AM – 10:45 AM"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
-                />
-              </div>
-            </div>
+            <SessionSchedulePicker
+              selectedDays={selectedDays}
+              onDaysChange={setSelectedDays}
+              startTime={startTime}
+              endTime={endTime}
+              onTimeChange={(start, end) => {
+                setStartTime(start);
+                setEndTime(end);
+              }}
+            />
           )}
 
           <SessionMaterialUploadInput
