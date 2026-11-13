@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { User, Phone, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
-import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
+import { showToast } from "@/utils";
 
 export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
   const { register } = teacherAuthMock;
@@ -18,17 +18,17 @@ export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!fullName.trim()) return toast.error("Please enter your full name.");
-    if (!phoneNumber.trim()) return toast.error("Please enter your phone number.");
-    if (!email.trim() || !email.includes("@")) return toast.error("Please enter a valid email address.");
-    if (!password || password.length < 6) return toast.error("Password must be at least 6 characters.");
-    if (password !== confirmPassword) return toast.error("Passwords do not match.");
-    if (!agreeTerms) return toast.error("Please agree to the Terms of Service and Privacy Policy.");
+    if (!fullName.trim()) return showToast.error("Please enter your full name.");
+    if (!phoneNumber.trim()) return showToast.error("Please enter your phone number.");
+    if (!email.trim() || !email.includes("@")) return showToast.error("Please enter a valid email address.");
+    if (!password || password.length < 6) return showToast.error("Password must be at least 6 characters.");
+    if (password !== confirmPassword) return showToast.error("Passwords do not match.");
+    if (!agreeTerms) return showToast.error("Please agree to the Terms of Service and Privacy Policy.");
 
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      toast.success("Verification code sent to your email!");
+      showToast.success("Verification code sent to your email!");
       onRegisterSuccess({ fullName, phoneNumber, email, password });
     }, 400);
   };

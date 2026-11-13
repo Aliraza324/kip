@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { User, Lock, Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
-import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
+import { showToast } from "@/utils";
 
 export const TeacherLoginForm = ({
   onNavigateRegister,
@@ -21,11 +21,11 @@ export const TeacherLoginForm = ({
   const handleLogin = (e) => {
     e.preventDefault();
     if (!username.trim()) {
-      toast.error("Please enter your username or email.");
+      showToast.error("Please enter your username or email.");
       return;
     }
     if (!password) {
-      toast.error("Please enter your password.");
+      showToast.error("Please enter your password.");
       return;
     }
 
@@ -39,20 +39,9 @@ export const TeacherLoginForm = ({
         username.toLowerCase() === demoAccounts.pending.username.toLowerCase();
 
       if (isPending) {
-        toast("Verification in progress. Your account is being reviewed by administration.", {
-          icon: "⏳",
-          duration: 4000,
-          style: {
-            borderRadius: "14px",
-            background: "#1e293b",
-            color: "#f8fafc",
-            border: "1px solid rgba(255,255,255,0.1)",
-          },
-        });
+        showToast.verificationInProgress();
       } else {
-        toast.success("Welcome to Dashboard!", {
-          duration: 3000,
-        });
+        showToast.welcomeDashboard();
         onLoginSuccess?.();
       }
     }, 450);
@@ -167,7 +156,7 @@ export const TeacherLoginForm = ({
               const next = testStatus === "approved" ? "pending" : "approved";
               setTestStatus(next);
               setUsername(demoAccounts[next].username);
-              toast(`Switched test condition to: ${next.toUpperCase()}`, { icon: "⚙️" });
+              showToast.info(`Switched test condition to: ${next.toUpperCase()}`);
             }}
             className="text-amber-300 hover:underline font-bold cursor-pointer"
           >

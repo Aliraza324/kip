@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Check, ArrowLeft } from "lucide-react";
-import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
+import { showToast } from "@/utils";
 
 export const TeacherEmailVerifyView = ({
   email = "teacher@domain.com",
@@ -59,21 +59,21 @@ export const TeacherEmailVerifyView = ({
   const handleResend = () => {
     if (timer > 0) return;
     setTimer(60);
-    toast.success("New 6-digit verification code sent to your email!");
+    showToast.success("New 6-digit verification code sent to your email!");
   };
 
   const handleVerify = (e) => {
     e.preventDefault();
     const code = otp.join("");
     if (code.length < 6) {
-      toast.error("Please enter the complete 6-digit verification code.");
+      showToast.error("Please enter the complete 6-digit verification code.");
       return;
     }
 
     setIsVerifying(true);
     setTimeout(() => {
       setIsVerifying(false);
-      toast.success("Verification successful!");
+      showToast.success("Verification successful!");
       onVerifySuccess?.(code);
     }, 450);
   };

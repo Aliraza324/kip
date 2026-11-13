@@ -27,7 +27,7 @@ export const TeacherAuthLayout = ({ children }) => {
       </div>
 
       {/* Frosted Glass Floating Card */}
-      <div className="relative z-20 w-full max-w-[440px] sm:max-w-[480px] rounded-[28px] sm:rounded-[36px] backdrop-blur-xl bg-black/50 sm:bg-black/55 border border-white/20 shadow-2xl p-6 sm:p-8 text-white transition-all">
+      <div className="relative z-20 w-full max-w-[440px] sm:max-w-[480px] rounded-[28px] sm:rounded-[36px] backdrop-blur-xl bg-white/20 sm:bg-white/20 border border-white/20 shadow-2xl p-6 sm:p-8 text-white transition-all">
         {children}
       </div>
     </div>

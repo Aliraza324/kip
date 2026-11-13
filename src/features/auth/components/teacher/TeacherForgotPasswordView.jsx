@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, KeyRound, ArrowLeft, Send, Check } from "lucide-react";
-import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
+import { showToast } from "@/utils";
 import { TeacherEmailVerifyView } from "./TeacherEmailVerifyView";
 
 export const TeacherForgotPasswordView = ({ onBackToLogin }) => {
@@ -18,37 +18,37 @@ export const TeacherForgotPasswordView = ({ onBackToLogin }) => {
   const handleSendCode = (e) => {
     e.preventDefault();
     if (!email.trim() || !email.includes("@")) {
-      toast.error("Please enter a valid email address.");
+      showToast.error("Please enter a valid email address.");
       return;
     }
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      toast.success(`Verification code sent to ${email}`);
+      showToast.success(`Verification code sent to ${email}`);
       setStep(2);
     }, 400);
   };
 
   const handleVerifyOtpSuccess = () => {
-    toast.success("Code verified! Set your new password.");
+    showToast.success("Code verified! Set your new password.");
     setStep(3);
   };
 
   const handleResetPassword = (e) => {
     e.preventDefault();
     if (!newPassword || newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters.");
+      showToast.error("Password must be at least 6 characters.");
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      showToast.error("Passwords do not match.");
       return;
     }
 
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      toast.success("Password reset successfully! Please log in with your new credentials.");
+      showToast.success("Password reset successfully! Please log in with your new credentials.");
       onBackToLogin();
     }, 450);
   };
