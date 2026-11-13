@@ -100,12 +100,12 @@ export const TeacherSessionDetailPage = () => {
       />
 
       {/* 2. Tabs Navigation: [ Overview, Students, Materials, Schedule ] */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+      <div className="-mx-3 px-3 sm:mx-0 sm:px-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === tab.id
                 ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-100"

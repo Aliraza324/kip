@@ -7,7 +7,7 @@ export const TeacherSessionScheduleTab = ({ schedules = [] }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-2xs space-y-4">
+    <div className="bg-white rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs space-y-4 overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
         <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center shrink-0">

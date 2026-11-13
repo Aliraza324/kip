@@ -82,7 +82,7 @@ export const TeacherSessionsPage = () => {
         <button
           type="button"
           onClick={() => { setSessionToEdit(null); setIsCreateModalOpen(true); }}
-          className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 shrink-0 self-start sm:self-auto"
+          className="w-full sm:w-auto px-5 sm:px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
           <span>Create Session</span>
@@ -90,12 +90,12 @@ export const TeacherSessionsPage = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+      <div className="-mx-3 px-3 sm:mx-0 sm:px-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
               activeTab === tab.id
                 ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-100"

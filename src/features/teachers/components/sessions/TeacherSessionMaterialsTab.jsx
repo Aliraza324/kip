@@ -7,9 +7,9 @@ export const TeacherSessionMaterialsTab = ({ materials = [], onUploadClick, onRe
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-2xs space-y-4">
+    <div className="bg-white rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs space-y-4 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center shrink-0">
             <BookOpen className="w-4 h-4 stroke-[2.2]" />
