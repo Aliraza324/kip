@@ -6,6 +6,7 @@ import {
   teacherSessionMaterialsMock,
   teacherSessionScheduleListMock,
 } from "@/mocks";
+import { LiveClassroomView } from "@/features/students/components/classroom";
 import {
   TeacherSessionDetailHeader,
   TeacherSessionOverviewTab,
@@ -29,6 +30,8 @@ export const TeacherSessionDetailPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [students, setStudents] = useState(teacherSessionStudentsMock);
   const [materials, setMaterials] = useState(teacherSessionMaterialsMock);
+  const [isLiveClassOpen, setIsLiveClassOpen] = useState(false);
+  const [activeLiveTitle, setActiveLiveTitle] = useState(session.title);
 
   // Modals
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -42,6 +45,11 @@ export const TeacherSessionDetailPage = () => {
     { id: "materials", label: "Materials" },
     { id: "schedule", label: "Schedule" },
   ];
+
+  const handleStartLive = (title) => {
+    setActiveLiveTitle(title || session.title);
+    setIsLiveClassOpen(true);
+  };
 
   const handleSaveEditedSession = (updatedData) => {
     setSession((prev) => ({ ...prev, ...updatedData }));
@@ -69,12 +77,23 @@ export const TeacherSessionDetailPage = () => {
     setIsSuccessModalOpen(true);
   };
 
+  if (isLiveClassOpen) {
+    return (
+      <LiveClassroomView
+        title={`${activeLiveTitle} – Live Class`}
+        participantsCount={session.studentsCount || 28}
+        onLeaveClass={() => setIsLiveClassOpen(false)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* 1. Header Banner Matching SS 4 & SS 5 */}
       <TeacherSessionDetailHeader
         session={session}
         onEditSchedule={() => setIsEditModalOpen(true)}
+        onStartLive={handleStartLive}
       />
 
       {/* 2. Tabs Navigation: [ Overview, Students, Materials, Schedule ] */}
@@ -95,7 +114,12 @@ export const TeacherSessionDetailPage = () => {
       </div>
 
       {/* 3. Tab Contents */}
-      {activeTab === "overview" && <TeacherSessionOverviewTab session={session} />}
+      {activeTab === "overview" && (
+        <TeacherSessionOverviewTab
+          session={session}
+          onStartLive={handleStartLive}
+        />
+      )}
 
       {activeTab === "students" && (
         <TeacherSessionStudentsTab

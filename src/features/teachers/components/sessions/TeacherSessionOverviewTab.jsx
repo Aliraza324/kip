@@ -1,9 +1,9 @@
 import { Calendar, Video, Layers, Users, BookOpen } from "lucide-react";
 import toast from "react-hot-toast";
 
-export const TeacherSessionOverviewTab = ({ session }) => {
+export const TeacherSessionOverviewTab = ({ session, onStartLive }) => {
   const handleStartClass = (title) => {
-    toast.success(`Launching session: ${title}`);
+    onStartLive?.(title);
   };
 
   return (

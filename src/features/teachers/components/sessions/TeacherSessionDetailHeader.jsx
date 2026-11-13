@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Edit2, Video, Calendar, Clock, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
 
-export const TeacherSessionDetailHeader = ({ session, onEditSchedule }) => {
+export const TeacherSessionDetailHeader = ({ session, onEditSchedule, onStartLive }) => {
   const handleStartLive = () => {
-    toast.success(`Starting Live Classroom for ${session.title}...`);
+    onStartLive?.(session.title);
   };
 
   return (

@@ -8,7 +8,11 @@ import { ClassroomParticipantsPanel } from "./ClassroomParticipantsPanel";
 import { ClassroomBottomToolbar } from "./ClassroomBottomToolbar";
 import { LeaveClassModal } from "./LeaveClassModal";
 
-export const LiveClassroomView = ({ onLeaveClass }) => {
+export const LiveClassroomView = ({
+  onLeaveClass,
+  title = "Mathematics – Live Class",
+  participantsCount = 24,
+}) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isHandRaised, setIsHandRaised] = useState(false);
@@ -64,8 +68,8 @@ export const LiveClassroomView = ({ onLeaveClass }) => {
     <div className="space-y-3.5 sm:space-y-4 max-w-[1600px] mx-auto min-h-full flex flex-col justify-between">
       {/* Top Header Bar */}
       <ClassroomTopBar
-        title="Mathematics – Live Class"
-        participantsCount={24}
+        title={title}
+        participantsCount={participantsCount}
         onLeave={() => setIsLeaveModalOpen(true)}
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
