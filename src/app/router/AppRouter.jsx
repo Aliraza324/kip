@@ -27,6 +27,8 @@ const TeacherGradeSubmissionPage = lazy(() => import("@/features/teachers/pages/
 const TeacherStudentsPage = lazy(() => import("@/features/teachers/pages/TeacherStudentsPage"));
 const TeacherClassStudentsListPage = lazy(() => import("@/features/teachers/pages/TeacherClassStudentsListPage"));
 const TeacherStudentDetailPage = lazy(() => import("@/features/teachers/pages/TeacherStudentDetailPage"));
+const TeacherProfilePage = lazy(() => import("@/features/teachers/pages/TeacherProfilePage"));
+const TeacherNotificationsPage = lazy(() => import("@/features/teachers/pages/TeacherNotificationsPage"));
 
 // Student Portal Routes
 const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
@@ -92,6 +94,8 @@ export const AppRouter = () => {
             <Route path="students/class/:classId" element={<TeacherClassStudentsListPage />} />
             <Route path="students/class/:classId/:studentId" element={<TeacherStudentDetailPage />} />
             <Route path="students/detail/:studentId" element={<TeacherStudentDetailPage />} />
+            <Route path="profile" element={<TeacherProfilePage />} />
+            <Route path="notifications" element={<TeacherNotificationsPage />} />
             <Route path="*" element={<Navigate to="/teacher" replace />} />
           </Route>
 
