@@ -69,9 +69,9 @@ export const TeacherSessionsPage = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       {/* Header with Title and Single "+ Create Session" Button per user instruction */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
             My session
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -89,13 +89,13 @@ export const TeacherSessionsPage = () => {
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 scroll-smooth">
+      {/* Filter Tabs - Fits cleanly even on 320px screens */}
+      <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 scroll-smooth">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+            className={`px-2.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
               activeTab === tab.id
                 ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-100"

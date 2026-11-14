@@ -72,10 +72,10 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/40 backdrop-blur-xs">
+      <div className="bg-white w-full max-w-lg rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100">
+          <h2 className="text-base sm:text-xl font-black text-slate-900 tracking-tight">
             {sessionToEdit ? "Edit Session" : "Create New Session"}
           </h2>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600">
@@ -83,7 +83,7 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[78vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 max-h-[82vh] overflow-y-auto">
           <div className="space-y-1">
             <label className="text-xs font-bold text-slate-700">Session Name *</label>
             <div className="relative">
@@ -93,7 +93,7 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter Session name (e.g., Mathematics – Grade 9)"
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] focus:bg-white"
               />
             </div>
           </div>
@@ -104,16 +104,16 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
               <button
                 type="button"
                 onClick={() => setType("scheduled")}
-                className={`py-2 px-3 rounded-2xl text-xs font-bold border transition-all ${
+                className={`py-2 px-2.5 rounded-xl sm:rounded-2xl text-xs font-bold border transition-all ${
                   type === "scheduled" ? "bg-blue-50 border-[#0080f6] text-[#0080f6]" : "border-slate-200 text-slate-600"
                 }`}
               >
-                📅 Scheduled Session
+                📅 Scheduled
               </button>
               <button
                 type="button"
                 onClick={() => setType("instant")}
-                className={`py-2 px-3 rounded-2xl text-xs font-bold border transition-all ${
+                className={`py-2 px-2.5 rounded-xl sm:rounded-2xl text-xs font-bold border transition-all ${
                   type === "instant" ? "bg-emerald-50 border-emerald-500 text-emerald-600" : "border-slate-200 text-slate-600"
                 }`}
               >
@@ -128,7 +128,7 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
               <select
                 value={selectedGrade}
                 onChange={(e) => handleGradeChange(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
               >
                 {teacherGradesAndSubjectsMock.map((g) => (
                   <option key={g.grade} value={g.grade}>{g.grade}</option>
@@ -140,7 +140,7 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
               <select
                 value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
               >
                 {availableSubjects.map((sub) => (
                   <option key={sub} value={sub}>{sub}</option>
@@ -169,17 +169,17 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
             onRemove={(idx) => setAttachedFiles((prev) => prev.filter((_, i) => i !== idx))}
           />
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-end gap-2.5 sm:gap-3 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 active:scale-95"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 active:scale-95"
             >
               {sessionToEdit ? "Save Changes" : "Create session"}
             </button>

@@ -9,7 +9,7 @@ export const TeacherSessionsFilterBar = ({
   onCourseChange,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
       {/* Search Input */}
       <div className="relative flex-1 w-full min-w-0">
         <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -18,44 +18,42 @@ export const TeacherSessionsFilterBar = ({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search session.."
-          className="w-full bg-white border border-slate-200/80 rounded-2xl pl-10 pr-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:border-[#0080f6] shadow-2xs"
+          className="w-full bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl pl-10 pr-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:border-[#0080f6] shadow-2xs"
         />
       </div>
 
-      {/* Filter Options: Grid on Mobile, Flex on Desktop */}
-      <div className="grid grid-cols-1 sm:flex sm:items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
+      {/* Filter Options: 2 Columns on Mobile, Flex on Desktop */}
+      <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
         {/* Filter 1: Date/Time */}
         <button
           type="button"
-          className="w-full sm:w-auto px-3.5 py-2 sm:py-2.5 bg-white border border-slate-200/80 rounded-2xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-between sm:justify-center gap-2 shadow-2xs cursor-pointer"
+          className="w-full sm:w-auto px-3 py-2 sm:py-2.5 bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
         >
-          <div className="flex items-center gap-2">
-            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-            <span>Date /Time</span>
-          </div>
+          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+          <span className="truncate">Date /Time</span>
         </button>
 
         {/* Filter 2: Grade Dropdown */}
-        <div className="relative w-full sm:w-auto min-w-[130px]">
+        <div className="relative w-full sm:w-auto sm:min-w-[130px]">
           <select
             value={selectedGrade}
             onChange={(e) => onGradeChange(e.target.value)}
-            className="w-full sm:w-auto appearance-none bg-white border border-slate-200/80 rounded-2xl pl-3.5 pr-8 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-600 outline-none focus:border-[#0080f6] shadow-2xs cursor-pointer"
+            className="w-full appearance-none bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl pl-3 pr-7 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-600 outline-none focus:border-[#0080f6] shadow-2xs cursor-pointer truncate"
           >
             <option value="all">√x Grade: All</option>
             <option value="Grade 8">Grade 8</option>
             <option value="Grade 9">Grade 9</option>
             <option value="Grade 10">Grade 10</option>
           </select>
-          <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
 
         {/* Filter 3: Course Dropdown */}
-        <div className="relative w-full sm:w-auto min-w-[130px]">
+        <div className="relative col-span-2 sm:col-span-1 w-full sm:w-auto sm:min-w-[130px]">
           <select
             value={selectedCourse}
             onChange={(e) => onCourseChange(e.target.value)}
-            className="w-full sm:w-auto appearance-none bg-white border border-slate-200/80 rounded-2xl pl-3.5 pr-8 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-600 outline-none focus:border-[#0080f6] shadow-2xs cursor-pointer"
+            className="w-full appearance-none bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl pl-3 pr-7 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-600 outline-none focus:border-[#0080f6] shadow-2xs cursor-pointer truncate"
           >
             <option value="all">📚 Course: All</option>
             <option value="Mathematics">Mathematics</option>
@@ -63,7 +61,7 @@ export const TeacherSessionsFilterBar = ({
             <option value="English">English</option>
             <option value="Computer Science">Computer Science</option>
           </select>
-          <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
     </div>
@@ -71,4 +69,3 @@ export const TeacherSessionsFilterBar = ({
 };
 
 export default TeacherSessionsFilterBar;
-
