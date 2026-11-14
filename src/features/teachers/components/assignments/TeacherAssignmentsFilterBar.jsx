@@ -39,20 +39,20 @@ export const TeacherAssignmentsFilterBar = ({
       </div>
 
       {/* Filters row */}
-      <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-2xs flex flex-wrap items-center gap-3">
+      <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 shadow-2xs flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
         <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-700 mr-1">
           <Filter className="w-4 h-4 text-slate-500" />
           <span>Filter:</span>
         </div>
 
         {/* Month Dropdown */}
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <select
             value={selectedMonth}
             onChange={(e) => onMonthChange(e.target.value)}
             aria-label="Filter by month"
-            className="appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
+            className="w-full sm:w-auto appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
           >
             <option value="oct-2026">October 2026</option>
             <option value="nov-2026">November 2026</option>
@@ -62,13 +62,13 @@ export const TeacherAssignmentsFilterBar = ({
         </div>
 
         {/* Subject Dropdown */}
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <Layers className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <select
             value={selectedSubject}
             onChange={(e) => onSubjectChange(e.target.value)}
             aria-label="Filter by subject"
-            className="appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
+            className="w-full sm:w-auto appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
           >
             <option value="all">All Subjects</option>
             <option value="algebra">Algebra</option>
@@ -80,13 +80,13 @@ export const TeacherAssignmentsFilterBar = ({
         </div>
 
         {/* Status Dropdown */}
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <UserCheck className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <select
             value={selectedStatus}
             onChange={(e) => onStatusChange(e.target.value)}
             aria-label="Filter by status"
-            className="appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
+            className="w-full sm:w-auto appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
           >
             <option value="all">All Status</option>
             <option value="submitted">Submitted</option>
@@ -100,7 +100,7 @@ export const TeacherAssignmentsFilterBar = ({
         <button
           type="button"
           onClick={onResetFilters}
-          className="text-xs sm:text-sm font-bold text-[#0080f6] hover:underline cursor-pointer sm:ml-auto"
+          className="text-xs sm:text-sm font-bold text-[#0080f6] hover:underline cursor-pointer sm:ml-auto self-end sm:self-auto py-1"
         >
           Reset Filters
         </button>

@@ -39,7 +39,7 @@ export const TeacherQuickActionsBar = ({ actions = [] }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
       {/* Label */}
       <div className="flex items-center gap-2.5 shrink-0">
         <Zap className="w-5 h-5 text-[#0080f6] stroke-[2.5]" />
@@ -49,7 +49,7 @@ export const TeacherQuickActionsBar = ({ actions = [] }) => {
       </div>
 
       {/* Action Buttons Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 md:max-w-2xl lg:max-w-3xl">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 flex-1 md:max-w-2xl lg:max-w-3xl w-full">
         {actions.map((act) => {
           const Icon = actionIcons[act.iconType] || Video;
           const style = actionStyles[act.color] || actionStyles.blue;
@@ -58,10 +58,10 @@ export const TeacherQuickActionsBar = ({ actions = [] }) => {
               key={act.id}
               type="button"
               onClick={() => handleClick(act)}
-              className={`p-3 sm:py-3.5 sm:px-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-center gap-2.5 active:scale-98 shadow-2xs hover:shadow-xs ${style.container}`}
+              className={`p-3 sm:py-3.5 sm:px-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex items-center justify-center gap-2.5 active:scale-98 shadow-2xs hover:shadow-xs w-full ${style.container}`}
             >
-              <Icon className={`w-5 h-5 shrink-0 stroke-[2.2] ${style.icon}`} />
-              <span className="text-xs sm:text-sm font-bold text-slate-800 whitespace-nowrap">
+              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 stroke-[2.2] ${style.icon}`} />
+              <span className="text-xs sm:text-sm font-bold text-slate-800 text-center">
                 {act.label}
               </span>
             </button>
@@ -73,4 +73,3 @@ export const TeacherQuickActionsBar = ({ actions = [] }) => {
 };
 
 export default TeacherQuickActionsBar;
-

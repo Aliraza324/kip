@@ -23,7 +23,7 @@ export const TeacherStudentsFilterBar = ({
       </div>
 
       {/* Grade Dropdown */}
-      <div className="relative min-w-[150px]">
+      <div className="relative w-full md:w-auto md:min-w-[150px]">
         <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
         <select
           value={selectedGrade}
@@ -39,7 +39,7 @@ export const TeacherStudentsFilterBar = ({
       </div>
 
       {/* Course Dropdown */}
-      <div className="relative min-w-[150px]">
+      <div className="relative w-full md:w-auto md:min-w-[150px]">
         <Layers className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
         <select
           value={selectedCourse}

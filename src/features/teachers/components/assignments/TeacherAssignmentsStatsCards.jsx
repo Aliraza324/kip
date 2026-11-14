@@ -29,24 +29,24 @@ export const TeacherAssignmentsStatsCards = ({ stats }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
       {cards.map((card, idx) => {
         const IconComponent = card.icon;
         return (
           <div
             key={idx}
-            className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-100 shadow-2xs flex items-center gap-3 sm:gap-4"
+            className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-slate-100 shadow-2xs flex items-center gap-2.5 sm:gap-4"
           >
             <div
-              className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 ${card.iconBg}`}
+              className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 ${card.iconBg}`}
             >
-              <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
+              <IconComponent className="w-4 h-4 sm:w-6 sm:h-6 stroke-[2.2]" />
             </div>
             <div className="min-w-0">
-              <span className="text-xl sm:text-2xl font-black text-slate-900 block leading-tight">
+              <span className="text-lg sm:text-2xl font-black text-slate-900 block leading-tight">
                 {card.value}
               </span>
-              <span className="text-xs text-slate-500 font-semibold truncate block">
+              <span className="text-[11px] sm:text-xs text-slate-500 font-semibold truncate block">
                 {card.label}
               </span>
             </div>
@@ -58,4 +58,3 @@ export const TeacherAssignmentsStatsCards = ({ stats }) => {
 };
 
 export default TeacherAssignmentsStatsCards;
-

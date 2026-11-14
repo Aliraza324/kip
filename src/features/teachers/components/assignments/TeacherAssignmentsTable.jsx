@@ -3,7 +3,7 @@ import { FileText, Eye, MoreHorizontal, ChevronLeft, ChevronRight, ChevronDown }
 
 export const TeacherAssignmentsTable = ({ assignments = [] }) => {
   return (
-    <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-2xs space-y-4">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs space-y-4">
       {/* Table Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">

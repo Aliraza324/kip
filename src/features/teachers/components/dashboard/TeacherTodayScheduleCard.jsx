@@ -11,10 +11,10 @@ export const TeacherTodayScheduleCard = ({ schedule = [] }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-2xs flex flex-col justify-between">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs flex flex-col justify-between">
       <div>
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0080f6] flex items-center justify-center shrink-0">
               <Calendar className="w-4 h-4 stroke-[2.2]" />
@@ -34,11 +34,11 @@ export const TeacherTodayScheduleCard = ({ schedule = [] }) => {
         </div>
 
         {/* Schedule List */}
-        <div className="space-y-3 pt-4">
+        <div className="space-y-2.5 sm:space-y-3 pt-3.5 sm:pt-4">
           {schedule.map((item) => (
             <div
               key={item.id}
-              className={`p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+              className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 transition-colors ${
                 item.isActive
                   ? "bg-[#eaf4fe]/90 border border-blue-200/70 shadow-xs"
                   : "bg-white hover:bg-slate-50/70 border border-slate-100"
@@ -64,7 +64,7 @@ export const TeacherTodayScheduleCard = ({ schedule = [] }) => {
               <button
                 type="button"
                 onClick={() => handleStartClass(item)}
-                className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`w-full sm:w-auto px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   item.isActive
                     ? "bg-[#0080f6] hover:bg-[#006fd6] text-white shadow-md shadow-blue-500/25 active:scale-95"
                     : "border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
@@ -82,4 +82,3 @@ export const TeacherTodayScheduleCard = ({ schedule = [] }) => {
 };
 
 export default TeacherTodayScheduleCard;
-

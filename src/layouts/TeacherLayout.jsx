@@ -176,7 +176,7 @@ export const TeacherLayout = () => {
         </header>
 
         {/* Scrollable Main Area */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden px-3 sm:px-6 lg:px-8 pb-8 pt-4">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 sm:px-6 lg:px-8 pb-8 pt-3 sm:pt-4">
           <Outlet />
         </main>
       </div>

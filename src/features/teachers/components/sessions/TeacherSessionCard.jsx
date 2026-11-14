@@ -32,10 +32,10 @@ export const TeacherSessionCard = ({ session, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-3 sm:p-5 border border-slate-100 shadow-2xs hover:shadow-xs transition-shadow flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 overflow-hidden">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-slate-100 shadow-2xs hover:shadow-xs transition-shadow flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 overflow-hidden">
       {/* Left: Icon + Title & Type */}
       <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
-        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 ${session.colorClass}`}>
+        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 ${session.colorClass}`}>
           {renderSessionIcon(session.iconType)}
         </div>
 
@@ -61,22 +61,22 @@ export const TeacherSessionCard = ({ session, onEdit, onDelete }) => {
         </div>
       </div>
 
-      {/* Middle: 3 Stats Icons (Responsive flex-wrap for 320px screens) */}
-      <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-6 gap-y-1.5 text-xs text-slate-500 font-semibold px-0.5 lg:px-4">
-        <div className="flex items-center gap-1.5 shrink-0">
+      {/* Middle: 3 Stats Icons (Responsive grid on small screens down to 320px) */}
+      <div className="grid grid-cols-3 gap-1 sm:flex sm:items-center sm:gap-x-6 text-xs text-slate-500 font-semibold px-0.5 lg:px-4 py-0.5">
+        <div className="flex items-center gap-1 shrink-0">
           <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0080f6] shrink-0" />
           <span className="text-slate-800 font-bold">{session.studentsCount}</span>
-          <span className="text-[11px] sm:text-xs text-slate-400 font-normal">Students</span>
+          <span className="text-[10px] sm:text-xs text-slate-400 font-normal">Students</span>
         </div>
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0080f6] shrink-0" />
           <span className="text-slate-800 font-bold">{session.materialsCount}</span>
-          <span className="text-[11px] sm:text-xs text-slate-400 font-normal">Materials</span>
+          <span className="text-[10px] sm:text-xs text-slate-400 font-normal">Materials</span>
         </div>
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0080f6] shrink-0" />
           <span className="text-slate-800 font-bold">{session.scheduledCount}</span>
-          <span className="text-[11px] sm:text-xs text-slate-400 font-normal">Scheduled</span>
+          <span className="text-[10px] sm:text-xs text-slate-400 font-normal">Scheduled</span>
         </div>
       </div>
 

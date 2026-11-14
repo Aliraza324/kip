@@ -36,7 +36,7 @@ export const TeacherStudentsTable = ({
   return (
     <div className="space-y-4">
       {/* Status Pill Tabs matching SS 1 */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 scroll-smooth">
         {[
           { id: "all", label: `All Students (${students.length})` },
           { id: "active", label: "Active (4)" },
@@ -46,7 +46,7 @@ export const TeacherStudentsTable = ({
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === tab.id
                 ? "bg-[#0080f6] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:text-slate-900 border border-slate-100 shadow-2xs"
@@ -58,7 +58,7 @@ export const TeacherStudentsTable = ({
       </div>
 
       {/* Main Table Card */}
-      <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-2xs space-y-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs space-y-4">
         {/* Filters Row */}
         <TeacherStudentsFilterBar
           searchTerm={searchTerm}

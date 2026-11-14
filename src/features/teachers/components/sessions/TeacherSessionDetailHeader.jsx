@@ -19,15 +19,15 @@ export const TeacherSessionDetailHeader = ({ session, onEditSchedule, onStartLiv
       </Link>
 
       {/* Header Banner */}
-      <div className="bg-white rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 border border-slate-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3.5 sm:gap-5 overflow-hidden">
         <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
-          <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center font-serif font-black text-lg sm:text-xl shrink-0">
+          <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center font-serif font-black text-base sm:text-xl shrink-0">
             √x
           </div>
 
           <div className="space-y-1 sm:space-y-1.5 min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-base sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight truncate">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <h1 className="text-sm sm:text-xl lg:text-2xl font-black text-slate-900 tracking-tight break-words">
                 {session.title}
               </h1>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-blue-50 text-[#0080f6] border border-blue-200/60 shrink-0">
@@ -36,7 +36,7 @@ export const TeacherSessionDetailHeader = ({ session, onEditSchedule, onStartLiv
               </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 text-xs font-semibold text-slate-500">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs font-semibold text-slate-500">
               <div className="flex items-center gap-1.5 shrink-0">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                 <span>{session.scheduleDate || "Tue, Nov 5, 2024"}</span>
@@ -58,7 +58,7 @@ export const TeacherSessionDetailHeader = ({ session, onEditSchedule, onStartLiv
           <button
             type="button"
             onClick={onEditSchedule}
-            className="w-full md:w-auto px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+            className="w-full md:w-auto px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
           >
             <Edit2 className="w-3.5 h-3.5" />
             <span>Edit schedule</span>
@@ -66,7 +66,7 @@ export const TeacherSessionDetailHeader = ({ session, onEditSchedule, onStartLiv
           <button
             type="button"
             onClick={handleStartLive}
-            className="w-full md:w-auto px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+            className="w-full md:w-auto px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/25 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
           >
             <Video className="w-3.5 h-3.5" />
             <span>Start Live</span>

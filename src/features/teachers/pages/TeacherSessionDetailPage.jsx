@@ -100,7 +100,7 @@ export const TeacherSessionDetailPage = () => {
       />
 
       {/* 2. Tabs Navigation: [ Overview, Students, Materials, Schedule ] */}
-      <div className="-mx-3 px-3 sm:mx-0 sm:px-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 scroll-smooth">
         {tabs.map((tab) => (
           <button
             key={tab.id}
