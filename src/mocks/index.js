@@ -29,4 +29,5 @@ export * from "./admin.mock.js";
 export * from "./adminStudents.mock.js";
 export * from "./adminTeachers.mock.js";
 export * from "./adminContent.mock.js";
+export * from "./adminNotifications.mock.js";
 
