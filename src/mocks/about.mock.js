@@ -19,6 +19,13 @@ export const aboutHeroMock = {
   },
 };
 
+
+
+
+
+
+
+
 export const aboutHighlightsMock = [
   {
     id: "smart_learning",
