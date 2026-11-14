@@ -21,6 +21,11 @@ const AdminStudentsPage = lazy(() => import("@/features/admin/students/pages/Adm
 const AdminClassStudentsPage = lazy(() => import("@/features/admin/students/pages/AdminClassStudentsPage"));
 const AdminAddStudentPage = lazy(() => import("@/features/admin/students/pages/AdminAddStudentPage"));
 const AdminStudentDetailPage = lazy(() => import("@/features/admin/students/pages/AdminStudentDetailPage"));
+const AdminTeachersPage = lazy(() => import("@/features/admin/teachers/pages/AdminTeachersPage"));
+const AdminAddTeacherPage = lazy(() => import("@/features/admin/teachers/pages/AdminAddTeacherPage"));
+const AdminTeacherApprovalPage = lazy(() => import("@/features/admin/teachers/pages/AdminTeacherApprovalPage"));
+const AdminTeacherDetailPage = lazy(() => import("@/features/admin/teachers/pages/AdminTeacherDetailPage"));
+const AdminAssignClassPage = lazy(() => import("@/features/admin/teachers/pages/AdminAssignClassPage"));
 
 // Teacher Portal Routes
 const TeacherLayout = lazy(() => import("@/layouts/TeacherLayout"));
@@ -99,6 +104,11 @@ export const AppRouter = () => {
             <Route path="students/class/:classId" element={<AdminClassStudentsPage />} />
             <Route path="students/create" element={<AdminAddStudentPage />} />
             <Route path="students/:studentId" element={<AdminStudentDetailPage />} />
+            <Route path="teachers" element={<AdminTeachersPage />} />
+            <Route path="teachers/create" element={<AdminAddTeacherPage />} />
+            <Route path="teachers/approval/:teacherId" element={<AdminTeacherApprovalPage />} />
+            <Route path="teachers/:teacherId" element={<AdminTeacherDetailPage />} />
+            <Route path="teachers/:teacherId/assign-class" element={<AdminAssignClassPage />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>
 
