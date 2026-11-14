@@ -21,6 +21,8 @@ const AdminStudentsPage = lazy(() => import("@/features/admin/students/pages/Adm
 const AdminClassStudentsPage = lazy(() => import("@/features/admin/students/pages/AdminClassStudentsPage"));
 const AdminAddStudentPage = lazy(() => import("@/features/admin/students/pages/AdminAddStudentPage"));
 const AdminStudentDetailPage = lazy(() => import("@/features/admin/students/pages/AdminStudentDetailPage"));
+const AdminClassesPage = lazy(() => import("@/features/admin/classes/pages/AdminClassesPage"));
+const AdminClassDetailPage = lazy(() => import("@/features/admin/classes/pages/AdminClassDetailPage"));
 
 // Teacher Portal Routes
 const TeacherLayout = lazy(() => import("@/layouts/TeacherLayout"));
@@ -99,6 +101,8 @@ export const AppRouter = () => {
             <Route path="students/class/:classId" element={<AdminClassStudentsPage />} />
             <Route path="students/create" element={<AdminAddStudentPage />} />
             <Route path="students/:studentId" element={<AdminStudentDetailPage />} />
+            <Route path="classes" element={<AdminClassesPage />} />
+            <Route path="classes/:classId" element={<AdminClassDetailPage />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>
 
