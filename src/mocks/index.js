@@ -26,4 +26,5 @@ export * from "./teacherStudents.mock.js";
 export * from "./teacherProfile.mock.js";
 export * from "./teacherNotifications.mock.js";
 export * from "./admin.mock.js";
+export * from "./adminStudents.mock.js";
 

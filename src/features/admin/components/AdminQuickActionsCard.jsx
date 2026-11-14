@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Users, GraduationCap, Layers, Monitor } from "lucide-react";
 import { adminDashboardMock } from "@/mocks";
 
@@ -6,6 +7,13 @@ const iconMap = {
   teachers: GraduationCap,
   classes: Layers,
   content: Monitor,
+};
+
+const actionLinks = {
+  "add-student": "/admin/students/create",
+  "add-teacher": "/admin/teachers",
+  "create-class": "/admin/classes",
+  "manage-content": "/admin/content",
 };
 
 export const AdminQuickActionsCard = () => {
@@ -20,10 +28,11 @@ export const AdminQuickActionsCard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {quickActions.map((action) => {
           const Icon = iconMap[action.iconType] || Users;
+          const href = actionLinks[action.id] || "/admin";
           return (
-            <button
+            <Link
               key={action.id}
-              type="button"
+              to={href}
               className={`w-full flex items-center justify-center sm:justify-start gap-3 px-4 py-3.5 sm:py-4 rounded-2xl sm:rounded-3xl border transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 ${action.containerClass}`}
             >
               <div
@@ -34,7 +43,7 @@ export const AdminQuickActionsCard = () => {
               <span className="text-xs sm:text-sm font-bold tracking-tight">
                 {action.label}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>
