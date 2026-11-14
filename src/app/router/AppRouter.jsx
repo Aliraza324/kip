@@ -23,6 +23,13 @@ const AdminAddStudentPage = lazy(() => import("@/features/admin/students/pages/A
 const AdminStudentDetailPage = lazy(() => import("@/features/admin/students/pages/AdminStudentDetailPage"));
 const AdminClassesPage = lazy(() => import("@/features/admin/classes/pages/AdminClassesPage"));
 const AdminClassDetailPage = lazy(() => import("@/features/admin/classes/pages/AdminClassDetailPage"));
+const AdminTeachersPage = lazy(() => import("@/features/admin/teachers/pages/AdminTeachersPage"));
+const AdminAddTeacherPage = lazy(() => import("@/features/admin/teachers/pages/AdminAddTeacherPage"));
+const AdminTeacherApprovalPage = lazy(() => import("@/features/admin/teachers/pages/AdminTeacherApprovalPage"));
+const AdminTeacherDetailPage = lazy(() => import("@/features/admin/teachers/pages/AdminTeacherDetailPage"));
+const AdminAssignClassPage = lazy(() => import("@/features/admin/teachers/pages/AdminAssignClassPage"));
+const AdminWebsiteContentPage = lazy(() => import("@/features/admin/content/pages/AdminWebsiteContentPage"));
+const AdminNotificationsPage = lazy(() => import("@/features/admin/notifications/pages/AdminNotificationsPage"));
 
 // Teacher Portal Routes
 const TeacherLayout = lazy(() => import("@/layouts/TeacherLayout"));
@@ -103,6 +110,13 @@ export const AppRouter = () => {
             <Route path="students/:studentId" element={<AdminStudentDetailPage />} />
             <Route path="classes" element={<AdminClassesPage />} />
             <Route path="classes/:classId" element={<AdminClassDetailPage />} />
+            <Route path="teachers" element={<AdminTeachersPage />} />
+            <Route path="teachers/create" element={<AdminAddTeacherPage />} />
+            <Route path="teachers/approval/:teacherId" element={<AdminTeacherApprovalPage />} />
+            <Route path="teachers/:teacherId" element={<AdminTeacherDetailPage />} />
+            <Route path="teachers/:teacherId/assign-class" element={<AdminAssignClassPage />} />
+            <Route path="content" element={<AdminWebsiteContentPage />} />
+            <Route path="notifications" element={<AdminNotificationsPage />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>
 
