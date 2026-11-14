@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import {
-  Home, Calendar, Layers, Users, ClipboardList, UserCheck,
+  Home, Calendar, Layers, Users, ClipboardList,
   User, Bell, Search, Headphones, ChevronDown, Menu, X, ArrowRight,
 } from "lucide-react";
 import logoImg from "@/assets/images/KIPClassin logo.png";
@@ -14,7 +14,6 @@ const navItems = [
   { label: "Class", href: "/teacher/classes", icon: Layers },
   { label: "Students", href: "/teacher/students", icon: Users },
   { label: "Assignments", href: "/teacher/assignments", icon: ClipboardList },
-  { label: "Attendance", href: "/teacher/attendance", icon: UserCheck },
   { label: "My Profile", href: "/teacher/profile", icon: User },
   { label: "Notifications", href: "/teacher/notifications", icon: Bell },
 ];
