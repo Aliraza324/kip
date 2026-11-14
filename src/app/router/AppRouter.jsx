@@ -12,6 +12,11 @@ const ContactPage = lazy(() => import("@/features/landing/pages/ContactPage"));
 // Auth Routes
 const StudentLoginPage = lazy(() => import("@/features/auth/pages/StudentLoginPage"));
 const TeacherAuthPage = lazy(() => import("@/features/auth/pages/TeacherAuthPage"));
+const AdminLoginPage = lazy(() => import("@/features/auth/pages/AdminLoginPage"));
+
+// Admin Portal Routes
+const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
+const AdminDashboardPage = lazy(() => import("@/features/admin/pages/AdminDashboardPage"));
 
 // Teacher Portal Routes
 const TeacherLayout = lazy(() => import("@/layouts/TeacherLayout"));
@@ -71,12 +76,23 @@ export const AppRouter = () => {
           <Route path="/auth/student-login" element={<StudentLoginPage />} />
           <Route path="/login" element={<StudentLoginPage />} />
 
+          {/* Admin Authentication Routes */}
+          <Route path="/auth/admin-login" element={<AdminLoginPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+
           {/* Teacher Authentication Routes */}
           <Route path="/auth/teacher-login" element={<TeacherAuthPage mode="login" />} />
           <Route path="/auth/teacher-register" element={<TeacherAuthPage mode="register" />} />
           <Route path="/auth/teacher-verify" element={<TeacherAuthPage mode="verify" />} />
           <Route path="/auth/teacher-success" element={<TeacherAuthPage mode="success" />} />
           <Route path="/auth/teacher-forgot-password" element={<TeacherAuthPage mode="forgot" />} />
+
+          {/* Admin Portal Protected Workspace */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
+          </Route>
 
           {/* Teacher Portal Protected Workspace */}
           <Route path="/teacher" element={<TeacherLayout />}>
