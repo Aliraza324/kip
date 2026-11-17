@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User } from "lucide-react";
+import { User, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { AdminTeacherAcademicAssignmentCard } from "./AdminTeacherAcademicAssignmentCard";
 
-export const AdminAddTeacherForm = ({ onSuccess }) => {
+export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
   const [formData, setFormData] = useState({
     fullName: "",
     teacherId: "TE-1006",
@@ -14,8 +14,10 @@ export const AdminAddTeacherForm = ({ onSuccess }) => {
     phone: "",
     dob: "",
     gender: "Male",
-    status: "Active",
+    status: "active",
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [subjects, setSubjects] = useState(["Mathematics", "Physics"]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,9 +31,17 @@ export const AdminAddTeacherForm = ({ onSuccess }) => {
       return;
     }
     const finalData = {
-      ...formData,
-      username: formData.username || formData.fullName.toLowerCase().replace(/\s+/g, "."),
-      password: formData.password || "Kip@1234",
+      fullName: formData.fullName.trim(),
+      code: formData.teacherId?.trim() || undefined,
+      username: formData.username?.trim() || undefined,
+      password: formData.password || undefined,
+      email: formData.email?.trim() || undefined,
+      phone: formData.phone?.trim() || undefined,
+      dob: formData.dob || undefined,
+      gender: formData.gender,
+      status: (formData.status || "active").toLowerCase(),
+      subjects: subjects.length > 0 ? subjects : undefined,
+      avatar: avatarFile || undefined,
     };
     onSuccess(finalData);
   };
@@ -155,7 +165,14 @@ export const AdminAddTeacherForm = ({ onSuccess }) => {
 
         {/* Right Column: Profile Photo & Academic Assignment */}
         <div className="lg:col-span-4">
-          <AdminTeacherAcademicAssignmentCard formData={formData} onChange={handleChange} />
+          <AdminTeacherAcademicAssignmentCard
+            formData={formData}
+            onChange={handleChange}
+            avatarFile={avatarFile}
+            onAvatarChange={setAvatarFile}
+            subjects={subjects}
+            onSubjectsChange={setSubjects}
+          />
         </div>
       </div>
 
@@ -169,9 +186,11 @@ export const AdminAddTeacherForm = ({ onSuccess }) => {
         </Link>
         <button
           type="submit"
-          className="px-7 py-2.5 rounded-full bg-[#0080f6] hover:bg-blue-600 text-xs sm:text-sm font-bold text-white shadow-md shadow-blue-500/25 cursor-pointer transition-colors"
+          disabled={isSubmitting}
+          className="px-7 py-2.5 rounded-full bg-[#0080f6] hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-xs sm:text-sm font-bold text-white shadow-md shadow-blue-500/25 cursor-pointer transition-colors flex items-center gap-2"
         >
-          + Add Teacher
+          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          <span>{isSubmitting ? "Creating Teacher..." : "+ Add Teacher"}</span>
         </button>
       </div>
     </form>

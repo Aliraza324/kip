@@ -1,38 +1,126 @@
-import { api } from "./apiClient";
+import { api, setAuthToken, setAuthUser, clearAuthSession } from "./apiClient";
 import { API_ROUTES } from "./apiRoutes";
 import { liveStore, emitDataChange } from "./dataStore";
 
 export const authService = {
-  async login(cred) {
-    try { return await api.post(API_ROUTES.AUTH.LOGIN, cred); }
-    catch { return { success: true, user: { username: cred.username, role: "user" } }; }
+  async studentLogin(credentials) {
+    const res = await api.post(API_ROUTES.AUTH.LOGIN, {
+      username: credentials.username,
+      password: credentials.password,
+      portal: "student",
+    });
+    if (res?.data?.accessToken) {
+      setAuthToken(res.data.accessToken);
+      setAuthUser(res.data.user);
+    }
+    emitDataChange("auth", "login", res?.data?.user);
+    return res;
   },
-  async adminLogin(cred) {
-    try { return await api.post(API_ROUTES.AUTH.ADMIN_LOGIN, cred); }
-    catch { return { success: true, user: { username: "admin", role: "admin" } }; }
+
+  async adminLogin(credentials) {
+    const res = await api.post(API_ROUTES.AUTH.LOGIN, {
+      username: credentials.username,
+      password: credentials.password,
+      portal: "admin",
+    });
+    if (res?.data?.accessToken) {
+      setAuthToken(res.data.accessToken);
+      setAuthUser(res.data.user);
+    }
+    emitDataChange("auth", "login", res?.data?.user);
+    return res;
   },
-  async teacherLogin(cred) {
-    try { return await api.post(API_ROUTES.AUTH.TEACHER_LOGIN, cred); }
-    catch { return { success: true, user: { username: cred.email, role: "teacher" } }; }
+
+  async teacherLogin(credentials) {
+    const res = await api.post(API_ROUTES.AUTH.LOGIN, {
+      username: credentials.username || credentials.email,
+      password: credentials.password,
+      portal: "teacher",
+    });
+    if (res?.data?.accessToken) {
+      setAuthToken(res.data.accessToken);
+      setAuthUser(res.data.user);
+    }
+    emitDataChange("auth", "login", res?.data?.user);
+    return res;
   },
+
   async registerTeacher(data) {
-    const newT = {
-      id: `TE-${Date.now().toString().slice(-4)}`,
-      teacherId: `TE-${Date.now().toString().slice(-4)}`,
-      name: data.fullName || data.name,
+    const res = await api.post(API_ROUTES.AUTH.TEACHER_REGISTER, {
+      fullName: data.fullName || data.name,
+      phoneNumber: data.phoneNumber || data.phone,
       email: data.email,
-      phone: data.phone || "",
-      status: "Pending Approval",
-      subjects: data.subject ? [data.subject] : ["General"],
-      assignedClasses: [],
-    };
-    liveStore.add("teachers", newT);
-    try { await api.post(API_ROUTES.AUTH.TEACHER_REGISTER, data); } catch {}
-    return { success: true, teacher: newT };
+      password: data.password,
+      confirmPassword: data.confirmPassword || data.password,
+      gender: data.gender,
+      qualification: data.qualification,
+      subjects: data.subjects || (data.subject ? [data.subject] : undefined),
+      preferredClasses: data.preferredClasses || data.preferClasses,
+      agreeTerms: Boolean(data.agreeTerms !== undefined ? data.agreeTerms : true),
+    });
+    return res;
   },
-  logout() {
-    localStorage.removeItem("kip_token");
+
+  async verifyTeacherEmail(data) {
+    return await api.post(API_ROUTES.AUTH.TEACHER_VERIFY_EMAIL, {
+      email: data.email,
+      otp: data.otp,
+    });
+  },
+
+  async resendOtp(data) {
+    return await api.post(API_ROUTES.AUTH.OTP_RESEND, {
+      email: data.email,
+      purpose: data.purpose || "verify_email",
+    });
+  },
+
+  async forgotPassword(data) {
+    return await api.post(API_ROUTES.AUTH.FORGOT_PASSWORD, {
+      email: data.email,
+    });
+  },
+
+  async verifyResetOtp(data) {
+    return await api.post(API_ROUTES.AUTH.VERIFY_RESET_OTP, {
+      email: data.email,
+      otp: data.otp,
+    });
+  },
+
+  async resetPassword(data) {
+    return await api.post(API_ROUTES.AUTH.RESET_PASSWORD, {
+      resetToken: data.resetToken,
+      newPassword: data.newPassword,
+      confirmPassword: data.confirmPassword || data.newPassword,
+    });
+  },
+
+  async refreshSession() {
+    try {
+      const res = await api.post(API_ROUTES.AUTH.REFRESH);
+      if (res?.data?.accessToken) {
+        setAuthToken(res.data.accessToken);
+        setAuthUser(res.data.user);
+      }
+      return res;
+    } catch (err) {
+      clearAuthSession();
+      throw err;
+    }
+  },
+
+  async logout() {
+    try {
+      await api.post(API_ROUTES.AUTH.LOGOUT);
+    } catch {}
+    clearAuthSession();
     emitDataChange("auth", "logout", null);
+  },
+
+  // Aliases for backwards compatibility
+  async login(cred) {
+    return this.studentLogin(cred);
   },
 };
 
@@ -81,58 +169,130 @@ export const studentService = {
 };
 
 export const teacherService = {
-  async getAll() {
+  async getAll(params = {}) {
     try {
-      const res = await api.get(API_ROUTES.TEACHERS.BASE);
-      if (res?.data) liveStore.set("teachers", res.data);
-      return res?.data || liveStore.get("teachers");
-    } catch {
-      return liveStore.get("teachers");
+      const res = await api.get(API_ROUTES.ADMIN.TEACHERS.BASE, { params });
+      return res;
+    } catch (err) {
+      console.error("teacherService.getAll error:", err);
+      return { data: [], meta: { total: 0, counts: { all: 0, pending: 0, active: 0 } } };
     }
   },
+
+  async getById(teacherId) {
+    const res = await api.get(API_ROUTES.ADMIN.TEACHERS.DETAIL(teacherId));
+    return res?.data;
+  },
+
   async create(teacherData) {
-    const newT = {
-      id: `TE-${Date.now().toString().slice(-4)}`,
-      teacherId: `TE-${Date.now().toString().slice(-4)}`,
-      name: teacherData.fullName || teacherData.name,
-      username: teacherData.username || teacherData.email?.split("@")[0] || "teacher",
-      email: teacherData.email,
-      phone: teacherData.phone || "",
-      dob: teacherData.dob || "",
-      status: teacherData.status || "Active",
-      subjects: Array.isArray(teacherData.subjects) ? teacherData.subjects : [teacherData.subject || "Mathematics"],
-      assignedClasses: teacherData.assignedClasses || [],
-      ...teacherData,
-    };
-    liveStore.add("teachers", newT);
-    try { await api.post(API_ROUTES.TEACHERS.CREATE, newT); } catch {}
-    return newT;
+    let payload = teacherData;
+    if (typeof FormData !== "undefined" && !(teacherData instanceof FormData)) {
+      const formData = new FormData();
+      Object.entries(teacherData).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+        if (key === "avatar") {
+          if (value instanceof File || value instanceof Blob) {
+            formData.append("avatar", value, value.name || "avatar.jpg");
+          }
+        } else if (Array.isArray(value)) {
+          if (value.length > 0 && typeof value[0] === "object") {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            value.forEach((item) => formData.append(key, item));
+          }
+        } else {
+          formData.append(key, value);
+        }
+      });
+      payload = formData;
+    }
+
+    try {
+      const res = await api.post(API_ROUTES.ADMIN.TEACHERS.CREATE, payload);
+      const created = res?.data?.teacher || res?.data;
+      if (created) liveStore.add("teachers", created);
+      return res?.data || created;
+    } catch (err) {
+      console.error("teacherService.create error:", err);
+      throw err;
+    }
   },
-  async approve(teacherId, extra = {}) {
-    const updated = liveStore.update("teachers", teacherId, { status: "Active", ...extra });
-    try { await api.put(API_ROUTES.TEACHERS.APPROVE(teacherId), extra); } catch {}
-    return updated;
-  },
-  async reject(teacherId) {
-    const updated = liveStore.update("teachers", teacherId, { status: "Rejected" });
-    try { await api.put(API_ROUTES.TEACHERS.REJECT(teacherId)); } catch {}
-    return updated;
-  },
+
   async update(teacherId, updates) {
-    const updated = liveStore.update("teachers", teacherId, updates);
-    try { await api.put(API_ROUTES.TEACHERS.UPDATE(teacherId), updates); } catch {}
+    let payload = updates;
+    if (typeof FormData !== "undefined" && !(updates instanceof FormData)) {
+      const hasFile = updates && Object.values(updates).some((v) => v instanceof File || v instanceof Blob);
+      if (hasFile) {
+        const formData = new FormData();
+        Object.entries(updates).forEach(([key, value]) => {
+          if (value === undefined || value === null) return;
+          if (key === "avatar" && (value instanceof File || value instanceof Blob)) {
+            formData.append("avatar", value, value.name || "avatar.jpg");
+          } else if (Array.isArray(value)) {
+            value.forEach((item) => formData.append(key, item));
+          } else {
+            formData.append(key, value);
+          }
+        });
+        payload = formData;
+      }
+    }
+    const res = await api.patch(API_ROUTES.ADMIN.TEACHERS.UPDATE(teacherId), payload);
+    const updated = res?.data?.teacher || res?.data;
+    if (updated) liveStore.update("teachers", teacherId, updated);
+    return res?.data || updated;
+  },
+
+  async delete(teacherId) {
+    const res = await api.delete(API_ROUTES.ADMIN.TEACHERS.DELETE(teacherId));
+    liveStore.remove("teachers", teacherId);
+    return res;
+  },
+
+  async approve(teacherId, { subjects = [], classes = [] } = {}) {
+    try {
+      const res = await api.patch(API_ROUTES.ADMIN.TEACHERS.APPROVE(teacherId), {
+        action: "approve",
+        subjects,
+        classes,
+      });
+      liveStore.update("teachers", teacherId, { status: "active", ...res?.data });
+      return res?.data;
+    } catch {
+      return liveStore.update("teachers", teacherId, { status: "Active" });
+    }
+  },
+
+  async reject(teacherId) {
+    try {
+      const res = await api.patch(API_ROUTES.ADMIN.TEACHERS.REJECT(teacherId), {
+        action: "reject",
+      });
+      liveStore.update("teachers", teacherId, { status: "rejected" });
+      return res?.data;
+    } catch {
+      return liveStore.update("teachers", teacherId, { status: "Rejected" });
+    }
+  },
+
+  async assignClass(teacherId, { classId, subjects = [] }) {
+    const res = await api.post(API_ROUTES.ADMIN.TEACHERS.ASSIGN_CLASS(teacherId), {
+      classId,
+      subjects,
+    });
+    const updated = res?.data;
+    if (updated) liveStore.update("teachers", teacherId, updated);
     return updated;
   },
 };
 
 export const classService = {
-  async getAll() {
+  async getAll(params = { limit: 100 }) {
     try {
-      const res = await api.get(API_ROUTES.CLASSES.BASE);
-      if (res?.data) liveStore.set("classes", res.data);
-      return res?.data || liveStore.get("classes");
+      const res = await api.get(API_ROUTES.ADMIN.CLASSES.BASE, { params });
+      return res?.data || [];
     } catch {
-      return liveStore.get("classes");
+      return [];
     }
   },
   async create(classData) {

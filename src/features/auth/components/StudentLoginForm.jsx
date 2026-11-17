@@ -4,16 +4,27 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { studentLoginMock } from "@/mocks";
 import { studentLoginSchema } from "../schemas/login.schema";
 import { fadeInUp } from "@/animations";
+import { useStudentLogin } from "@/hooks/student";
 
 export const StudentLoginForm = () => {
   const { title, subtitle, fields, submitButton } = studentLoginMock;
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
+
+  const { mutateAsync: loginStudent, isPending: isLoggingIn } = useStudentLogin({
+    onSuccess: (res) => {
+      toast.success(res?.message || "Login successful!");
+      navigate("/student");
+    },
+    onError: (err) => {
+      toast.error(err?.message || "Invalid username or password");
+    },
+  });
 
   const {
     register,
@@ -24,11 +35,12 @@ export const StudentLoginForm = () => {
     defaultValues: { username: "", password: "" },
   });
 
-  const onSubmit = () => {
-    setIsLoggingIn(true);
-    setTimeout(() => {
-      navigate("/student");
-    }, 600);
+  const onSubmit = async (data) => {
+    try {
+      await loginStudent(data);
+    } catch {
+      // Handled in onError
+    }
   };
 
   return (

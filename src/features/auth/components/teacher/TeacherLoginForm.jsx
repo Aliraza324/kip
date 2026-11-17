@@ -3,6 +3,7 @@ import { User, Lock, Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
 import { showToast } from "@/utils";
+import { useTeacherLogin } from "@/hooks/teacher";
 
 export const TeacherLoginForm = ({
   onNavigateRegister,
@@ -15,10 +16,23 @@ export const TeacherLoginForm = ({
   const [username, setUsername] = useState(prefilledUsername || demoAccounts.approved.username);
   const [password, setPassword] = useState("password123");
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [testStatus, setTestStatus] = useState(initialStatus); // "approved" | "pending"
 
-  const handleLogin = (e) => {
+  const { mutateAsync: loginTeacher, isPending: isSubmitting } = useTeacherLogin({
+    onSuccess: (res) => {
+      showToast.welcomeDashboard();
+      onLoginSuccess?.(res?.data);
+    },
+    onError: (err) => {
+      if (err?.code === "ACCOUNT_PENDING") {
+        showToast.verificationInProgress();
+      } else {
+        showToast.error(err?.message || "Invalid credentials.");
+      }
+    },
+  });
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!username.trim()) {
       showToast.error("Please enter your username or email.");
@@ -29,22 +43,11 @@ export const TeacherLoginForm = ({
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Determine if approved or pending review per Requirement 6
-      const isPending =
-        testStatus === "pending" ||
-        username.toLowerCase().includes("domain.com") ||
-        username.toLowerCase() === demoAccounts.pending.username.toLowerCase();
-
-      if (isPending) {
-        showToast.verificationInProgress();
-      } else {
-        showToast.welcomeDashboard();
-        onLoginSuccess?.();
-      }
-    }, 450);
+    try {
+      await loginTeacher({ username, password });
+    } catch {
+      // Handled in onError
+    }
   };
 
   return (

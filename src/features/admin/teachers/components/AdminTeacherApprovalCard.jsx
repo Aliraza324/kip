@@ -4,34 +4,55 @@ import { User, X, Check, GraduationCap } from "lucide-react";
 import toast from "react-hot-toast";
 import { teacherService } from "@/service/apiService";
 
-export const AdminTeacherApprovalCard = ({ teacher }) => {
+export const AdminTeacherApprovalCard = ({ teacher = {} }) => {
   const navigate = useNavigate();
-  const [assignedSubjects, setAssignedSubjects] = useState(["Chemistry"]);
+  const teacherName = teacher.fullName || teacher.name || "Teacher";
+  const teacherId = teacher.id || teacher._id || teacher.teacherId || teacher.code;
+  const initialSubjects = Array.isArray(teacher.subjects) && teacher.subjects.length > 0
+    ? teacher.subjects
+    : ["General"];
+
+  const [assignedSubjects, setAssignedSubjects] = useState(initialSubjects);
   const [assignedClasses, setAssignedClasses] = useState(["Grade 9 – B", "Grade 10 – A"]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const removeSubject = (s) => setAssignedSubjects((prev) => prev.filter((item) => item !== s));
   const removeClass = (c) => setAssignedClasses((prev) => prev.filter((item) => item !== c));
 
   const handleApprove = async () => {
-    await teacherService.approve(teacher.id || teacher.teacherId, {
-      assignedClasses: assignedClasses.map((cls, idx) => ({
-        id: `ac-${Date.now()}-${idx}`,
-        class: cls,
-        section: cls.includes("–") ? cls.split("–")[1]?.trim() : "A",
-        subject: assignedSubjects[0] || "General",
-        assignedOn: "Just Now",
-      })),
-      subjects: assignedSubjects,
-    });
-    toast.success(`Account approved for ${teacher.name}!`);
-    navigate("/admin/teachers");
+    setIsSubmitting(true);
+    try {
+      await teacherService.approve(teacherId, {
+        subjects: assignedSubjects,
+        classes: [],
+      });
+      toast.success(`Account approved for ${teacherName}!`);
+      navigate("/admin/teachers");
+    } catch (err) {
+      toast.error(err?.message || "Failed to approve account");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReject = async () => {
-    await teacherService.reject(teacher.id || teacher.teacherId);
-    toast.error(`Registration rejected for ${teacher.name}`);
-    navigate("/admin/teachers");
+    setIsSubmitting(true);
+    try {
+      await teacherService.reject(teacherId);
+      toast.error(`Registration rejected for ${teacherName}`);
+      navigate("/admin/teachers");
+    } catch (err) {
+      toast.error(err?.message || "Failed to reject account");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const avatarUrl =
+    typeof teacher.avatar === "string"
+      ? teacher.avatar
+      : teacher.avatar?.url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=eaf4fe&color=0080f6`;
 
   return (
     <div className="space-y-6">
@@ -45,12 +66,12 @@ export const AdminTeacherApprovalCard = ({ teacher }) => {
 
           <div className="flex items-center gap-4">
             <img
-              src={teacher.avatar}
-              alt={teacher.name}
+              src={avatarUrl}
+              alt={teacherName}
               className="w-16 h-16 rounded-full object-cover border-2 border-slate-200 shrink-0"
             />
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">{teacher.name}</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">{teacherName}</h2>
               <span className="inline-block mt-1 px-3 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold">
                 ⏱ Pending Approval
               </span>
@@ -60,23 +81,27 @@ export const AdminTeacherApprovalCard = ({ teacher }) => {
           <div className="divide-y divide-slate-100 text-xs sm:text-sm">
             <div className="py-2.5 flex justify-between gap-2">
               <span className="text-slate-500 font-semibold">Email</span>
-              <span className="font-bold text-slate-800">{teacher.email}</span>
+              <span className="font-bold text-slate-800">{teacher.email || "—"}</span>
             </div>
             <div className="py-2.5 flex justify-between gap-2">
               <span className="text-slate-500 font-semibold">Phone</span>
-              <span className="font-bold text-slate-800">{teacher.phone}</span>
+              <span className="font-bold text-slate-800">{teacher.phone || "—"}</span>
             </div>
             <div className="py-2.5 flex justify-between gap-2">
-              <span className="text-slate-500 font-semibold">Date of Birth</span>
-              <span className="font-bold text-slate-800">{teacher.dob}</span>
+              <span className="text-slate-500 font-semibold">Qualification</span>
+              <span className="font-bold text-slate-800">
+                {Array.isArray(teacher.qualification) ? teacher.qualification.join(", ") : teacher.qualification || "—"}
+              </span>
             </div>
             <div className="py-2.5 flex justify-between gap-2">
               <span className="text-slate-500 font-semibold">Gender</span>
-              <span className="font-bold text-slate-800">{teacher.gender}</span>
+              <span className="font-bold text-slate-800">{teacher.gender || "—"}</span>
             </div>
             <div className="py-2.5 flex justify-between gap-2">
               <span className="text-slate-500 font-semibold">Registered On</span>
-              <span className="font-bold text-slate-800">{teacher.registeredOn || "Nov 20, 2026, 11:24 AM"}</span>
+              <span className="font-bold text-slate-800">
+                {teacher.registeredOn || (teacher.createdAt ? new Date(teacher.createdAt).toLocaleDateString() : "Just Now")}
+              </span>
             </div>
           </div>
 
@@ -97,13 +122,15 @@ export const AdminTeacherApprovalCard = ({ teacher }) => {
             <div>
               <span className="text-xs font-semibold text-slate-500 block mb-1.5">Requested Subjects</span>
               <span className="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                Chemistry
+                {Array.isArray(teacher.subjects) && teacher.subjects.length > 0 ? teacher.subjects.join(", ") : "General"}
               </span>
             </div>
             <div>
               <span className="text-xs font-semibold text-slate-500 block mb-1">Preferred Classes (If any)</span>
               <span className="text-xs font-bold text-slate-800">
-                {teacher.preferredClasses || "Grade 9 – B, Grade 10 – A"}
+                {Array.isArray(teacher.preferredClasses)
+                  ? teacher.preferredClasses.join(", ")
+                  : teacher.preferredClasses || "Grade 9 – B, Grade 10 – A"}
               </span>
             </div>
           </div>
@@ -149,18 +176,20 @@ export const AdminTeacherApprovalCard = ({ teacher }) => {
         <button
           type="button"
           onClick={handleReject}
-          className="px-6 py-2.5 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs sm:text-sm font-bold cursor-pointer transition-colors flex items-center gap-1.5"
+          disabled={isSubmitting}
+          className="px-6 py-2.5 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs sm:text-sm font-bold cursor-pointer transition-colors flex items-center gap-1.5 disabled:opacity-50"
         >
           <X className="w-4 h-4" />
-          <span>Reject</span>
+          <span>{isSubmitting ? "Processing..." : "Reject"}</span>
         </button>
         <button
           type="button"
           onClick={handleApprove}
-          className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-blue-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 cursor-pointer transition-colors flex items-center gap-1.5"
+          disabled={isSubmitting}
+          className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-blue-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 cursor-pointer transition-colors flex items-center gap-1.5 disabled:opacity-50"
         >
           <Check className="w-4 h-4" />
-          <span>Approve & Create Account</span>
+          <span>{isSubmitting ? "Processing..." : "Approve & Create Account"}</span>
         </button>
       </div>
     </div>

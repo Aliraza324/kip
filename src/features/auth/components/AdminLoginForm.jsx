@@ -9,12 +9,22 @@ import logoImg from "@/assets/images/KIPClassin logo.png";
 import { adminLoginMock } from "@/mocks";
 import { adminLoginSchema } from "../schemas/login.schema";
 import { fadeInUp } from "@/animations";
+import { useAdminLogin } from "@/hooks/admin";
 
 export const AdminLoginForm = () => {
   const { title, subtitle, fields, submitButton, credentials } = adminLoginMock;
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
+
+  const { mutateAsync: loginAdmin, isPending: isLoggingIn } = useAdminLogin({
+    onSuccess: (res) => {
+      toast.success(res?.message || "Welcome back, Administrator!");
+      navigate("/admin");
+    },
+    onError: (err) => {
+      toast.error(err?.message || "Invalid administrator credentials");
+    },
+  });
 
   const {
     register,
@@ -29,12 +39,12 @@ export const AdminLoginForm = () => {
     },
   });
 
-  const onSubmit = () => {
-    setIsLoggingIn(true);
-    setTimeout(() => {
-      toast.success("Welcome back, Administrator!");
-      navigate("/admin");
-    }, 500);
+  const onSubmit = async (data) => {
+    try {
+      await loginAdmin(data);
+    } catch {
+      // Handled in onError
+    }
   };
 
   const handleQuickFill = () => {

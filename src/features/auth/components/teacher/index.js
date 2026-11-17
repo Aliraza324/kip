@@ -4,4 +4,5 @@ export { TeacherRegisterForm } from "./TeacherRegisterForm";
 export { TeacherEmailVerifyView } from "./TeacherEmailVerifyView";
 export { TeacherSuccessView } from "./TeacherSuccessView";
 export { TeacherForgotPasswordView } from "./TeacherForgotPasswordView";
+export { CreatableTagSelect } from "./CreatableTagSelect";
 

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Eye, Edit3, MoreHorizontal, ArrowRight } from "lucide-react";
+import { Eye, Edit3, Trash2, ArrowRight } from "lucide-react";
 
 const subjectColorMap = {
   Mathematics: "bg-blue-50 text-[#0080f6]",
@@ -9,8 +9,18 @@ const subjectColorMap = {
   Biology: "bg-cyan-50 text-cyan-600",
 };
 
-export const AdminTeacherRow = ({ teacher, idx, isSelected, onToggle }) => {
-  const isPending = teacher.status === "Pending Approval";
+export const AdminTeacherRow = ({ teacher, idx, isSelected, onToggle, onEdit, onDelete }) => {
+  const isPending = teacher.status === "Pending Approval" || teacher.status === "pending";
+  const teacherId = teacher.id || teacher._id || teacher.teacherId || teacher.code;
+  const teacherName = teacher.fullName || teacher.name || "Teacher";
+  const teacherCode = teacher.code || teacher.teacherId || "—";
+  const avatarUrl =
+    typeof teacher.avatar === "string"
+      ? teacher.avatar
+      : teacher.avatar?.url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=eaf4fe&color=0080f6`;
+
+  const subjectsList = Array.isArray(teacher.subjects) ? teacher.subjects : [];
 
   return (
     <tr
@@ -30,76 +40,90 @@ export const AdminTeacherRow = ({ teacher, idx, isSelected, onToggle }) => {
       <td className="py-3.5 px-4">
         <div className="flex items-center gap-3">
           <img
-            src={teacher.avatar}
-            alt={teacher.name}
+            src={avatarUrl}
+            alt={teacherName}
             className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
           />
-          <span className="font-bold text-slate-900">{teacher.name}</span>
+          <span className="font-bold text-slate-900">{teacherName}</span>
         </div>
       </td>
-      <td className="py-3.5 px-4 text-slate-600 font-medium">{teacher.teacherId}</td>
+      <td className="py-3.5 px-4 text-slate-600 font-medium">{teacherCode}</td>
       <td className="py-3.5 px-4">
         <div className="flex flex-wrap gap-1.5">
-          {teacher.subjects.map((sub) => (
-            <span
-              key={sub}
-              className={`inline-block px-3 py-0.5 rounded-full text-xs font-semibold ${
-                subjectColorMap[sub] || "bg-blue-50 text-blue-600"
-              }`}
-            >
-              {sub}
-            </span>
-          ))}
+          {subjectsList.length > 0 ? (
+            subjectsList.map((sub) => (
+              <span
+                key={sub}
+                className={`inline-block px-3 py-0.5 rounded-full text-xs font-semibold ${
+                  subjectColorMap[sub] || "bg-blue-50 text-blue-600"
+                }`}
+              >
+                {sub}
+              </span>
+            ))
+          ) : (
+            <span className="text-xs text-slate-400">—</span>
+          )}
         </div>
       </td>
       <td className="py-3.5 px-4 text-slate-600">
         {teacher.assignedClasses?.length > 0
-          ? teacher.assignedClasses.map((ac) => `${ac.class} – ${ac.section}`).join(", ")
-          : "Grade 9 – B"}
+          ? teacher.assignedClasses
+              .map((ac) => ac.label || `${ac.className || ac.class || "Class"} – ${ac.section || ""}`)
+              .join(", ")
+          : "—"}
       </td>
       <td className="py-3.5 px-4">
         <span
           className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-            isPending ? "bg-amber-100/80 text-amber-700" : "bg-emerald-50 text-emerald-600"
+            isPending
+              ? "bg-amber-100/80 text-amber-700"
+              : teacher.status === "rejected"
+                ? "bg-rose-100 text-rose-700"
+                : "bg-emerald-50 text-emerald-600"
           }`}
         >
-          {isPending ? "Pending Approval" : "• Active"}
+          {isPending ? "Pending Approval" : teacher.status === "rejected" ? "Rejected" : "• Active"}
         </span>
       </td>
       <td className="py-3.5 px-4 text-center">
-        {isPending ? (
-          <Link
-            to={`/admin/teachers/approval/${teacher.teacherId}`}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
-          >
-            <span>Pending Approval</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#0080f6]" />
-          </Link>
-        ) : (
-          <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-1.5">
+          {isPending ? (
             <Link
-              to={`/admin/teachers/${teacher.teacherId}`}
+              to={`/admin/teachers/approval/${teacherId}`}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold shadow-2xs transition-colors cursor-pointer mr-1"
+            >
+              <span>Review</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#0080f6]" />
+            </Link>
+          ) : (
+            <Link
+              to={`/admin/teachers/${teacherId}`}
               title="View Teacher Details"
               className="p-1.5 rounded-lg text-[#0080f6] hover:bg-blue-50 transition-colors cursor-pointer"
             >
               <Eye className="w-4 h-4" />
             </Link>
-            <button
-              type="button"
-              title="Edit Teacher"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <Edit3 className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              title="More Actions"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <MoreHorizontal className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+          )}
+
+          <button
+            type="button"
+            onClick={() => onEdit?.(teacher)}
+            title="Edit Teacher"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <Edit3 className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onDelete?.(teacher)}
+            title="Delete Teacher"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </td>
     </tr>
   );

@@ -3,6 +3,7 @@ import { Check, ArrowLeft } from "lucide-react";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
 import { showToast } from "@/utils";
+import { useTeacherVerifyEmail, useTeacherResendOtp } from "@/hooks/teacher";
 
 export const TeacherEmailVerifyView = ({
   email = "teacher@domain.com",
@@ -13,10 +14,29 @@ export const TeacherEmailVerifyView = ({
   onBack,
 }) => {
   const { verify } = teacherAuthMock;
-  const [otp, setOtp] = useState(["5", "8", "3", "9", "2", "6"]);
-  const [timer, setTimer] = useState(52);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [timer, setTimer] = useState(60);
   const inputRefs = useRef([]);
+
+  const { mutateAsync: verifyEmailMutation, isPending: isVerifying } = useTeacherVerifyEmail({
+    onSuccess: (res) => {
+      showToast.success(res?.message || "Verification successful!");
+      onVerifySuccess?.(otp.join(""), res?.data);
+    },
+    onError: (err) => {
+      showToast.error(err?.message || "Verification failed. Invalid or expired OTP.");
+    },
+  });
+
+  const { mutateAsync: resendOtpMutation, isPending: isResending } = useTeacherResendOtp({
+    onSuccess: (res) => {
+      setTimer(60);
+      showToast.success(res?.message || "New 6-digit verification code sent to your email!");
+    },
+    onError: (err) => {
+      showToast.error(err?.message || "Failed to resend verification code.");
+    },
+  });
 
   useEffect(() => {
     if (timer <= 0) return;
@@ -56,13 +76,16 @@ export const TeacherEmailVerifyView = ({
     }
   };
 
-  const handleResend = () => {
-    if (timer > 0) return;
-    setTimer(60);
-    showToast.success("New 6-digit verification code sent to your email!");
+  const handleResend = async () => {
+    if (timer > 0 || isResending) return;
+    try {
+      await resendOtpMutation({ email, purpose: "verify_email" });
+    } catch {
+      // Handled in onError
+    }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
     const code = otp.join("");
     if (code.length < 6) {
@@ -70,12 +93,11 @@ export const TeacherEmailVerifyView = ({
       return;
     }
 
-    setIsVerifying(true);
-    setTimeout(() => {
-      setIsVerifying(false);
-      showToast.success("Verification successful!");
-      onVerifySuccess?.(code);
-    }, 450);
+    try {
+      await verifyEmailMutation({ email, otp: code });
+    } catch {
+      // Handled in onError
+    }
   };
 
   const formattedTimer = `00:${timer < 10 ? `0${timer}` : timer}`;

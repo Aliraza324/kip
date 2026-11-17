@@ -6,3 +6,5 @@ export * from "./AdminTeacherSuccessModal";
 export * from "./AdminTeacherApprovalCard";
 export * from "./AdminTeacherDetailCard";
 export * from "./AdminAssignClassForm";
+export * from "./AdminEditTeacherModal";
+export * from "./AdminDeleteTeacherModal";

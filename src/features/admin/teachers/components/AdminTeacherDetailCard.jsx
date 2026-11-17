@@ -1,8 +1,17 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, Calendar, User, Plus, Layers } from "lucide-react";
 
-export const AdminTeacherDetailCard = ({ teacher }) => {
-  const assigned = teacher.assignedClasses || [];
+export const AdminTeacherDetailCard = ({ teacher = {} }) => {
+  const teacherName = teacher.fullName || teacher.name || "Teacher";
+  const teacherCode = teacher.code || teacher.teacherId || "—";
+  const teacherId = teacher.id || teacher._id;
+  const avatarUrl =
+    typeof teacher.avatar === "string"
+      ? teacher.avatar
+      : teacher.avatar?.url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=eaf4fe&color=0080f6`;
+
+  const assigned = Array.isArray(teacher.assignedClasses) ? teacher.assignedClasses : [];
 
   return (
     <div className="space-y-6">
@@ -10,16 +19,16 @@ export const AdminTeacherDetailCard = ({ teacher }) => {
       <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-slate-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="flex items-center gap-4 sm:gap-5">
           <img
-            src={teacher.avatar}
-            alt={teacher.name}
+            src={avatarUrl}
+            alt={teacherName}
             className="w-18 h-18 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-slate-200 shadow-xs shrink-0"
           />
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              {teacher.name}
+              {teacherName}
             </h2>
             <span className="inline-block mt-1 px-3 py-0.5 rounded-full bg-blue-50 text-[#0080f6] text-xs font-bold">
-              {teacher.teacherId}
+              {teacherCode}
             </span>
           </div>
         </div>
@@ -27,19 +36,21 @@ export const AdminTeacherDetailCard = ({ teacher }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-xs sm:text-sm text-slate-600 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-slate-400" />
-            <span className="font-medium">{teacher.email}</span>
+            <span className="font-medium">{teacher.email || "—"}</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-slate-400" />
-            <span className="font-medium">{teacher.dob}</span>
+            <span className="font-medium">
+              {teacher.dob ? new Date(teacher.dob).toLocaleDateString() : "—"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-slate-400" />
-            <span className="font-medium">{teacher.phone}</span>
+            <span className="font-medium">{teacher.phone || "—"}</span>
           </div>
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-slate-400" />
-            <span className="font-medium">{teacher.gender}</span>
+            <span className="font-medium">{teacher.gender || "—"}</span>
           </div>
         </div>
       </div>
@@ -62,7 +73,7 @@ export const AdminTeacherDetailCard = ({ teacher }) => {
           </div>
 
           <Link
-            to={`/admin/teachers/${teacher.teacherId}/assign-class`}
+            to={`/admin/teachers/${teacherId || teacherCode}/assign-class`}
             className="self-start sm:self-auto inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#0080f6] hover:bg-blue-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -82,19 +93,31 @@ export const AdminTeacherDetailCard = ({ teacher }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs sm:text-sm font-medium text-slate-700">
-              {assigned.map((cls, idx) => (
-                <tr key={cls.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
-                  <td className="py-3.5 px-4 font-bold text-slate-900">{cls.class}</td>
-                  <td className="py-3.5 px-4 font-semibold text-slate-700">{cls.section}</td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#0080f6] text-xs font-semibold">
-                      {cls.subject}
-                    </span>
+              {assigned.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-slate-400">
+                    No classes assigned to this teacher yet.
                   </td>
-                  <td className="py-3.5 px-4 text-slate-500">{cls.assignedOn}</td>
                 </tr>
-              ))}
+              ) : (
+                assigned.map((cls, idx) => (
+                  <tr key={cls.assignmentId || cls.id || idx} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3.5 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
+                    <td className="py-3.5 px-4 font-bold text-slate-900">
+                      {cls.className || cls.class || cls.grade || "Class"}
+                    </td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-700">{cls.section || "—"}</td>
+                    <td className="py-3.5 px-4">
+                      <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#0080f6] text-xs font-semibold">
+                        {cls.subject || "General"}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-500">
+                      {cls.assignedOn || (cls.assignedAt ? new Date(cls.assignedAt).toLocaleDateString() : "Active")}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

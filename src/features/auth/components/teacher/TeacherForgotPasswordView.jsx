@@ -4,37 +4,77 @@ import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
 import { showToast } from "@/utils";
 import { TeacherEmailVerifyView } from "./TeacherEmailVerifyView";
+import {
+  useTeacherForgotPassword,
+  useTeacherVerifyResetOtp,
+  useTeacherResetPassword,
+} from "@/hooks/teacher";
 
 export const TeacherForgotPasswordView = ({ onBackToLogin }) => {
   const { forgot } = teacherAuthMock;
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
   const [email, setEmail] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSendCode = (e) => {
+  const { mutateAsync: sendResetCode, isPending: isSendingCode } = useTeacherForgotPassword({
+    onSuccess: (res) => {
+      showToast.success(res?.message || `Verification code sent to ${email}`);
+      setStep(2);
+    },
+    onError: (err) => {
+      showToast.error(err?.message || "Failed to send reset code.");
+    },
+  });
+
+  const { mutateAsync: verifyOtp, isPending: isVerifyingOtp } = useTeacherVerifyResetOtp({
+    onSuccess: (res) => {
+      if (res?.data?.resetToken) {
+        setResetToken(res.data.resetToken);
+      }
+      showToast.success(res?.message || "Code verified! Set your new password.");
+      setStep(3);
+    },
+    onError: (err) => {
+      showToast.error(err?.message || "Invalid or expired reset code.");
+    },
+  });
+
+  const { mutateAsync: performReset, isPending: isResetting } = useTeacherResetPassword({
+    onSuccess: (res) => {
+      showToast.success(res?.message || "Password reset successfully! Please log in with your new credentials.");
+      onBackToLogin();
+    },
+    onError: (err) => {
+      showToast.error(err?.message || "Failed to reset password. Please try again.");
+    },
+  });
+
+  const handleSendCode = async (e) => {
     e.preventDefault();
     if (!email.trim() || !email.includes("@")) {
       showToast.error("Please enter a valid email address.");
       return;
     }
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      showToast.success(`Verification code sent to ${email}`);
-      setStep(2);
-    }, 400);
+    try {
+      await sendResetCode({ email });
+    } catch {
+      // Handled in onError
+    }
   };
 
-  const handleVerifyOtpSuccess = () => {
-    showToast.success("Code verified! Set your new password.");
-    setStep(3);
+  const handleVerifyOtpSuccess = async (code) => {
+    try {
+      await verifyOtp({ email, otp: code });
+    } catch {
+      // Handled in onError
+    }
   };
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     if (!newPassword || newPassword.length < 6) {
       showToast.error("Password must be at least 6 characters.");
@@ -45,12 +85,11 @@ export const TeacherForgotPasswordView = ({ onBackToLogin }) => {
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      showToast.success("Password reset successfully! Please log in with your new credentials.");
-      onBackToLogin();
-    }, 450);
+    try {
+      await performReset({ resetToken, newPassword, confirmPassword });
+    } catch {
+      // Handled in onError
+    }
   };
 
   // Step 2: OTP Verification using the matching 6-digit squircle layout
@@ -126,11 +165,11 @@ export const TeacherForgotPasswordView = ({ onBackToLogin }) => {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isResetting}
             className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#0099ff] to-[#0066ee] hover:from-[#008ae6] hover:to-[#0055dd] text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98 disabled:opacity-60"
           >
             <Check className="w-4 h-4 stroke-[2.5]" />
-            <span>{isSubmitting ? "Updating..." : forgot.resetButtonText}</span>
+            <span>{isResetting ? "Updating..." : forgot.resetButtonText}</span>
           </button>
         </form>
       </div>
@@ -170,11 +209,11 @@ export const TeacherForgotPasswordView = ({ onBackToLogin }) => {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSendingCode}
           className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#0099ff] to-[#0066ee] hover:from-[#008ae6] hover:to-[#0055dd] text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98 disabled:opacity-60"
         >
           <Send className="w-4 h-4" />
-          <span>{isSubmitting ? "Sending Code..." : forgot.sendCodeButtonText}</span>
+          <span>{isSendingCode ? "Sending Code..." : forgot.sendCodeButtonText}</span>
         </button>
 
         <p className="text-xs text-white/80 text-center pt-1">

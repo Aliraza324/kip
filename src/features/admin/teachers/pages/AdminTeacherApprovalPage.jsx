@@ -1,14 +1,11 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { AdminTeacherApprovalCard } from "../components";
-import { adminTeachersMock } from "@/mocks";
+import { useAdminTeacherDetail } from "@/hooks/admin";
 
 export const AdminTeacherApprovalPage = () => {
   const { teacherId } = useParams();
-
-  const teacher =
-    adminTeachersMock.find((t) => t.teacherId === teacherId || t.id === teacherId) ||
-    adminTeachersMock[3];
+  const { teacher, isLoading, error } = useAdminTeacherDetail(teacherId);
 
   return (
     <div className="space-y-6 max-w-[1200px] mx-auto pb-8">
@@ -30,8 +27,28 @@ export const AdminTeacherApprovalPage = () => {
         </div>
       </div>
 
-      {/* Approval Card */}
-      <AdminTeacherApprovalCard teacher={teacher} />
+      {isLoading ? (
+        <div className="py-16 text-center text-slate-400">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#0080f6] mb-2" />
+          <span>Loading registration details...</span>
+        </div>
+      ) : !teacher ? (
+        <div className="py-16 text-center bg-white rounded-3xl border border-slate-100 p-8 space-y-3">
+          <AlertCircle className="w-10 h-10 text-slate-300 mx-auto" />
+          <h3 className="text-base font-bold text-slate-800">Teacher Request Not Found</h3>
+          <p className="text-xs text-slate-400">
+            {error?.message || "The requested teacher application does not exist or may have been reviewed already."}
+          </p>
+          <Link
+            to="/admin/teachers"
+            className="inline-block mt-2 px-5 py-2 rounded-full bg-[#0080f6] text-white text-xs font-bold hover:bg-blue-600 transition-colors"
+          >
+            Back to Teachers
+          </Link>
+        </div>
+      ) : (
+        <AdminTeacherApprovalCard teacher={teacher} />
+      )}
     </div>
   );
 };

@@ -18,9 +18,47 @@ export const setAuthToken = (token) => {
   }
 };
 
-export async function apiRequest(path, { method = "GET", body, headers = {}, ...rest } = {}) {
+export const getAuthUser = () => {
+  if (typeof localStorage === "undefined") return null;
+  try {
+    const raw = localStorage.getItem("kip_user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const setAuthUser = (user) => {
+  if (typeof localStorage === "undefined") return;
+  if (user) {
+    localStorage.setItem("kip_user", JSON.stringify(user));
+  } else {
+    localStorage.removeItem("kip_user");
+  }
+};
+
+export const clearAuthSession = () => {
+  setAuthToken(null);
+  setAuthUser(null);
+};
+
+export async function apiRequest(path, { method = "GET", params, body, headers = {}, credentials = "include", ...rest } = {}) {
   const cleanBase = (BASE_URL || "").replace(/\/+$/, "");
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  let cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+  if (params && typeof params === "object") {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.append(key, val);
+      }
+    });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      cleanPath += (cleanPath.includes("?") ? "&" : "?") + queryString;
+    }
+  }
+
   const url = path.startsWith("http") ? path : `${cleanBase}${cleanPath}`;
 
   const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
@@ -37,6 +75,7 @@ export async function apiRequest(path, { method = "GET", body, headers = {}, ...
       method,
       headers: requestHeaders,
       body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
+      credentials,
       ...rest,
     });
 
@@ -49,11 +88,12 @@ export async function apiRequest(path, { method = "GET", body, headers = {}, ...
       const err = new Error(data?.message || data?.error || `Request failed with ${response.status}`);
       err.status = response.status;
       err.data = data;
+      err.code = data?.code;
+      err.errors = data?.errors;
       throw err;
     }
     return data;
   } catch (err) {
-    // Graceful fallback for offline / mock dev mode
     console.warn(`[API ${method} ${path}]:`, err.message);
     throw err;
   }

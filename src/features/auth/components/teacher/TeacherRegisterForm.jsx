@@ -1,8 +1,75 @@
 import { useState } from "react";
-import { User, Phone, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
+import {
+  User,
+  Phone,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  UserPlus,
+  GraduationCap,
+  BookOpen,
+  Layers,
+  Users,
+} from "lucide-react";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherAuthMock } from "@/mocks";
 import { showToast } from "@/utils";
+import { useTeacherRegister } from "@/hooks/teacher";
+import { CreatableTagSelect } from "./CreatableTagSelect";
+
+const QUALIFICATION_OPTIONS = [
+  "BS Computer Science",
+  "BS Mathematics",
+  "BS Physics",
+  "BS Chemistry",
+  "BS English",
+  "BS Biology",
+  "MS / M.Phil",
+  "PhD",
+  "B.Ed / M.Ed",
+  "Master of Arts (MA)",
+  "Master of Science (MSc)",
+  "Bachelor of Arts (BA)",
+  "Bachelor of Science (BSc)",
+];
+
+const GENDER_OPTIONS = ["Male", "Female", "Other"];
+
+const SUBJECT_OPTIONS = [
+  "Mathematics",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "Computer Science",
+  "English Language",
+  "English Literature",
+  "Urdu",
+  "Islamiat",
+  "Pakistan Studies",
+  "General Science",
+  "Economics",
+  "Accounting",
+  "Statistics",
+];
+
+const CLASS_OPTIONS = [
+  "Grade 6",
+  "Grade 7",
+  "Grade 8",
+  "Grade 9 (Matric 1)",
+  "Grade 10 (Matric 2)",
+  "O Level (Year 1)",
+  "O Level (Year 2)",
+  "A Level (Year 1)",
+  "A Level (Year 2)",
+  "FSc Pre-Engineering Part 1",
+  "FSc Pre-Engineering Part 2",
+  "FSc Pre-Medical Part 1",
+  "FSc Pre-Medical Part 2",
+  "ICS (Computer Science)",
+  "I.Com",
+];
 
 export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
   const { register } = teacherAuthMock;
@@ -11,36 +78,71 @@ export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [gender, setGender] = useState("");
+  const [qualification, setQualification] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [preferredClasses, setPreferredClasses] = useState([]);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { mutateAsync: registerTeacher, isPending: isSubmitting } = useTeacherRegister({
+    onSuccess: (res, vars) => {
+      showToast.success(res?.message || "Verification code sent to your email!");
+      onRegisterSuccess(vars);
+    },
+    onError: (err) => {
+      showToast.error(err?.message || "Registration failed. Please try again.");
+    },
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!fullName.trim()) return showToast.error("Please enter your full name.");
     if (!phoneNumber.trim()) return showToast.error("Please enter your phone number.");
     if (!email.trim() || !email.includes("@")) return showToast.error("Please enter a valid email address.");
+
+    if (!gender) return showToast.error("Please select your gender.");
+    if (!qualification || qualification.length === 0) {
+      return showToast.error("Please select or type at least one qualification.");
+    }
+    if (!subjects || subjects.length === 0) {
+      return showToast.error("Please select or type at least one subject.");
+    }
+    if (!preferredClasses || preferredClasses.length === 0) {
+      return showToast.error("Please select or type at least one preferred class.");
+    }
+
     if (!password || password.length < 6) return showToast.error("Password must be at least 6 characters.");
     if (password !== confirmPassword) return showToast.error("Passwords do not match.");
     if (!agreeTerms) return showToast.error("Please agree to the Terms of Service and Privacy Policy.");
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      showToast.success("Verification code sent to your email!");
-      onRegisterSuccess({ fullName, phoneNumber, email, password });
-    }, 400);
+    try {
+      await registerTeacher({
+        fullName,
+        phoneNumber,
+        email,
+        password,
+        confirmPassword,
+        gender,
+        qualification,
+        subjects,
+        preferredClasses,
+        agreeTerms,
+      });
+    } catch {
+      // Handled in onError
+    }
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5 text-left">
+    <div className="space-y-3 sm:space-y-3.5 text-left">
       {/* Brand Logo */}
       <div className="flex items-center">
         <img
           src={logoImg}
           alt="KIPClassin Logo"
-          className="h-8 sm:h-9 w-auto object-contain drop-shadow-md"
+          className="h-7 sm:h-8 w-auto object-contain drop-shadow-md"
         />
       </div>
 
@@ -49,13 +151,13 @@ export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
         <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
           {register.title}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-200/90 mt-1">
+        <p className="text-[11px] sm:text-xs text-slate-200/90 mt-0.5">
           {register.subtitle}
         </p>
       </div>
 
       {/* Register Form */}
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-2.5 sm:space-y-2.5">
         {/* Row 1: Full Name & Phone Number */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <div className="relative">
@@ -93,42 +195,83 @@ export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
           />
         </div>
 
-        {/* Row 3: Create Password */}
-        <div className="relative">
-          <Lock className="w-4 h-4 text-white/70 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type={showPass ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={register.createPasswordPlaceholder}
-            className="w-full rounded-full bg-white/10 border border-white/25 text-white placeholder-white/55 pl-11 pr-11 py-2.5 text-xs sm:text-sm outline-none focus:border-blue-400 focus:bg-white/15 transition-all shadow-inner"
+        {/* Row 3: Gender & Qualification */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+          <CreatableTagSelect
+            icon={Users}
+            placeholder="Gender"
+            options={GENDER_OPTIONS}
+            value={gender}
+            onChange={setGender}
+            isSingle={true}
           />
-          <button
-            type="button"
-            onClick={() => setShowPass(!showPass)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white cursor-pointer"
-          >
-            {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          </button>
+
+          <CreatableTagSelect
+            icon={GraduationCap}
+            placeholder="Qualification"
+            options={QUALIFICATION_OPTIONS}
+            value={qualification}
+            onChange={setQualification}
+          />
         </div>
 
-        {/* Row 4: Confirm Password */}
-        <div className="relative">
-          <Lock className="w-4 h-4 text-white/70 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type={showConfirmPass ? "text" : "password"}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder={register.confirmPasswordPlaceholder}
-            className="w-full rounded-full bg-white/10 border border-white/25 text-white placeholder-white/55 pl-11 pr-11 py-2.5 text-xs sm:text-sm outline-none focus:border-blue-400 focus:bg-white/15 transition-all shadow-inner"
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPass(!showConfirmPass)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white cursor-pointer"
-          >
-            {showConfirmPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          </button>
+        {/* Row 4: Subject(s) Dropdown / Creatable Array */}
+        <CreatableTagSelect
+          icon={BookOpen}
+          placeholder="Subjects"
+          options={SUBJECT_OPTIONS}
+          value={subjects}
+          onChange={setSubjects}
+        />
+
+        {/* Row 5: Preferred Classes Dropdown / Creatable Array */}
+        <CreatableTagSelect
+          icon={Layers}
+          placeholder="Preferred Classes"
+          options={CLASS_OPTIONS}
+          value={preferredClasses}
+          onChange={setPreferredClasses}
+        />
+
+        {/* Row 6: Password & Confirm Password */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+          {/* Create Password */}
+          <div className="relative">
+            <Lock className="w-4 h-4 text-white/70 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type={showPass ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={register.createPasswordPlaceholder}
+              className="w-full rounded-full bg-white/10 border border-white/25 text-white placeholder-white/55 pl-11 pr-11 py-2.5 text-xs sm:text-sm outline-none focus:border-blue-400 focus:bg-white/15 transition-all shadow-inner"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPass(!showPass)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white cursor-pointer"
+            >
+              {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <Lock className="w-4 h-4 text-white/70 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type={showConfirmPass ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder={register.confirmPasswordPlaceholder}
+              className="w-full rounded-full bg-white/10 border border-white/25 text-white placeholder-white/55 pl-11 pr-11 py-2.5 text-xs sm:text-sm outline-none focus:border-blue-400 focus:bg-white/15 transition-all shadow-inner"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPass(!showConfirmPass)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white cursor-pointer"
+            >
+              {showConfirmPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
 
         {/* Checkbox: Terms of Service & Privacy Policy */}
@@ -174,4 +317,3 @@ export const TeacherRegisterForm = ({ onNavigateLogin, onRegisterSuccess }) => {
 };
 
 export default TeacherRegisterForm;
-

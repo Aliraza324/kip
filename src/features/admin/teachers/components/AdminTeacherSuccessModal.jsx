@@ -10,8 +10,16 @@ export const AdminTeacherSuccessModal = ({ isOpen, onClose, teacherData, onReset
 
   if (!isOpen) return null;
 
-  const username = teacherData?.username || "ahmed.raza";
-  const password = teacherData?.password || "Kip@1234";
+  const username =
+    teacherData?.credentials?.username ||
+    teacherData?.teacher?.username ||
+    teacherData?.username ||
+    "teacher";
+  const password =
+    teacherData?.credentials?.password ||
+    teacherData?.teacher?.password ||
+    teacherData?.password ||
+    "—";
 
   const handleCopyUser = () => {
     navigator.clipboard.writeText(username);
