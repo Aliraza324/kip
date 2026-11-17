@@ -20,8 +20,12 @@ export const AdminStudentDetailPage = () => {
     student,
     summary,
     progress,
+    progressFactors,
+    kpi,
+    recentActivity,
     assignments,
     attendance,
+    report,
     isLoading,
     isError,
     refetch,
@@ -59,7 +63,15 @@ export const AdminStudentDetailPage = () => {
     );
   }
 
-  const report = { summary, progress, assignments, attendance };
+  const resolvedReport = report || {
+    summary,
+    progress,
+    progressFactors,
+    kpi,
+    recentActivity,
+    assignments,
+    attendance,
+  };
 
   return (
     <div className="space-y-6 max-w-[1300px] mx-auto pb-8">
@@ -73,16 +85,30 @@ export const AdminStudentDetailPage = () => {
 
       {/* Tab Panels */}
       {activeTab === "Overview" && (
-        <AdminStudentOverviewTab student={student} report={report} />
+        <AdminStudentOverviewTab student={student} report={resolvedReport} />
       )}
       {activeTab === "Progress" && (
-        <AdminStudentProgressTab student={student} progress={progress} />
+        <AdminStudentProgressTab
+          student={student}
+          report={resolvedReport}
+          progress={progress}
+          progressFactors={progressFactors}
+          kpi={kpi}
+        />
       )}
       {activeTab === "Assignments" && (
-        <AdminStudentAssignmentsTab student={student} assignments={assignments} />
+        <AdminStudentAssignmentsTab
+          student={student}
+          assignments={assignments || []}
+          report={resolvedReport}
+        />
       )}
       {activeTab === "Attendance" && (
-        <AdminStudentAttendanceTab student={student} attendance={attendance} />
+        <AdminStudentAttendanceTab
+          student={student}
+          attendance={attendance || {}}
+          report={resolvedReport}
+        />
       )}
 
       {/* Edit Student Modal */}
