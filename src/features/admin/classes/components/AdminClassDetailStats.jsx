@@ -1,12 +1,12 @@
 import { GraduationCap, Users, ClipboardList, CheckCircle2 } from "lucide-react";
 
 export const AdminClassDetailStats = ({
-  grade = "Grade 9",
+  grade = "—",
   status = "Active",
-  totalStudents = 32,
-  assignedTeachers = 4,
-  pendingAssignments = 6,
-  completedAssignments = 24,
+  totalStudents = 0,
+  assignedTeachers = 0,
+  pendingAssignments = 0,
+  completedAssignments = 0,
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3 xl:gap-3.5 items-stretch">

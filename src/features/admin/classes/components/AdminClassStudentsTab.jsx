@@ -17,10 +17,9 @@ export const AdminClassStudentsTab = ({
   const filteredStudents = useMemo(() => {
     return students.filter((s) => {
       const q = searchQuery.toLowerCase();
-      return (
-        s.name.toLowerCase().includes(q) ||
-        s.studentId.toLowerCase().includes(q)
-      );
+      const name = (s.fullName || s.name || "").toLowerCase();
+      const id = (s.code || s.studentId || "").toLowerCase();
+      return name.includes(q) || id.includes(q);
     });
   }, [students, searchQuery]);
 
@@ -43,6 +42,10 @@ export const AdminClassStudentsTab = ({
     );
   };
 
+  const totalCount = filteredStudents.length;
+  const startItem = totalCount === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalCount);
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200/70 p-5 sm:p-7 shadow-2xs space-y-5">
       {/* Tab Header & Controls */}
@@ -51,10 +54,10 @@ export const AdminClassStudentsTab = ({
           <Users className="w-8 h-8 text-[#0080f6] stroke-[2] shrink-0" />
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-[#0c1a40] tracking-tight">
-              Students (32)
+              Students ({students.length})
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-              List of all students in Grade 9 – Section A.
+              Enrolled students roster
             </p>
           </div>
         </div>
@@ -119,14 +122,23 @@ export const AdminClassStudentsTab = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100/90 text-xs sm:text-sm font-medium text-slate-700">
-            {paginatedStudents.map((s) => (
-              <AdminStudentRow
-                key={s.id}
-                student={s}
-                isSelected={selectedIds.includes(s.id)}
-                onToggleSelect={() => toggleSelectOne(s.id)}
-              />
-            ))}
+            {paginatedStudents.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="py-8 text-center text-slate-400 font-medium">
+                  No students found.
+                </td>
+              </tr>
+            ) : (
+              paginatedStudents.map((s, idx) => (
+                <AdminStudentRow
+                  key={s.id}
+                  student={s}
+                  index={(currentPage - 1) * itemsPerPage + idx + 1}
+                  isSelected={selectedIds.includes(s.id)}
+                  onToggleSelect={() => toggleSelectOne(s.id)}
+                />
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -134,7 +146,7 @@ export const AdminClassStudentsTab = ({
       {/* Pagination Footer */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         <p className="text-xs text-slate-500">
-          Showing 1–5 of 32 students
+          Showing {startItem}–{endItem} of {totalCount} students
         </p>
         <div className="flex items-center gap-1.5">
           <button

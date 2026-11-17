@@ -1,7 +1,7 @@
-import { Users, Plus, Eye, Edit2, MoreHorizontal } from "lucide-react";
-import toast from "react-hot-toast";
+import { Users, Plus, Eye, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export const AdminClassTeachersTab = ({ teachers = [], onAssignTeacher }) => {
+export const AdminClassTeachersTab = ({ teachers = [], onAssignTeacher, onRemoveTeacher }) => {
   return (
     <div className="bg-white rounded-3xl border border-slate-200/70 p-5 sm:p-7 shadow-2xs space-y-5">
       {/* Tab Inner Header */}
@@ -37,58 +37,71 @@ export const AdminClassTeachersTab = ({ teachers = [], onAssignTeacher }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100/90 text-xs sm:text-sm font-medium text-slate-700">
-            {teachers.map((t) => (
-              <tr key={t.id} className="hover:bg-slate-50/60 transition-colors">
-                <td className="py-4 px-3 font-semibold text-slate-800 whitespace-nowrap">{t.index}</td>
-                <td className="py-4 px-4 whitespace-nowrap">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={t.avatar}
-                      alt={t.name}
-                      className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-200/70"
-                    />
-                    <span className="font-black text-slate-900 whitespace-nowrap">{t.name}</span>
-                  </div>
-                </td>
-                <td className="py-4 px-4 font-semibold text-slate-600 whitespace-nowrap">{t.teacherId}</td>
-                <td className="py-4 px-4 whitespace-nowrap">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${t.subjectColor}`}
-                  >
-                    {t.subject}
-                  </span>
-                </td>
-                <td className="py-4 px-4 text-slate-600 font-medium whitespace-nowrap">{t.joinedOn}</td>
-                <td className="py-4 px-4 whitespace-nowrap">
-                  <div className="flex items-center justify-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => toast(`Viewing profile of ${t.name}`, { icon: "👤" })}
-                      className="p-1 text-[#0080f6] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                      title="View Profile"
-                    >
-                      <Eye className="w-4 h-4 stroke-[2.2]" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => toast.success(`Editing assignment for ${t.name}`)}
-                      className="p-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                      title="Edit"
-                    >
-                      <Edit2 className="w-4 h-4 stroke-[2]" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => toast(`Options for ${t.name}`, { icon: "⚙️" })}
-                      className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                      title="More"
-                    >
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
-                  </div>
+            {teachers.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="py-10 text-center text-slate-400 font-medium">
+                  No teachers assigned to this class yet.
                 </td>
               </tr>
-            ))}
+            ) : (
+              teachers.map((t, idx) => {
+                const teacherName = t.fullName || t.name;
+                const teacherCode = t.code || t.teacherId || "—";
+                const joinedDate = t.assignedAt ? new Date(t.assignedAt).toLocaleDateString() : t.joinedOn || "—";
+
+                return (
+                  <tr key={t.assignmentId || t.id || idx} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="py-4 px-3 font-semibold text-slate-800 whitespace-nowrap">{idx + 1}</td>
+                    <td className="py-4 px-4 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        {t.avatar ? (
+                          <img
+                            src={t.avatar}
+                            alt={teacherName}
+                            className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-200/70"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-blue-100 text-[#0080f6] font-bold text-xs flex items-center justify-center shrink-0">
+                            {(teacherName || "T")[0]}
+                          </div>
+                        )}
+                        <span className="font-black text-slate-900 whitespace-nowrap">{teacherName}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 font-semibold text-slate-600 whitespace-nowrap">{teacherCode}</td>
+                    <td className="py-4 px-4 whitespace-nowrap">
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-blue-50 text-[#0080f6]">
+                        {t.subject || "All Subjects"}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-slate-600 font-medium whitespace-nowrap">{joinedDate}</td>
+                    <td className="py-4 px-4 whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-2">
+                        {t.id && (
+                          <Link
+                            to={`/admin/teachers/${t.id}`}
+                            className="p-1.5 text-[#0080f6] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                            title="View Teacher Profile"
+                          >
+                            <Eye className="w-4 h-4 stroke-[2.2]" />
+                          </Link>
+                        )}
+                        {onRemoveTeacher && (
+                          <button
+                            type="button"
+                            onClick={() => onRemoveTeacher(t.assignmentId || t.id, teacherName)}
+                            className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            title="Remove from class"
+                          >
+                            <Trash2 className="w-4 h-4 stroke-[2]" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

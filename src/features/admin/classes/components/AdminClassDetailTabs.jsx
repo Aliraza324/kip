@@ -1,12 +1,14 @@
 export const AdminClassDetailTabs = ({
   activeTab = "teachers",
   onTabChange,
-  studentsCount = 32,
+  teachersCount = 0,
+  studentsCount = 0,
+  assignmentsCount = 0,
 }) => {
   const tabs = [
-    { id: "teachers", label: "Assigned Teachers" },
+    { id: "teachers", label: `Assigned Teachers (${teachersCount})` },
     { id: "students", label: `Students (${studentsCount})` },
-    { id: "assignments", label: "Assignments" },
+    { id: "assignments", label: `Assignments (${assignmentsCount})` },
   ];
 
   return (

@@ -64,26 +64,40 @@ export const AdminClassDetailModal = ({ isOpen, onClose, classData }) => {
             <span>Assigned Teachers</span>
           </h4>
           <div className="p-3 rounded-2xl border border-slate-100 bg-slate-50/50 space-y-2">
-            <div className="flex items-center gap-3">
-              <img
-                src={classData.primaryTeacher?.avatar}
-                alt={classData.primaryTeacher?.name}
-                className="w-10 h-10 rounded-full object-cover border border-slate-200"
-              />
-              <div>
-                <p className="text-sm font-bold text-slate-900">
-                  {classData.primaryTeacher?.name}
-                </p>
-                <p className="text-xs text-slate-500 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                  Lead Class Teacher
-                </p>
+            {classData.primaryTeacher ? (
+              <div className="flex items-center gap-3">
+                {classData.primaryTeacher.avatar ? (
+                  <img
+                    src={classData.primaryTeacher.avatar}
+                    alt={classData.primaryTeacher?.fullName || classData.primaryTeacher?.name || "Teacher"}
+                    className="w-10 h-10 rounded-full object-cover border border-slate-200"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-[#0080f6] font-bold text-sm flex items-center justify-center">
+                    {(classData.primaryTeacher?.fullName || classData.primaryTeacher?.name || "T")[0]}
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    {classData.primaryTeacher?.fullName || classData.primaryTeacher?.name}
+                  </p>
+                  <p className="text-xs text-slate-500 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                    Lead Class Teacher
+                  </p>
+                </div>
               </div>
-            </div>
-            {classData.teachersList && classData.teachersList.length > 1 && (
+            ) : (
+              <p className="text-xs text-slate-400 italic">No primary teacher assigned.</p>
+            )}
+
+            {Array.isArray(classData.teachers) && classData.teachers.length > 1 && (
               <div className="pt-2 border-t border-slate-200/60 text-xs text-slate-600">
                 <span className="font-semibold text-slate-700">Co-teachers: </span>
-                {classData.teachersList.filter((t) => t !== classData.primaryTeacher?.name).join(", ")}
+                {classData.teachers
+                  .filter((t) => (t.fullName || t.name) !== (classData.primaryTeacher?.fullName || classData.primaryTeacher?.name))
+                  .map((t) => t.fullName || t.name)
+                  .join(", ")}
               </div>
             )}
           </div>

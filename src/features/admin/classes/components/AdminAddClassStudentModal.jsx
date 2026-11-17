@@ -2,22 +2,40 @@ import { useState } from "react";
 import { X, UserPlus, Check } from "lucide-react";
 import toast from "react-hot-toast";
 
-export const AdminAddClassStudentModal = ({ isOpen, onClose, onAddStudent }) => {
+export const AdminAddClassStudentModal = ({
+  isOpen,
+  onClose,
+  onAddStudent,
+  className = "Class",
+}) => {
   const [studentName, setStudentName] = useState("");
-  const [studentId, setStudentId] = useState(`ST-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [studentCode, setStudentCode] = useState("");
   const [gender, setGender] = useState("Male");
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!studentName.trim()) {
       toast.error("Please enter student name");
       return;
     }
-    onAddStudent({ name: studentName, studentId, gender });
-    toast.success(`Student ${studentName} enrolled in Grade 9!`);
-    onClose();
+    setIsSubmitting(true);
+    try {
+      await onAddStudent({
+        fullName: studentName.trim(),
+        code: studentCode.trim() || undefined,
+        gender,
+        email: email.trim() || undefined,
+      });
+      onClose();
+    } catch {
+      // Error is handled in parent
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -26,7 +44,7 @@ export const AdminAddClassStudentModal = ({ isOpen, onClose, onAddStudent }) => 
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+          className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -37,14 +55,14 @@ export const AdminAddClassStudentModal = ({ isOpen, onClose, onAddStudent }) => 
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900">Add Student</h3>
-            <p className="text-xs text-slate-500">Enroll student into Grade 9</p>
+            <p className="text-xs text-slate-500">Enroll student into {className}</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Full Name
+              Full Name <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
@@ -52,18 +70,20 @@ export const AdminAddClassStudentModal = ({ isOpen, onClose, onAddStudent }) => 
               value={studentName}
               onChange={(e) => setStudentName(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
+              required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Student ID
+                Student ID / Roll No
               </label>
               <input
                 type="text"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
+                placeholder="e.g. ST-1005"
+                value={studentCode}
+                onChange={(e) => setStudentCode(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
               />
             </div>
@@ -82,20 +102,35 @@ export const AdminAddClassStudentModal = ({ isOpen, onClose, onAddStudent }) => 
             </div>
           </div>
 
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              Email (Optional)
+            </label>
+            <input
+              type="email"
+              placeholder="e.g. student@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
+            />
+          </div>
+
           <div className="flex items-center justify-end gap-3 pt-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 rounded-full border border-slate-200 text-slate-600 text-xs font-semibold"
+              disabled={isSubmitting}
+              className="px-5 py-2 rounded-full border border-slate-200 text-slate-600 text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-[#0080f6] text-white text-xs font-bold shadow-md shadow-blue-500/25"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-1.5 px-6 py-2 rounded-full bg-[#0080f6] text-white text-xs font-bold shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50"
             >
               <Check className="w-4 h-4" />
-              <span>Add Student</span>
+              <span>{isSubmitting ? "Enrolling..." : "Add Student"}</span>
             </button>
           </div>
         </form>

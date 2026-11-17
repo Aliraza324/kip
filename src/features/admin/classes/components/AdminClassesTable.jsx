@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Eye, Edit2, MoreHorizontal } from "lucide-react";
+import { Eye, Edit2, MoreHorizontal, Trash2 } from "lucide-react";
 
 export const AdminClassesTable = ({
   classes = [],
@@ -8,7 +8,9 @@ export const AdminClassesTable = ({
   onToggleSelectOne,
   onViewClass,
   onEditClass,
+  onDeleteClass,
   onMoreOptions,
+  startIndex = 0,
 }) => {
   const isAllSelected =
     classes.length > 0 && selectedIds.length === classes.length;
@@ -45,8 +47,13 @@ export const AdminClassesTable = ({
                 </td>
               </tr>
             ) : (
-              classes.map((cls) => {
+              classes.map((cls, idx) => {
                 const isSelected = selectedIds.includes(cls.id);
+                const teacherName = cls.primaryTeacher?.fullName || cls.primaryTeacher?.name;
+                const teacherAvatar = cls.primaryTeacher?.avatar;
+                const moreCount = cls.moreTeachersCount ?? Math.max(0, (cls.teachersCount || cls.teachers?.length || 0) - 1);
+                const isActive = (cls.status || "").toLowerCase() === "active";
+
                 return (
                   <tr
                     key={cls.id}
@@ -67,7 +74,7 @@ export const AdminClassesTable = ({
 
                     {/* Number */}
                     <td className="py-4 px-3 font-medium text-slate-800 whitespace-nowrap">
-                      {cls.index}
+                      {cls.index || startIndex + idx + 1}
                     </td>
 
                     {/* Class Name */}
@@ -78,6 +85,11 @@ export const AdminClassesTable = ({
                       >
                         {cls.name}
                       </Link>
+                      {cls.section && (
+                        <span className="text-xs text-slate-400 ml-1.5 font-normal">
+                          ({cls.section})
+                        </span>
+                      )}
                     </td>
 
                     {/* Grade */}
@@ -90,14 +102,29 @@ export const AdminClassesTable = ({
                     {/* Teachers (Avatar + More badge) */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       <div className="flex items-center gap-2.5 whitespace-nowrap">
-                        <img
-                          src={cls.primaryTeacher?.avatar}
-                          alt={cls.primaryTeacher?.name || "Teacher"}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover shrink-0 border border-slate-200/60 shadow-2xs"
-                        />
-                        {cls.moreTeachersCount > 0 && (
-                          <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-[#eaf4fe] text-[#0080f6] font-bold text-[11px] sm:text-xs whitespace-nowrap">
-                            +{cls.moreTeachersCount} More
+                        {cls.primaryTeacher ? (
+                          <>
+                            {teacherAvatar ? (
+                              <img
+                                src={teacherAvatar}
+                                alt={teacherName || "Teacher"}
+                                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover shrink-0 border border-slate-200/60 shadow-2xs"
+                              />
+                            ) : (
+                              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-[#0080f6] font-bold text-xs flex items-center justify-center shrink-0">
+                                {(teacherName || "T")[0]}
+                              </div>
+                            )}
+                            <span className="font-semibold text-xs sm:text-sm text-slate-800">
+                              {teacherName}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-slate-400 text-xs italic">Unassigned</span>
+                        )}
+                        {moreCount > 0 && (
+                          <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[#eaf4fe] text-[#0080f6] font-bold text-[10px] sm:text-xs whitespace-nowrap">
+                            +{moreCount} More
                           </span>
                         )}
                       </div>
@@ -106,15 +133,25 @@ export const AdminClassesTable = ({
                     {/* Students */}
                     <td className="py-4 px-4 whitespace-nowrap">
                       <span className="text-slate-700 font-medium text-sm whitespace-nowrap">
-                        {cls.studentsCount}
+                        {cls.studentsCount || 0}
                       </span>
                     </td>
 
                     {/* Status Badge */}
                     <td className="py-4 px-4 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eefcf3] text-[#16a34a] text-xs font-semibold whitespace-nowrap">
-                        <span className="w-2 h-2 rounded-full bg-[#16a34a]" />
-                        <span>{cls.status}</span>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap capitalize ${
+                          isActive
+                            ? "bg-[#eefcf3] text-[#16a34a]"
+                            : "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            isActive ? "bg-[#16a34a]" : "bg-slate-400"
+                          }`}
+                        />
+                        <span>{cls.status || "Inactive"}</span>
                       </span>
                     </td>
 
@@ -139,15 +176,28 @@ export const AdminClassesTable = ({
                         >
                           <Edit2 className="w-4 h-4 stroke-[2]" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={(e) => onMoreOptions(cls, e)}
-                          className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                          title="More Options"
-                          aria-label={`More options for ${cls.name}`}
-                        >
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
+                        {onDeleteClass && (
+                          <button
+                            type="button"
+                            onClick={() => onDeleteClass(cls)}
+                            className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            title="Delete Class"
+                            aria-label={`Delete ${cls.name}`}
+                          >
+                            <Trash2 className="w-4 h-4 stroke-[2]" />
+                          </button>
+                        )}
+                        {onMoreOptions && (
+                          <button
+                            type="button"
+                            onClick={(e) => onMoreOptions(cls, e)}
+                            className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                            title="More Options"
+                            aria-label={`More options for ${cls.name}`}
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

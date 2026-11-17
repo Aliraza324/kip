@@ -5,8 +5,14 @@ export const AdminAssignmentRow = ({
   assignment,
   isSelected,
   onToggleSelect,
+  index = 1,
 }) => {
-  const isCompleted = assignment.status === "Completed";
+  const isCompleted = (assignment.status || "").toLowerCase() === "completed";
+  const assignedDate = assignment.assignedDate || (assignment.assignedAt ? new Date(assignment.assignedAt).toLocaleDateString() : "—");
+  const dueDate = assignment.dueDate || (assignment.dueAt ? new Date(assignment.dueAt).toLocaleDateString() : "—");
+  const submitted = assignment.submissionsCount ?? assignment.submittedCount ?? 0;
+  const total = assignment.totalSubmissions ?? assignment.totalStudents ?? 0;
+  const progress = assignment.progressPercent ?? (total > 0 ? Math.round((submitted / total) * 100) : 0);
 
   return (
     <tr className="hover:bg-slate-50/60 transition-colors">
@@ -19,7 +25,7 @@ export const AdminAssignmentRow = ({
         />
       </td>
       <td className="py-4 px-3 font-bold text-[#0c1a40] whitespace-nowrap">
-        {assignment.index}
+        {assignment.index || index}
       </td>
       <td className="py-4 px-4 whitespace-nowrap">
         <span className="font-bold text-[#0c1a40] text-sm whitespace-nowrap">
@@ -28,20 +34,22 @@ export const AdminAssignmentRow = ({
       </td>
       <td className="py-4 px-4 whitespace-nowrap">
         <span
-          className={`inline-block px-3.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${assignment.subjectColor}`}
+          className={`inline-block px-3.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+            assignment.subjectColor || "bg-blue-50 text-[#0080f6]"
+          }`}
         >
           {assignment.subject}
         </span>
       </td>
       <td className="py-4 px-4 text-slate-600 font-medium text-xs sm:text-sm whitespace-nowrap">
-        {assignment.assignedDate}
+        {assignedDate}
       </td>
       <td className="py-4 px-4 text-slate-600 font-medium text-xs sm:text-sm whitespace-nowrap">
-        {assignment.dueDate}
+        {dueDate}
       </td>
       <td className="py-4 px-4 whitespace-nowrap">
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap capitalize ${
             isCompleted
               ? "bg-[#e8faee] text-[#16a34a]"
               : "bg-[#fff2e8] text-[#ea580c]"
@@ -52,20 +60,20 @@ export const AdminAssignmentRow = ({
           ) : (
             <Clock className="w-3.5 h-3.5 stroke-[2]" />
           )}
-          <span>{assignment.status}</span>
+          <span>{assignment.status || "Pending"}</span>
         </span>
       </td>
       <td className="py-4 px-4 min-w-[140px] whitespace-nowrap">
         <div className="space-y-1.5 w-36">
           <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
-            {assignment.submissionsCount} / {assignment.totalSubmissions}
+            {submitted} / {total}
           </span>
           <div className="w-full bg-[#eef2f7] h-2 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full ${
                 isCompleted ? "bg-[#16a34a]" : "bg-[#ea580c]"
               }`}
-              style={{ width: `${assignment.progressPercent}%` }}
+              style={{ width: `${progress}%` }}
             />
           </div>
         </div>

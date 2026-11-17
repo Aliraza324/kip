@@ -46,7 +46,7 @@ export const AdminClassAssignmentsTab = ({ assignments = [] }) => {
               Assignments ({assignments.length})
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-              All assignments for Grade 9 – Section A.
+              All assignments for this class.
             </p>
           </div>
         </div>
@@ -131,14 +131,23 @@ export const AdminClassAssignmentsTab = ({ assignments = [] }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100/90 text-xs sm:text-sm font-medium text-slate-700">
-            {paginated.map((a) => (
-              <AdminAssignmentRow
-                key={a.id}
-                assignment={a}
-                isSelected={selectedIds.includes(a.id)}
-                onToggleSelect={() => toggleSelectOne(a.id)}
-              />
-            ))}
+            {paginated.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="py-8 text-center text-slate-400 font-medium">
+                  No assignments found.
+                </td>
+              </tr>
+            ) : (
+              paginated.map((a, idx) => (
+                <AdminAssignmentRow
+                  key={a.id}
+                  assignment={a}
+                  index={(currentPage - 1) * itemsPerPage + idx + 1}
+                  isSelected={selectedIds.includes(a.id)}
+                  onToggleSelect={() => toggleSelectOne(a.id)}
+                />
+              ))
+            )}
           </tbody>
         </table>
       </div>

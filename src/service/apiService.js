@@ -125,46 +125,57 @@ export const authService = {
 };
 
 export const studentService = {
-  async getAll() {
+  async getAll(params = {}) {
     try {
-      const res = await api.get(API_ROUTES.STUDENTS.BASE);
-      if (res?.data) liveStore.set("students", res.data);
-      return res?.data || liveStore.get("students");
+      const res = await api.get(API_ROUTES.ADMIN.STUDENTS.BASE, { params });
+      return res?.data || res;
     } catch {
-      return liveStore.get("students");
+      return [];
     }
   },
   async getByClass(classId) {
-    const list = await this.getAll();
-    return classId ? list.filter((s) => s.classId === classId) : list;
+    return await this.getAll({ classId });
   },
   async create(studentData) {
-    const newStudent = {
-      id: `ST-${Date.now().toString().slice(-4)}`,
-      studentId: `ST-${Date.now().toString().slice(-4)}`,
-      name: studentData.fullName || studentData.name,
-      username: studentData.username || studentData.email?.split("@")[0] || "student",
-      className: studentData.class || "Grade 9",
-      classId: studentData.classId || "cls-math-9",
-      status: studentData.status || "Active",
-      email: studentData.email || "",
-      phone: studentData.phone || "",
-      dob: studentData.dob || "",
-      gender: studentData.gender || "Male",
-      ...studentData,
-    };
-    liveStore.add("students", newStudent);
-    try { await api.post(API_ROUTES.STUDENTS.CREATE, newStudent); } catch {}
-    return newStudent;
+    let payload = studentData;
+    if (typeof FormData !== "undefined" && !(studentData instanceof FormData)) {
+      const hasFile = studentData && Object.values(studentData).some((v) => v instanceof File || v instanceof Blob);
+      if (hasFile) {
+        const formData = new FormData();
+        Object.entries(studentData).forEach(([key, value]) => {
+          if (value === undefined || value === null) return;
+          formData.append(key, value);
+        });
+        payload = formData;
+      }
+    }
+    const res = await api.post(API_ROUTES.ADMIN.STUDENTS.CREATE, payload);
+    const created = res?.data !== undefined ? res.data : res;
+    if (created) liveStore.add("students", created);
+    return created;
   },
   async update(id, updates) {
-    const updated = liveStore.update("students", id, updates);
-    try { await api.put(API_ROUTES.STUDENTS.UPDATE(id), updates); } catch {}
+    let payload = updates;
+    if (typeof FormData !== "undefined" && !(updates instanceof FormData)) {
+      const hasFile = updates && Object.values(updates).some((v) => v instanceof File || v instanceof Blob);
+      if (hasFile) {
+        const formData = new FormData();
+        Object.entries(updates).forEach(([key, value]) => {
+          if (value === undefined || value === null) return;
+          formData.append(key, value);
+        });
+        payload = formData;
+      }
+    }
+    const res = await api.patch(API_ROUTES.ADMIN.STUDENTS.UPDATE(id), payload);
+    const updated = res?.data !== undefined ? res.data : res;
+    if (updated) liveStore.update("students", id, updated);
     return updated;
   },
   async delete(id) {
+    const res = await api.delete(API_ROUTES.ADMIN.STUDENTS.DELETE(id));
     liveStore.remove("students", id);
-    try { await api.delete(API_ROUTES.STUDENTS.DELETE(id)); } catch {}
+    return res;
   },
 };
 
@@ -287,19 +298,61 @@ export const teacherService = {
 };
 
 export const classService = {
-  async getAll(params = { limit: 100 }) {
+  async getAll(params = {}) {
     try {
       const res = await api.get(API_ROUTES.ADMIN.CLASSES.BASE, { params });
-      return res?.data || [];
-    } catch {
-      return [];
+      return res;
+    } catch (err) {
+      console.error("classService.getAll error:", err);
+      return { data: [], meta: { total: 0, filters: { grades: [] } } };
     }
   },
+
+  async getById(classId) {
+    const res = await api.get(API_ROUTES.ADMIN.CLASSES.DETAIL(classId));
+    return res?.data !== undefined ? res.data : res;
+  },
+
   async create(classData) {
-    const newC = { id: `cls-${Date.now().toString().slice(-4)}`, enrolledCount: 0, status: "Active", ...classData };
-    liveStore.add("classes", newC);
-    try { await api.post(API_ROUTES.CLASSES.CREATE, newC); } catch {}
-    return newC;
+    const res = await api.post(API_ROUTES.ADMIN.CLASSES.CREATE, classData);
+    const created = res?.data !== undefined ? res.data : res;
+    if (created) liveStore.add("classes", created);
+    return created;
+  },
+
+  async update(classId, updates) {
+    const res = await api.patch(API_ROUTES.ADMIN.CLASSES.UPDATE(classId), updates);
+    const updated = res?.data !== undefined ? res.data : res;
+    if (updated) liveStore.update("classes", classId, updated);
+    return updated;
+  },
+
+  async delete(classId) {
+    const res = await api.delete(API_ROUTES.ADMIN.CLASSES.DELETE(classId));
+    liveStore.remove("classes", classId);
+    return res;
+  },
+
+  async assignTeacher(classId, { teacherId, subject }) {
+    const res = await api.post(API_ROUTES.ADMIN.CLASSES.ASSIGN_TEACHER(classId), { teacherId, subject });
+    return res?.data !== undefined ? res.data : res;
+  },
+
+  async removeTeacher(classId, assignmentId) {
+    const res = await api.delete(API_ROUTES.ADMIN.CLASSES.REMOVE_TEACHER(classId, assignmentId));
+    return res?.data !== undefined ? res.data : res;
+  },
+
+  async updateTeacherAssignment(classId, assignmentId, { subject }) {
+    const res = await api.patch(API_ROUTES.ADMIN.CLASSES.UPDATE_TEACHER(classId, assignmentId), { subject });
+    return res?.data !== undefined ? res.data : res;
+  },
+
+  async importStudentsCsv(classId, file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await api.post(API_ROUTES.ADMIN.CLASSES.IMPORT_STUDENTS(classId), formData);
+    return res?.data !== undefined ? res.data : res;
   },
 };
 

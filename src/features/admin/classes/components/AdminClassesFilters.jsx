@@ -29,8 +29,22 @@ export const AdminClassesFilters = ({
     setOpenDropdown((prev) => (prev === key ? null : key));
   };
 
-  const renderDropdown = (label, currentVal, options, onSelect, key) => {
+  const renderDropdown = (defaultLabel, currentVal, options = [], onSelect, key) => {
     const isOpen = openDropdown === key;
+
+    let displayLabel = defaultLabel;
+    if (currentVal && currentVal !== defaultLabel) {
+      const matched = options.find((o) => {
+        const val = typeof o === "object" ? o.id || o.value : o;
+        return val === currentVal;
+      });
+      if (matched) {
+        displayLabel = typeof matched === "object" ? matched.label || matched.name : matched;
+      } else {
+        displayLabel = currentVal;
+      }
+    }
+
     return (
       <div className="relative">
         <button
@@ -42,7 +56,7 @@ export const AdminClassesFilters = ({
               : "border-slate-200/90 text-slate-700 hover:border-slate-300 hover:bg-slate-50/60"
           }`}
         >
-          <span>{currentVal || label}</span>
+          <span>{displayLabel}</span>
           <ChevronDown
             className={`w-3.5 h-3.5 transition-transform duration-200 ${
               isOpen ? "rotate-180 text-[#0080f6]" : "text-slate-400"
@@ -53,13 +67,16 @@ export const AdminClassesFilters = ({
         {isOpen && (
           <div className="absolute left-0 top-full mt-2 w-48 sm:w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150 max-h-60 overflow-y-auto no-scrollbar">
             {options.map((opt) => {
-              const isSelected = (currentVal || label) === opt;
+              const optVal = typeof opt === "object" ? opt.id || opt.value : opt;
+              const optLabel = typeof opt === "object" ? opt.label || opt.name : opt;
+              const isSelected = (currentVal || defaultLabel) === optVal || displayLabel === optLabel;
+
               return (
                 <button
-                  key={opt}
+                  key={optVal}
                   type="button"
                   onClick={() => {
-                    onSelect(opt);
+                    onSelect(optVal);
                     setOpenDropdown(null);
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2 text-xs sm:text-sm text-left transition-colors cursor-pointer ${
@@ -68,7 +85,7 @@ export const AdminClassesFilters = ({
                       : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
-                  <span className="truncate">{opt}</span>
+                  <span className="truncate">{optLabel}</span>
                   {isSelected && <Check className="w-4 h-4 text-[#0080f6]" />}
                 </button>
               );
