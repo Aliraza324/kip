@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, Edit3, MoreHorizontal, ChevronDown } from "lucide-react";
-import { adminStudentsMock } from "@/mocks";
+import { useLiveStudents } from "@/hooks/useDataSync";
 
 export const AdminClassStudentsTable = ({ classId }) => {
-  const [students] = useState(
-    classId
-      ? adminStudentsMock.filter((s) => s.classId === classId || !classId)
-      : adminStudentsMock
-  );
+  const students = useLiveStudents(classId);
   const [selectedIds, setSelectedIds] = useState([]);
 
   const toggleSelectAll = () => {

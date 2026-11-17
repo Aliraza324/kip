@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, Edit3, MoreHorizontal, Layers, ChevronDown } from "lucide-react";
-import { adminClassesMock } from "@/mocks";
+import { useLiveClasses } from "@/hooks/useDataSync";
 
 export const AdminClassesTable = () => {
-  const [classes] = useState(adminClassesMock);
+  const classes = useLiveClasses();
   const [selectedIds, setSelectedIds] = useState([]);
 
   const toggleSelectAll = () => {

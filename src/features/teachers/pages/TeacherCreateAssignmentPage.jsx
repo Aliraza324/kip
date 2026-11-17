@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import toast from "react-hot-toast";
+import { liveStore } from "@/service/dataStore";
 import { teacherAssignClassesMock } from "@/mocks";
 import {
   TeacherCreateAssignmentForm,
@@ -49,6 +51,21 @@ export const TeacherCreateAssignmentPage = () => {
 
   const handleCreateAssignment = (e) => {
     e.preventDefault();
+    const newAsg = {
+      id: `asg-${Date.now()}`,
+      title: formData.title,
+      subject: formData.subject,
+      class: "Grade 9 – Section A",
+      assignedDate: "Today",
+      dueDate: formData.dueDate,
+      dueTime: formData.dueTime,
+      totalMarks: Number(formData.totalMarks) || 100,
+      totalSubmissions: 0,
+      totalStudents: 28,
+      status: "Active",
+    };
+    liveStore.add("assignments", newAsg);
+    toast.success("Assignment created successfully!");
     navigate("/teacher/assignments");
   };
 

@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { adminTeachersMock } from "@/mocks";
+import { useLiveTeachers } from "@/hooks/useDataSync";
 import { AdminTeacherRow } from "./AdminTeacherRow";
 
 export const AdminTeachersTable = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedIds, setSelectedIds] = useState([]);
+  const teachers = useLiveTeachers();
 
-  const filteredTeachers = adminTeachersMock.filter((t) => {
+  const pendingCount = teachers.filter((t) => t.status === "Pending Approval").length;
+  const activeCount = teachers.filter((t) => t.status === "Active").length;
+
+  const filteredTeachers = teachers.filter((t) => {
     if (activeTab === "pending") return t.status === "Pending Approval";
     if (activeTab === "active") return t.status === "Active";
     return true;
@@ -39,7 +43,7 @@ export const AdminTeachersTable = () => {
               : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/80"
           }`}
         >
-          All Teachers <span className="ml-1 opacity-90 font-semibold">86</span>
+          All Teachers <span className="ml-1 opacity-90 font-semibold">{teachers.length}</span>
         </button>
         <button
           onClick={() => setActiveTab("pending")}
@@ -49,7 +53,7 @@ export const AdminTeachersTable = () => {
               : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/80"
           }`}
         >
-          Pending Approval <span className="ml-1 opacity-90 font-semibold">3</span>
+          Pending Approval <span className="ml-1 opacity-90 font-semibold">{pendingCount}</span>
         </button>
         <button
           onClick={() => setActiveTab("active")}
@@ -59,7 +63,7 @@ export const AdminTeachersTable = () => {
               : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/80"
           }`}
         >
-          Active <span className="ml-1 opacity-90 font-semibold">79</span>
+          Active <span className="ml-1 opacity-90 font-semibold">{activeCount}</span>
         </button>
       </div>
 

@@ -2,11 +2,16 @@ import { Link } from "react-router-dom";
 import { GraduationCap, ArrowRight, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { landingHeroMock } from "@/mocks";
+import { useLiveContent } from "@/hooks/useDataSync";
 import { fadeInUp, staggerContainer } from "@/animations";
 
 export const LandingHeroContent = () => {
-  const { badge, headingLine1, headingLine2, description, primaryCta, secondaryCta } =
-    landingHeroMock;
+  const liveHome = useLiveContent("home");
+  const badge = liveHome?.badge || landingHeroMock.badge;
+  const description = liveHome?.description || landingHeroMock.description;
+  const { headingLine1, headingLine2, primaryCta, secondaryCta } = landingHeroMock;
+  const primaryText = liveHome?.btn1Text || primaryCta.text;
+  const secondaryText = liveHome?.btn2Text || secondaryCta.text;
 
   return (
     <motion.div
@@ -85,7 +90,7 @@ export const LandingHeroContent = () => {
           to={primaryCta.href}
           className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1 sm:gap-2 rounded-xl bg-[#007be3] px-2.5 sm:px-5 lg:px-7 py-2.5 sm:py-3.5 text-xs sm:text-sm lg:text-base font-semibold text-white shadow-md shadow-blue-500/25 transition-all hover:bg-[#0066c0] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 whitespace-nowrap shrink-0 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span>{primaryCta.text}</span>
+          <span>{primaryText}</span>
           <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
         </Link>
 
@@ -96,7 +101,7 @@ export const LandingHeroContent = () => {
           <span className="flex h-3.5 w-3.5 sm:h-5 sm:w-5 items-center justify-center rounded-full border border-[#007be3] text-[#007be3] shrink-0">
             <Play className="h-2 w-2 sm:h-2.5 sm:w-2.5 fill-current ml-0.5" />
           </span>
-          <span>{secondaryCta.text}</span>
+          <span>{secondaryText}</span>
         </Link>
       </motion.div>
     </motion.div>

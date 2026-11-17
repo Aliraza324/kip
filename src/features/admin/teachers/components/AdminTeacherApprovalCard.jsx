@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, X, Check, GraduationCap } from "lucide-react";
 import toast from "react-hot-toast";
+import { teacherService } from "@/service/apiService";
 
 export const AdminTeacherApprovalCard = ({ teacher }) => {
   const navigate = useNavigate();
@@ -11,12 +12,23 @@ export const AdminTeacherApprovalCard = ({ teacher }) => {
   const removeSubject = (s) => setAssignedSubjects((prev) => prev.filter((item) => item !== s));
   const removeClass = (c) => setAssignedClasses((prev) => prev.filter((item) => item !== c));
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
+    await teacherService.approve(teacher.id || teacher.teacherId, {
+      assignedClasses: assignedClasses.map((cls, idx) => ({
+        id: `ac-${Date.now()}-${idx}`,
+        class: cls,
+        section: cls.includes("–") ? cls.split("–")[1]?.trim() : "A",
+        subject: assignedSubjects[0] || "General",
+        assignedOn: "Just Now",
+      })),
+      subjects: assignedSubjects,
+    });
     toast.success(`Account approved for ${teacher.name}!`);
     navigate("/admin/teachers");
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
+    await teacherService.reject(teacher.id || teacher.teacherId);
     toast.error(`Registration rejected for ${teacher.name}`);
     navigate("/admin/teachers");
   };

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
+import { useDataSync } from "@/hooks/useDataSync";
 import {
   teacherAssignmentsListMock,
   teacherAssignmentsStatsMock,
@@ -16,9 +17,16 @@ export const TeacherAssignmentsPage = () => {
   const [selectedMonth, setSelectedMonth] = useState("oct-2026");
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const liveAssignments = useDataSync("assignments");
+
+  const assignmentsList = useMemo(() => {
+    return Array.isArray(liveAssignments) && liveAssignments.length > 0
+      ? liveAssignments
+      : teacherAssignmentsListMock;
+  }, [liveAssignments]);
 
   const filteredAssignments = useMemo(() => {
-    return teacherAssignmentsListMock.filter((asg) => {
+    return assignmentsList.filter((asg) => {
       // Tab filter
       if (activeTab === "pending" && asg.status.toLowerCase() !== "pending") return false;
       if (activeTab === "submitted" && asg.status.toLowerCase() !== "submitted") return false;
@@ -34,7 +42,7 @@ export const TeacherAssignmentsPage = () => {
 
       return true;
     });
-  }, [activeTab, selectedSubject, selectedStatus]);
+  }, [assignmentsList, activeTab, selectedSubject, selectedStatus]);
 
   const handleResetFilters = () => {
     setActiveTab("all");

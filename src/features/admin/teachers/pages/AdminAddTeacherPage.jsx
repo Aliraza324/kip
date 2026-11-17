@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { teacherService } from "@/service/apiService";
 import { AdminAddTeacherForm, AdminTeacherSuccessModal } from "../components";
 
 export const AdminAddTeacherPage = () => {
   const [createdTeacher, setCreatedTeacher] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const handleSuccess = (teacherData) => {
-    setCreatedTeacher(teacherData);
+  const handleSuccess = async (teacherData) => {
+    const saved = await teacherService.create(teacherData);
+    setCreatedTeacher(saved || teacherData);
     setShowSuccessModal(true);
   };
 

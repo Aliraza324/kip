@@ -7,6 +7,7 @@ import {
   AdminNotificationFilterPills,
 } from "../components";
 import { adminNotificationsListMock } from "@/mocks";
+import { notificationService } from "@/service/apiService";
 
 const CATEGORIES = [
   { key: "all", label: "All (24)" },
@@ -31,7 +32,8 @@ export const AdminNotificationsPage = () => {
     );
   };
 
-  const handleMarkAllRead = () => {
+  const handleMarkAllRead = async () => {
+    await notificationService.markAllAsRead();
     setNotifications((prev) => prev.map((item) => ({ ...item, isUnread: false })));
     toast.success("All notifications marked as read");
   };

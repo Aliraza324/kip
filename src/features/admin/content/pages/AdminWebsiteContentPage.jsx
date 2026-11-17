@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import {
   AdminContentNavTabs,
@@ -11,6 +11,8 @@ import {
   AdminContentActionsBar,
 } from "../components";
 import { adminWebsiteContentMock } from "@/mocks";
+import { useDataSync } from "@/hooks/useDataSync";
+import { contentService } from "@/service/apiService";
 
 const metaTitles = {
   home: { title: "Home Page – Hero Section", sub: "Edit the hero section content and design." },
@@ -24,7 +26,12 @@ export const AdminWebsiteContentPage = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [contactSubTab, setContactSubTab] = useState("content");
   const [showAddFeatureModal, setShowAddFeatureModal] = useState(false);
-  const [contentState, setContentState] = useState(adminWebsiteContentMock);
+  const liveContent = useDataSync("content");
+  const [contentState, setContentState] = useState(() => liveContent || adminWebsiteContentMock);
+
+  useEffect(() => {
+    if (liveContent) setContentState(liveContent);
+  }, [liveContent]);
 
   const currentData = contentState[activeTab === "how-it-works" ? "howItWorks" : activeTab];
   const { title: sTitle, sub: sSub } = metaTitles[activeTab] || metaTitles.home;
@@ -50,12 +57,14 @@ export const AdminWebsiteContentPage = () => {
   };
 
   const handleDiscard = () => {
-    setContentState(adminWebsiteContentMock);
+    setContentState(liveContent || adminWebsiteContentMock);
     toast.success("Changes discarded");
   };
 
-  const handleSave = () => {
-    toast.success("Website content saved successfully!");
+  const handleSave = async () => {
+    const key = activeTab === "how-it-works" ? "howItWorks" : activeTab;
+    await contentService.updatePageContent(key, contentState[key]);
+    toast.success("Website content saved and reflected in real time!");
   };
 
   return (

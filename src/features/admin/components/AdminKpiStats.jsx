@@ -1,5 +1,6 @@
 import { Users, GraduationCap, Layers } from "lucide-react";
 import { adminDashboardMock } from "@/mocks";
+import { useLiveStudents, useLiveTeachers, useLiveClasses } from "@/hooks/useDataSync";
 
 const iconMap = {
   users: Users,
@@ -9,11 +10,23 @@ const iconMap = {
 
 export const AdminKpiStats = () => {
   const { kpis } = adminDashboardMock;
+  const liveStudents = useLiveStudents();
+  const liveTeachers = useLiveTeachers();
+  const liveClasses = useLiveClasses();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
       {kpis.map((kpi) => {
         const Icon = iconMap[kpi.iconType] || Users;
+        let displayValue = kpi.value;
+        if (kpi.iconType === "users" && liveStudents?.length) {
+          displayValue = (1248 + Math.max(0, liveStudents.length - 5)).toLocaleString();
+        } else if (kpi.iconType === "teachers" && liveTeachers?.length) {
+          displayValue = liveTeachers.length.toString();
+        } else if (kpi.iconType === "classes" && liveClasses?.length) {
+          displayValue = liveClasses.length.toString();
+        }
+
         return (
           <div
             key={kpi.id}
@@ -26,7 +39,7 @@ export const AdminKpiStats = () => {
             </div>
             <div className="min-w-0">
               <span className="text-2xl sm:text-3xl font-black text-slate-900 block leading-tight tracking-tight">
-                {kpi.value}
+                {displayValue}
               </span>
               <span className="text-xs sm:text-sm text-slate-500 font-semibold block mt-1">
                 {kpi.label}
