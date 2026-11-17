@@ -5,7 +5,7 @@ import { useAdminTeacherDetail } from "@/hooks/admin";
 
 export const AdminTeacherDetailPage = () => {
   const { teacherId } = useParams();
-  const { teacher, isLoading, error } = useAdminTeacherDetail(teacherId);
+  const { teacher, isLoading, error, refetch } = useAdminTeacherDetail(teacherId);
 
   return (
     <div className="space-y-6 max-w-[1300px] mx-auto pb-8">
@@ -47,7 +47,7 @@ export const AdminTeacherDetailPage = () => {
           </Link>
         </div>
       ) : (
-        <AdminTeacherDetailCard teacher={teacher} />
+        <AdminTeacherDetailCard teacher={teacher} onRefresh={refetch} />
       )}
     </div>
   );
