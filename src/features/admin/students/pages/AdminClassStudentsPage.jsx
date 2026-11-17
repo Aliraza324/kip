@@ -1,14 +1,26 @@
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Users, Plus } from "lucide-react";
 import { AdminClassStudentsTable } from "../components";
-import { adminClassesMock } from "@/mocks";
+import { classService } from "@/service/apiService";
 
 export const AdminClassStudentsPage = () => {
   const { classId } = useParams();
-  const currentClass = adminClassesMock.find((c) => c.id === classId) || {
-    name: "All Students",
-    grade: "Grade 9",
-  };
+  const [classData, setClassData] = useState(null);
+
+  useEffect(() => {
+    if (classId && classId !== "all") {
+      classService
+        .getById(classId)
+        .then((res) => {
+          setClassData(res?.data || res);
+        })
+        .catch(() => setClassData(null));
+    }
+  }, [classId]);
+
+  const title = classData?.name ? `${classData.name} ${classData.grade ? `(${classData.grade})` : ""}` : "Class Students";
+  const sectionText = classData?.section ? ` • Section ${classData.section}` : "";
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto pb-8">
@@ -20,7 +32,7 @@ export const AdminClassStudentsPage = () => {
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0080f6] hover:text-blue-700 transition-colors mb-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Classes</span>
+            <span>Back to All Students</span>
           </Link>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[#eaf4fe] text-[#0080f6] flex items-center justify-center shrink-0">
@@ -28,10 +40,10 @@ export const AdminClassStudentsPage = () => {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                {currentClass.name}
+                {title}
               </h1>
               <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                Enrolled students list and performance records.
+                Enrolled students roster and performance records{sectionText}.
               </p>
             </div>
           </div>

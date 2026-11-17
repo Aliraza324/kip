@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, X, Key, User, Lock, Copy, CheckCheck, ArrowRight, Sparkles } from "lucide-react";
+import { Check, X, Key, User, Lock, Copy, CheckCheck, ArrowRight, Sparkles, Mail } from "lucide-react";
 import toast from "react-hot-toast";
 
 export const AdminStudentSuccessModal = ({ isOpen, onClose, studentData, onResetForm }) => {
@@ -10,8 +10,10 @@ export const AdminStudentSuccessModal = ({ isOpen, onClose, studentData, onReset
 
   if (!isOpen) return null;
 
-  const username = studentData?.username || "ayesha.ali";
-  const password = studentData?.password || "Kip@123";
+  const username = studentData?.credentials?.username || studentData?.username || "—";
+  const password = studentData?.credentials?.password || studentData?.password || "—";
+  const emailSent = studentData?.emailSent;
+  const targetEmail = studentData?.targetEmail || studentData?.email;
 
   const handleCopyUser = () => {
     navigator.clipboard.writeText(username);
@@ -64,20 +66,20 @@ export const AdminStudentSuccessModal = ({ isOpen, onClose, studentData, onReset
         <div className="mt-6 rounded-2xl bg-[#f0f7fe] border border-blue-100/80 p-4 text-left space-y-3">
           <div className="flex items-center gap-2 text-[#0080f6] font-bold text-xs sm:text-sm">
             <Key className="w-4 h-4" />
-            <span>Login Details</span>
+            <span>Login Credentials</span>
           </div>
 
           <div className="space-y-2 text-xs sm:text-sm">
             <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-blue-50">
-              <div className="flex items-center gap-2 text-slate-600">
-                <User className="w-4 h-4 text-slate-400" />
-                <span className="font-semibold text-slate-500">Username</span>
-                <span className="font-bold text-slate-900 ml-2">{username}</span>
+              <div className="flex items-center gap-2 text-slate-600 min-w-0">
+                <User className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="font-semibold text-slate-500 shrink-0">Username</span>
+                <span className="font-bold text-slate-900 ml-2 font-mono truncate">{username}</span>
               </div>
               <button
                 type="button"
                 onClick={handleCopyUser}
-                className="p-1 rounded-md text-slate-400 hover:text-[#0080f6] cursor-pointer"
+                className="p-1 rounded-md text-slate-400 hover:text-[#0080f6] cursor-pointer shrink-0"
                 title="Copy Username"
               >
                 {copiedUser ? <CheckCheck className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -85,15 +87,15 @@ export const AdminStudentSuccessModal = ({ isOpen, onClose, studentData, onReset
             </div>
 
             <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-blue-50">
-              <div className="flex items-center gap-2 text-slate-600">
-                <Lock className="w-4 h-4 text-slate-400" />
-                <span className="font-semibold text-slate-500">Password</span>
-                <span className="font-bold text-slate-900 ml-2">{password}</span>
+              <div className="flex items-center gap-2 text-slate-600 min-w-0">
+                <Lock className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="font-semibold text-slate-500 shrink-0">Password</span>
+                <span className="font-bold text-slate-900 ml-2 font-mono truncate">{password}</span>
               </div>
               <button
                 type="button"
                 onClick={handleCopyPass}
-                className="p-1 rounded-md text-slate-400 hover:text-[#0080f6] cursor-pointer"
+                className="p-1 rounded-md text-slate-400 hover:text-[#0080f6] cursor-pointer shrink-0"
                 title="Copy Password"
               >
                 {copiedPass ? <CheckCheck className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -102,10 +104,17 @@ export const AdminStudentSuccessModal = ({ isOpen, onClose, studentData, onReset
           </div>
         </div>
 
-        {/* Green Alert Banner */}
-        <div className="mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-2">
-          <span>ⓘ Share these login details with the student to access their account.</span>
-        </div>
+        {/* Email Dispatched Alert */}
+        {emailSent && targetEmail ? (
+          <div className="mt-4 p-3 rounded-xl bg-blue-50 border border-blue-100 text-blue-700 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-2">
+            <Mail className="w-4 h-4 text-[#0080f6] shrink-0" />
+            <span>Login credentials have been automatically dispatched to <b>{targetEmail}</b>.</span>
+          </div>
+        ) : (
+          <div className="mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-2">
+            <span>ⓘ Share these login details with the student so they can access the portal.</span>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -121,7 +130,7 @@ export const AdminStudentSuccessModal = ({ isOpen, onClose, studentData, onReset
             onClick={handleViewStudents}
             className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-blue-600 text-xs sm:text-sm font-bold text-white shadow-md shadow-blue-500/20 inline-flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
           >
-            <span>View Students</span>
+            <span>View All Students</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

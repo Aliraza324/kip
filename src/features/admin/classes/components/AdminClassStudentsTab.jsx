@@ -3,15 +3,20 @@ import {
   Users, Search, Upload, Plus, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { AdminStudentRow } from "./AdminStudentRow";
+import { AdminEditStudentModal } from "@/features/admin/students/components/AdminEditStudentModal";
+import { AdminDeleteStudentModal } from "@/features/admin/students/components/AdminDeleteStudentModal";
 
 export const AdminClassStudentsTab = ({
   students = [],
   onAddStudent,
   onImportStudents,
+  onRefresh,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [deletingStudent, setDeletingStudent] = useState(null);
   const itemsPerPage = 5;
 
   const filteredStudents = useMemo(() => {
@@ -136,6 +141,8 @@ export const AdminClassStudentsTab = ({
                   index={(currentPage - 1) * itemsPerPage + idx + 1}
                   isSelected={selectedIds.includes(s.id)}
                   onToggleSelect={() => toggleSelectOne(s.id)}
+                  onEdit={(student) => setEditingStudent(student)}
+                  onDelete={(student) => setDeletingStudent(student)}
                 />
               ))
             )}
@@ -158,29 +165,40 @@ export const AdminClassStudentsTab = ({
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="w-8 h-8 rounded-full bg-[#0080f6] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-            1
-          </span>
-          <span className="w-8 h-8 rounded-full text-slate-600 flex items-center justify-center text-xs">
-            2
-          </span>
-          <span className="w-8 h-8 rounded-full text-slate-600 flex items-center justify-center text-xs">
-            3
-          </span>
-          <span className="w-8 h-8 flex items-center justify-center text-slate-400 text-xs">
-            ...
-          </span>
-          <span className="w-8 h-8 rounded-full text-slate-600 flex items-center justify-center text-xs">
-            7
+            {currentPage}
           </span>
           <button
             type="button"
+            disabled={endItem >= totalCount}
             onClick={() => setCurrentPage((p) => p + 1)}
-            className="w-8 h-8 rounded-full border border-slate-200 text-slate-500 flex items-center justify-center"
+            className="w-8 h-8 rounded-full border border-slate-200 text-slate-500 flex items-center justify-center disabled:opacity-40"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
+
+      {/* Edit Student Modal */}
+      <AdminEditStudentModal
+        isOpen={Boolean(editingStudent)}
+        onClose={() => setEditingStudent(null)}
+        student={editingStudent}
+        onUpdated={() => {
+          onRefresh?.();
+          setEditingStudent(null);
+        }}
+      />
+
+      {/* Delete Student Modal */}
+      <AdminDeleteStudentModal
+        isOpen={Boolean(deletingStudent)}
+        onClose={() => setDeletingStudent(null)}
+        student={deletingStudent}
+        onDeleted={() => {
+          onRefresh?.();
+          setDeletingStudent(null);
+        }}
+      />
     </div>
   );
 };

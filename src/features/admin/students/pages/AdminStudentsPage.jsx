@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Users, Plus } from "lucide-react";
-import { AdminClassesTable } from "../components";
+import { AdminClassStudentsTable } from "../components";
 
 export const AdminStudentsPage = () => {
   return (
@@ -16,7 +16,7 @@ export const AdminStudentsPage = () => {
               Students
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-              Manage all students, add new students, and assign them to classes.
+              Manage all students, view academic progress, edit profiles, and enroll them in classes.
             </p>
           </div>
         </div>
@@ -30,8 +30,8 @@ export const AdminStudentsPage = () => {
         </Link>
       </div>
 
-      {/* Classes Table */}
-      <AdminClassesTable />
+      {/* Full Students Roster Table with Class & Status Filters, Search, View, Edit & Delete */}
+      <AdminClassStudentsTable />
     </div>
   );
 };

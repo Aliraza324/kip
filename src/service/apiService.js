@@ -136,6 +136,10 @@ export const studentService = {
   async getByClass(classId) {
     return await this.getAll({ classId });
   },
+  async getById(id) {
+    const res = await api.get(API_ROUTES.ADMIN.STUDENTS.DETAIL(id));
+    return res?.data !== undefined ? res.data : res;
+  },
   async create(studentData) {
     let payload = studentData;
     if (typeof FormData !== "undefined" && !(studentData instanceof FormData)) {

@@ -9,3 +9,6 @@ export * from "./AdminStudentOverviewTab";
 export * from "./AdminStudentAssignmentsTab";
 export * from "./AdminStudentAttendanceTab";
 export * from "./AdminStudentProgressTab";
+export * from "./AdminStudentRow";
+export * from "./AdminEditStudentModal";
+export * from "./AdminDeleteStudentModal";

@@ -1,17 +1,38 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import toast from "react-hot-toast";
 import { studentService } from "@/service/apiService";
 import { AdminAddStudentForm, AdminStudentSuccessModal } from "../components";
 
 export const AdminAddStudentPage = () => {
   const [createdStudent, setCreatedStudent] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSuccess = async (studentData) => {
-    const saved = await studentService.create(studentData);
-    setCreatedStudent(saved || studentData);
-    setShowSuccessModal(true);
+  const handleSuccess = async (formDataPayload, formRawData) => {
+    setIsSubmitting(true);
+    try {
+      const res = await studentService.create(formDataPayload);
+      const student = res?.data?.student || res?.student || res?.data || res;
+      const credentials = res?.data?.credentials || res?.credentials || {
+        username: formRawData?.username || student?.username,
+        password: formRawData?.password || "—",
+      };
+
+      setCreatedStudent({
+        ...student,
+        credentials,
+        emailSent: Boolean(formRawData?.email),
+        targetEmail: formRawData?.email,
+      });
+      setShowSuccessModal(true);
+      toast.success(`Student "${student.fullName || formRawData?.fullName}" created successfully!`);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || "Failed to create student");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -34,13 +55,13 @@ export const AdminAddStudentPage = () => {
             Add New Student
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-            Create a student account and add their personal details.
+            Create a student account, upload photo, and assign class and section.
           </p>
         </div>
       </div>
 
       {/* Form */}
-      <AdminAddStudentForm onSuccess={handleSuccess} />
+      <AdminAddStudentForm onSuccess={handleSuccess} isSubmitting={isSubmitting} />
 
       {/* Success Modal */}
       <AdminStudentSuccessModal

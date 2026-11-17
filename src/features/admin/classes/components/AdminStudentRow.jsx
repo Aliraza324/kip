@@ -1,17 +1,19 @@
-import { Eye, Edit2 } from "lucide-react";
+import { Eye, Edit2, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import toast from "react-hot-toast";
 
 export const AdminStudentRow = ({
   student,
   isSelected,
   onToggleSelect,
   index = 1,
+  onEdit,
+  onDelete,
 }) => {
-  const studentName = student.fullName || student.name;
+  const studentName = student.fullName || student.name || "Student";
   const studentCode = student.code || student.studentId || "—";
   const isFemale = (student.gender || "").toLowerCase() === "female";
-  const isActive = (student.status || "").toLowerCase() === "active";
+  const isActive = (student.status || "active").toLowerCase() === "active";
+  const studentId = student.id || student._id;
 
   return (
     <tr className="hover:bg-slate-50/60 transition-colors">
@@ -30,7 +32,7 @@ export const AdminStudentRow = ({
         <div className="flex items-center gap-3">
           {student.avatar ? (
             <img
-              src={student.avatar}
+              src={typeof student.avatar === "string" ? student.avatar : student.avatar?.url}
               alt={studentName}
               className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-200"
             />
@@ -44,7 +46,7 @@ export const AdminStudentRow = ({
           </span>
         </div>
       </td>
-      <td className="py-4 px-4 font-semibold text-slate-600 whitespace-nowrap">
+      <td className="py-4 px-4 font-semibold text-slate-600 whitespace-nowrap font-mono text-xs">
         {studentCode}
       </td>
       <td className="py-4 px-4 whitespace-nowrap">
@@ -75,32 +77,31 @@ export const AdminStudentRow = ({
         </span>
       </td>
       <td className="py-4 px-4 whitespace-nowrap">
-        <div className="flex items-center justify-center gap-3">
-          {student.id ? (
+        <div className="flex items-center justify-center gap-2">
+          {studentId ? (
             <Link
-              to={`/admin/students/${student.id}`}
-              className="p-1 text-[#0080f6] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-              title="View Details"
+              to={`/admin/students/${studentId}`}
+              className="p-1.5 text-[#0080f6] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+              title="View Student Details"
             >
               <Eye className="w-4 h-4 stroke-[2.2]" />
             </Link>
-          ) : (
-            <button
-              type="button"
-              onClick={() => toast(`Viewing student ${studentName}`, { icon: "🎓" })}
-              className="p-1 text-[#0080f6] hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-              title="View Details"
-            >
-              <Eye className="w-4 h-4 stroke-[2.2]" />
-            </button>
-          )}
+          ) : null}
           <button
             type="button"
-            onClick={() => toast.success(`Edit ${studentName}`)}
-            className="p-1 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-            title="Edit"
+            onClick={() => onEdit?.(student)}
+            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            title="Edit Student"
           >
             <Edit2 className="w-4 h-4 stroke-[2]" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete?.(student)}
+            className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+            title="Delete Student"
+          >
+            <Trash2 className="w-4 h-4 stroke-[2]" />
           </button>
         </div>
       </td>
@@ -109,4 +110,3 @@ export const AdminStudentRow = ({
 };
 
 export default AdminStudentRow;
-

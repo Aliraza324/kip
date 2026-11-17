@@ -146,6 +146,7 @@ export const AdminClassDetailPage = () => {
           students={classData.students || []}
           onAddStudent={() => setIsAddStudentOpen(true)}
           onImportStudents={() => fileInputRef.current?.click()}
+          onRefresh={refetch}
         />
       )}
 
