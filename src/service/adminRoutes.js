@@ -53,6 +53,9 @@ export const ADMIN_ROUTES = {
   },
   CONTACT: {
     MESSAGES: "/admin/contact-messages",
+    REPLY: (id) => `/admin/contact-messages/${id}/reply`,
+    SET_READ: (id) => `/admin/contact-messages/${id}`,
+    DELETE: (id) => `/admin/contact-messages/${id}`,
     SUBSCRIBERS: "/admin/subscribers",
   },
   PROFILE: {

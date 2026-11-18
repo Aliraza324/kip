@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Home, Info, LayoutGrid, Layers, Mail } from "lucide-react";
+import { ArrowLeft, ExternalLink, Home, Info, LayoutGrid, Layers, Mail, MessageSquare } from "lucide-react";
 
 const tabs = [
   { id: "home", label: "Home Page", icon: Home },
@@ -62,6 +62,14 @@ export const AdminContentNavTabs = ({ activeTab, onSelectTab }) => {
             </button>
           );
         })}
+
+        <Link
+          to="/admin/contact-queries"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-blue-50 text-[#0080f6] hover:bg-blue-100 transition-all shrink-0 ml-auto border border-blue-100"
+        >
+          <MessageSquare className="w-3.5 h-3.5" />
+          <span>Contact Queries Inbox</span>
+        </Link>
       </div>
     </div>
   );

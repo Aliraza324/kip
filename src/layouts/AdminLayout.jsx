@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Home, Users, GraduationCap, Layers, Monitor, Bell, Search,
-  Menu, X, LogOut, ChevronDown, User,
+  Menu, X, LogOut, ChevronDown, User, MessageSquare,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
@@ -13,6 +13,7 @@ const navItems = [
   { label: "Teachers", href: "/admin/teachers", icon: GraduationCap },
   { label: "Classes", href: "/admin/classes", icon: Layers },
   { label: "Website Content", href: "/admin/content", icon: Monitor },
+  { label: "Contact Queries", href: "/admin/contact-queries", icon: MessageSquare },
   { label: "Notifications", href: "/admin/notifications", icon: Bell, hasBadge: true },
 ];
 

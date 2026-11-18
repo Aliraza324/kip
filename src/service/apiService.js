@@ -444,6 +444,25 @@ export const contactPublicService = {
   },
 };
 
+export const adminContactService = {
+  async listMessages(params = {}) {
+    const res = await api.get(API_ROUTES.ADMIN.CONTACT.MESSAGES, { params });
+    return res;
+  },
+  async setRead(id, isRead = true) {
+    const res = await api.patch(API_ROUTES.ADMIN.CONTACT.SET_READ(id), { isRead });
+    return res;
+  },
+  async replyMessage(id, replyMessage) {
+    const res = await api.post(API_ROUTES.ADMIN.CONTACT.REPLY(id), { replyMessage });
+    return res;
+  },
+  async deleteMessage(id) {
+    const res = await api.delete(API_ROUTES.ADMIN.CONTACT.DELETE(id));
+    return res;
+  },
+};
+
 export default {
   auth: authService,
   students: studentService,
@@ -453,5 +472,6 @@ export default {
   landing: contentService,
   newsletter: newsletterService,
   contactPublic: contactPublicService,
+  adminContact: adminContactService,
   notifications: notificationService,
 };
