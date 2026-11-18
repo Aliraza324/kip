@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Lock, Eye, EyeOff, ArrowRight, Loader2, KeyRound } from "lucide-react";
+import { User, Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
@@ -12,7 +12,7 @@ import { fadeInUp } from "@/animations";
 import { useAdminLogin } from "@/hooks/admin";
 
 export const AdminLoginForm = () => {
-  const { title, subtitle, fields, submitButton, credentials } = adminLoginMock;
+  const { title, subtitle, fields, submitButton } = adminLoginMock;
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -29,13 +29,12 @@ export const AdminLoginForm = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(adminLoginSchema),
     defaultValues: {
-      username: credentials?.username || "admin",
-      password: credentials?.password || "password123",
+      username: "",
+      password: "",
     },
   });
 
@@ -45,12 +44,6 @@ export const AdminLoginForm = () => {
     } catch {
       // Handled in onError
     }
-  };
-
-  const handleQuickFill = () => {
-    setValue("username", credentials.username);
-    setValue("password", credentials.password);
-    toast.success("Demo credentials loaded!");
   };
 
   return (
@@ -141,18 +134,6 @@ export const AdminLoginForm = () => {
             </>
           )}
         </button>
-
-        {/* Demo Credentials Helper Pill */}
-        <div
-          onClick={handleQuickFill}
-          className="mt-3 py-2 px-3.5 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 backdrop-blur-md flex items-center justify-between text-[11px] text-white/90 cursor-pointer transition-colors"
-        >
-          <div className="flex items-center gap-1.5">
-            <KeyRound className="w-3.5 h-3.5 text-amber-300" />
-            <span><strong>User:</strong> admin &bull; <strong>Pass:</strong> password123</span>
-          </div>
-          <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">Auto Fill</span>
-        </div>
       </form>
     </motion.div>
   );
