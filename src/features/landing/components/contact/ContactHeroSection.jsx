@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import heroBgImg from "@/assets/images/heroBg.png";
 import contactHeroImg from "@/assets/images/bdc52ba98dfa4db546d0c25918ce17bb6487f413.png";
 import { contactHeroMock } from "@/mocks";
+import { useLiveContent } from "@/hooks/useDataSync";
 import { fadeInUp, scaleIn, staggerContainer } from "@/animations";
 
 const iconMap = {
@@ -11,14 +12,40 @@ const iconMap = {
 };
 
 export const ContactHeroSection = () => {
-  const {
-    badge,
-    headingLine1,
-    headingLine2Prefix,
-    headingLine2Accent,
-    description,
-    pills,
-  } = contactHeroMock;
+  const liveContact = useLiveContent("contact");
+
+  const badge = liveContact?.badge || contactHeroMock.badge;
+  const description = liveContact?.description || contactHeroMock.description;
+  const rawTitle = liveContact?.title || "Let's Talk! We're Here to Help.";
+
+  let headingLine1 = contactHeroMock.headingLine1;
+  let headingLine2Prefix = contactHeroMock.headingLine2Prefix;
+  let headingLine2Accent = contactHeroMock.headingLine2Accent;
+
+  if (liveContact?.title) {
+    if (liveContact.title.includes("!")) {
+      const parts = liveContact.title.split("!").map((s) => s.trim()).filter(Boolean);
+      headingLine1 = parts[0] ? `${parts[0]}!` : "";
+      headingLine2Prefix = parts.slice(1).join(" ");
+      headingLine2Accent = "";
+    } else {
+      const words = liveContact.title.split(" ");
+      if (words.length > 3) {
+        const mid = Math.ceil(words.length / 2);
+        headingLine1 = words.slice(0, mid).join(" ");
+        headingLine2Prefix = words.slice(mid).join(" ");
+        headingLine2Accent = "";
+      } else {
+        headingLine1 = liveContact.title;
+        headingLine2Prefix = "";
+        headingLine2Accent = "";
+      }
+    }
+  }
+
+  const heroImage =
+    (typeof liveContact?.image === "string" ? liveContact.image : liveContact?.image?.url) ||
+    contactHeroImg;
 
   return (
     <section
@@ -75,11 +102,13 @@ export const ContactHeroSection = () => {
                 </span>
               </div>
 
-              {/* Line 2: We're Here to Help. */}
-              <div className="mt-1">
-                <span>{headingLine2Prefix}</span>
-                <span className="text-[#007be3]">{headingLine2Accent}</span>
-              </div>
+              {/* Line 2 */}
+              {(headingLine2Prefix || headingLine2Accent) && (
+                <div className="mt-1">
+                  {headingLine2Prefix && <span>{headingLine2Prefix} </span>}
+                  {headingLine2Accent && <span className="text-[#007be3]">{headingLine2Accent}</span>}
+                </div>
+              )}
             </motion.h1>
 
             {/* Description Subtitle */}
@@ -95,7 +124,7 @@ export const ContactHeroSection = () => {
               variants={fadeInUp}
               className="mt-7 flex flex-wrap items-center gap-3 sm:gap-4"
             >
-              {pills.map((item) => {
+              {contactHeroMock.pills.map((item) => {
                 const IconComponent = iconMap[item.iconType] || Sparkles;
                 return (
                   <div
@@ -113,7 +142,7 @@ export const ContactHeroSection = () => {
             </motion.div>
           </motion.div>
 
-          {/* Image Column (Order 1 on mobile, Order 2 on desktop) */}
+          {/* Image Column */}
           <motion.div
             variants={scaleIn}
             initial="hidden"
@@ -121,8 +150,8 @@ export const ContactHeroSection = () => {
             className="order-1 lg:order-2 lg:col-span-6 xl:col-span-7 flex items-center justify-center lg:justify-end"
           >
             <img
-              src={contactHeroImg}
-              alt="Let's Talk! We're Here to Help - KIPClassin"
+              src={heroImage}
+              alt={rawTitle}
               className="relative z-10 w-full max-w-lg lg:max-w-xl xl:max-w-2xl h-auto object-contain select-none drop-shadow-md transition-transform duration-300 hover:scale-[1.01]"
               fetchPriority="high"
             />
@@ -134,4 +163,3 @@ export const ContactHeroSection = () => {
 };
 
 export default ContactHeroSection;
-

@@ -48,6 +48,8 @@ export const ADMIN_ROUTES = {
     BASE: "/content",
     DETAIL: (section) => `/admin/content/${section}`,
     UPDATE: (section) => `/admin/content/${section}`,
+    IMAGE: (section) => `/admin/content/${section}/image`,
+    VIDEO: (section) => `/admin/content/${section}/video`,
   },
   CONTACT: {
     MESSAGES: "/admin/contact-messages",

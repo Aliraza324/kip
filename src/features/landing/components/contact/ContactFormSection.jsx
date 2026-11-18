@@ -16,25 +16,32 @@ import { fadeInUp } from "@/animations";
 import { contactFormSchema } from "./contact.schema";
 import { ContactInputField } from "./ContactInputField";
 import { ContactChannels } from "./ContactChannels";
+import { useSubmitContactMessage } from "@/hooks/useLandingContent";
 
 export const ContactFormSection = () => {
   const { form } = contactFormSectionMock;
   const [isSuccess, setIsSuccess] = useState(false);
+  const submitMutation = useSubmitContactMessage();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(contactFormSchema),
     defaultValues: { firstName: "", lastName: "", email: "", subject: "", message: "" },
   });
 
-  const onSubmit = () => {
-    setIsSuccess(true);
-    reset();
-    setTimeout(() => setIsSuccess(false), 5000);
+  const onSubmit = async (data) => {
+    try {
+      await submitMutation.mutateAsync(data);
+      setIsSuccess(true);
+      reset();
+      setTimeout(() => setIsSuccess(false), 5000);
+    } catch {
+      // Toast already handled by mutation hook
+    }
   };
 
   return (
@@ -165,7 +172,7 @@ export const ContactFormSection = () => {
               {/* Row 5: Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={submitMutation.isLoading}
                 className="w-full py-3.5 sm:py-4 px-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#0060d0] via-[#007be3] to-[#008ef8] hover:from-[#0050b5] hover:to-[#007be3] disabled:opacity-70 text-white font-semibold text-sm sm:text-base shadow-md shadow-[#007be3]/20 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.99] cursor-pointer mt-2"
               >
                 <span>{form.submitButton.label}</span>

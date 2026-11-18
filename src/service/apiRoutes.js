@@ -1,10 +1,12 @@
 import { STUDENT_ROUTES } from "./studentRoutes";
 import { TEACHER_ROUTES } from "./teacherRoutes";
 import { ADMIN_ROUTES } from "./adminRoutes";
+import { LANDING_ROUTES } from "./landingRoute";
 
 export { STUDENT_ROUTES } from "./studentRoutes";
 export { TEACHER_ROUTES } from "./teacherRoutes";
 export { ADMIN_ROUTES } from "./adminRoutes";
+export { LANDING_ROUTES } from "./landingRoute";
 
 export const AUTH_ROUTES = {
   LOGIN: "/auth/login",
@@ -41,6 +43,8 @@ export const API_ROUTES = {
   CONTENT: {
     BASE: "/content",
     UPDATE: (pageKey) => `/admin/content/${pageKey}`,
+    IMAGE: (pageKey) => `/admin/content/${pageKey}/image`,
+    VIDEO: (pageKey) => `/admin/content/${pageKey}/video`,
   },
   NOTIFICATIONS: {
     BASE: "/me/notifications",

@@ -4,7 +4,7 @@ import headsetImg from "@/assets/images/image 36.png";
 import envelopeImg from "@/assets/images/image 37.png";
 import phoneImg from "@/assets/images/image 36 (1).png";
 import locationImg from "@/assets/images/image 36 (2).png";
-import { contactFormSectionMock } from "@/mocks";
+import { useLiveContent } from "@/hooks/useDataSync";
 import { fadeInUp, staggerContainer } from "@/animations";
 
 const channelImages = {
@@ -15,12 +15,52 @@ const channelImages = {
 };
 
 export const ContactChannels = () => {
-  const { channels } = contactFormSectionMock;
+  const liveContact = useLiveContent("contact");
+  const details = liveContact?.details || {};
+
+  const email = details.email || "support@kipclassin.com";
+  const phone = details.phone || "+1 (647) 555-0199";
+  const address = details.address || "Toronto, Ontario, Canada";
+
+  const items = [
+    {
+      id: "live_support",
+      title: "Live Support",
+      description: "Chat with our support team in real time.",
+      imageKey: "headset",
+      href: "#contact-form",
+      target: "_self",
+    },
+    {
+      id: "email_us",
+      title: "Email Us",
+      description: email,
+      imageKey: "envelope",
+      href: `mailto:${email}`,
+      target: "_self",
+    },
+    {
+      id: "call_us",
+      title: "Call Us",
+      description: phone,
+      imageKey: "phone",
+      href: `tel:${phone.replace(/[^\d+]/g, "")}`,
+      target: "_self",
+    },
+    {
+      id: "our_location",
+      title: "Our Location",
+      description: address,
+      imageKey: "location",
+      href: `https://maps.google.com/?q=${encodeURIComponent(address)}`,
+      target: "_blank",
+    },
+  ];
 
   return (
     <div className="lg:col-span-5">
       <h2 className="text-2xl sm:text-[28px] font-bold text-[#01287b] leading-tight mb-6 sm:mb-7">
-        {channels.title}
+        Other Ways to Reach Us
       </h2>
 
       <motion.div
@@ -30,10 +70,12 @@ export const ContactChannels = () => {
         viewport={{ once: true, margin: "-50px" }}
         className="space-y-3.5 sm:space-y-4"
       >
-        {channels.items.map((item) => (
+        {items.map((item) => (
           <motion.a
             key={item.id}
             href={item.href}
+            target={item.target || "_self"}
+            rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
             variants={fadeInUp}
             className="group flex items-center justify-between gap-4 p-4 sm:p-4.5 rounded-2xl sm:rounded-[22px] bg-[#f8faff] border border-[#e2edfa] hover:border-[#bfdbfe] hover:bg-[#eef6ff] hover:shadow-md transition-all duration-300"
           >
@@ -64,4 +106,3 @@ export const ContactChannels = () => {
 };
 
 export default ContactChannels;
-

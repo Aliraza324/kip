@@ -2,8 +2,12 @@ import { Video, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import girlImg from "@/assets/images/girl.png";
 import { scaleIn } from "@/animations";
+import { useLiveContent } from "@/hooks/useDataSync";
 
 export const LandingHeroImage = () => {
+  const liveHome = useLiveContent("home");
+  const heroImage = (typeof liveHome?.image === "string" ? liveHome.image : liveHome?.image?.url) || girlImg;
+
   return (
     <motion.div
       variants={scaleIn}
@@ -52,13 +56,13 @@ export const LandingHeroImage = () => {
 
         {/* Main Girl Illustration */}
         <img
-          src={girlImg}
+          src={heroImage}
           alt="Student learning online with KIPClassin"
           loading="eager"
           fetchPriority="high"
           width={1536}
           height={1024}
-          className="w-full h-auto object-contain select-none block drop-shadow-sm"
+          className="w-full h-auto object-contain select-none block drop-shadow-sm max-h-[580px]"
         />
       </div>
     </motion.div>

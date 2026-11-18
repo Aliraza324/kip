@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   Mail,
   Send,
@@ -7,11 +8,14 @@ import {
   Users,
   UserPlus,
   HelpCircle,
+  Loader2,
 } from "lucide-react";
 import footerBgImg from "@/assets/images/KIPClassin footer.png";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { landingFooterMock } from "@/mocks";
 import { FooterSocialIcon } from "./FooterSocialIcons";
+import { useLiveContent } from "@/hooks/useDataSync";
+import { useSubscribeNewsletter } from "@/hooks/useLandingContent";
 
 const userIconMap = {
   GraduationCap,
@@ -23,7 +27,6 @@ const userIconMap = {
 export const LandingFooter = () => {
   const {
     description,
-    socials,
     quickLinks,
     userLinks,
     companyLinks,
@@ -31,12 +34,35 @@ export const LandingFooter = () => {
     copyright,
   } = landingFooterMock;
 
+  const liveContact = useLiveContent("contact");
   const [email, setEmail] = useState("");
+
+  const { mutate: subscribe, isLoading: isSubscribing } = useSubscribeNewsletter({
+    onSuccess: () => {
+      setEmail("");
+    },
+  });
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    setEmail("");
+    const trimmed = email.trim();
+    if (!trimmed || !trimmed.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    subscribe(trimmed);
   };
+
+  // Dynamic social links from Admin Contact settings / DB
+  const dynamicSocials =
+    liveContact?.socialLinks && liveContact.socialLinks.length > 0
+      ? liveContact.socialLinks.filter((s) => s.enabled !== false)
+      : [
+          { id: "soc-1", platform: "Facebook", url: "https://facebook.com/kipclassin" },
+          { id: "soc-2", platform: "Instagram", url: "https://instagram.com/kipclassin" },
+          { id: "soc-3", platform: "YouTube", url: "https://youtube.com/@kipclassin" },
+          { id: "soc-4", platform: "LinkedIn", url: "https://linkedin.com/company/kipclassin" },
+        ];
 
   return (
     <footer
@@ -63,15 +89,18 @@ export const LandingFooter = () => {
               {description}
             </p>
 
-            <div className="mt-5 flex items-center gap-2">
-              {socials.map((item) => (
+            {/* Social Links styled like reference image with rounded squares */}
+            <div className="mt-5 flex items-center gap-2.5">
+              {dynamicSocials.map((item) => (
                 <a
-                  key={item.label}
-                  href={item.href}
-                  aria-label={item.label}
-                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all focus:outline-hidden"
+                  key={item.id || item.platform}
+                  href={item.url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={item.platform}
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm focus:outline-hidden"
                 >
-                  <FooterSocialIcon type={item.icon} />
+                  <FooterSocialIcon type={item.platform} />
                 </a>
               ))}
             </div>
@@ -156,17 +185,23 @@ export const LandingFooter = () => {
                 <input
                   type="email"
                   value={email}
+                  disabled={isSubscribing}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={newsletter.placeholder}
-                  className="w-full bg-transparent text-slate-800 text-xs placeholder:text-slate-400 focus:outline-hidden pr-2"
+                  className="w-full bg-transparent text-slate-800 text-xs placeholder:text-slate-400 focus:outline-hidden pr-2 disabled:opacity-60"
                   required
                 />
                 <button
                   type="submit"
+                  disabled={isSubscribing}
                   aria-label="Subscribe to newsletter"
-                  className="h-8 w-8 rounded-full bg-[#febf11] hover:bg-[#e5ab0f] text-[#01287b] font-bold flex items-center justify-center shrink-0 shadow-xs transition-transform active:scale-95 cursor-pointer"
+                  className="h-8 w-8 rounded-full bg-[#febf11] hover:bg-[#e5ab0f] text-[#01287b] font-bold flex items-center justify-center shrink-0 shadow-xs transition-transform active:scale-95 cursor-pointer disabled:opacity-60"
                 >
-                  <Send className="h-3.5 w-3.5" />
+                  {isSubscribing ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Send className="h-3.5 w-3.5" />
+                  )}
                 </button>
               </form>
             </div>

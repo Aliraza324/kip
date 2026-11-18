@@ -1,5 +1,6 @@
 import { api, setAuthToken, setAuthUser, clearAuthSession } from "./apiClient";
 import { API_ROUTES } from "./apiRoutes";
+import { LANDING_ROUTES } from "./landingRoute";
 import { liveStore, emitDataChange } from "./dataStore";
 
 export const authService = {
@@ -364,17 +365,48 @@ export const contentService = {
   async getAll() {
     try {
       const res = await api.get(API_ROUTES.CONTENT.BASE);
-      if (res?.data) liveStore.set("content", res.data);
-      return res?.data || liveStore.get("content");
+      const data = res?.data !== undefined ? res.data : res;
+      if (data) liveStore.set("content", data);
+      return data || liveStore.get("content");
     } catch {
       return liveStore.get("content");
     }
   },
   async updatePageContent(pageKey, newSectionData) {
-    const current = liveStore.get("content");
-    const updated = { ...current, [pageKey]: { ...(current[pageKey] || {}), ...newSectionData } };
+    const res = await api.put(API_ROUTES.CONTENT.UPDATE(pageKey), newSectionData);
+    const updatedSection = res?.data !== undefined ? res.data : res;
+    const current = liveStore.get("content") || {};
+    const updated = {
+      ...current,
+      [pageKey]: { ...(current[pageKey] || {}), ...newSectionData, ...(updatedSection || {}) },
+    };
     liveStore.set("content", updated);
-    try { await api.put(API_ROUTES.CONTENT.UPDATE(pageKey), newSectionData); } catch {}
+    return updated[pageKey];
+  },
+  async uploadImage(pageKey, file) {
+    const formData = new FormData();
+    formData.append("image", file);
+    const res = await api.put(API_ROUTES.CONTENT.IMAGE(pageKey), formData);
+    const updatedSection = res?.data !== undefined ? res.data : res;
+    const current = liveStore.get("content") || {};
+    const updated = {
+      ...current,
+      [pageKey]: { ...(current[pageKey] || {}), ...(updatedSection || {}) },
+    };
+    liveStore.set("content", updated);
+    return updated[pageKey];
+  },
+  async uploadVideo(pageKey, file) {
+    const formData = new FormData();
+    formData.append("video", file);
+    const res = await api.put(API_ROUTES.CONTENT.VIDEO(pageKey), formData);
+    const updatedSection = res?.data !== undefined ? res.data : res;
+    const current = liveStore.get("content") || {};
+    const updated = {
+      ...current,
+      [pageKey]: { ...(current[pageKey] || {}), ...(updatedSection || {}) },
+    };
+    liveStore.set("content", updated);
     return updated[pageKey];
   },
 };
@@ -398,11 +430,28 @@ export const notificationService = {
   },
 };
 
+export const newsletterService = {
+  async subscribe(email) {
+    const res = await api.post(LANDING_ROUTES.NEWSLETTER.SUBSCRIBE, { email });
+    return res;
+  },
+};
+
+export const contactPublicService = {
+  async submitMessage(messageData) {
+    const res = await api.post(LANDING_ROUTES.CONTACT.SUBMIT, messageData);
+    return res?.data !== undefined ? res.data : res;
+  },
+};
+
 export default {
   auth: authService,
   students: studentService,
   teachers: teacherService,
   classes: classService,
   content: contentService,
+  landing: contentService,
+  newsletter: newsletterService,
+  contactPublic: contactPublicService,
   notifications: notificationService,
 };

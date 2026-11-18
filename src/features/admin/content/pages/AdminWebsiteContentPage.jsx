@@ -4,8 +4,6 @@ import {
   AdminContentNavTabs,
   AdminSectionHeroForm,
   AdminSectionMediaCard,
-  AdminFeaturesListCard,
-  AdminAddFeatureModal,
   AdminContactInfoCard,
   AdminSocialLinksTable,
   AdminContentActionsBar,
@@ -13,6 +11,11 @@ import {
 import { adminWebsiteContentMock } from "@/mocks";
 import { useDataSync } from "@/hooks/useDataSync";
 import { contentService } from "@/service/apiService";
+import {
+  useUpdateHeroContent,
+  useUploadHeroImage,
+  useUploadHeroVideo,
+} from "@/hooks/admin/useAdminContent";
 
 const metaTitles = {
   home: { title: "Home Page – Hero Section", sub: "Edit the hero section content and design." },
@@ -25,23 +28,30 @@ const metaTitles = {
 export const AdminWebsiteContentPage = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [contactSubTab, setContactSubTab] = useState("content");
-  const [showAddFeatureModal, setShowAddFeatureModal] = useState(false);
   const liveContent = useDataSync("content");
   const [contentState, setContentState] = useState(() => liveContent || adminWebsiteContentMock);
+
+  const updateMutation = useUpdateHeroContent();
+  const uploadImageMutation = useUploadHeroImage();
+  const uploadVideoMutation = useUploadHeroVideo();
+
+  useEffect(() => {
+    contentService.getAll();
+  }, []);
 
   useEffect(() => {
     if (liveContent) setContentState(liveContent);
   }, [liveContent]);
 
-  const currentData = contentState[activeTab === "how-it-works" ? "howItWorks" : activeTab];
+  const currentKey = activeTab === "how-it-works" ? "howItWorks" : activeTab;
+  const currentData = contentState[currentKey] || {};
   const { title: sTitle, sub: sSub } = metaTitles[activeTab] || metaTitles.home;
 
   const handleHeroChange = (e) => {
     const { name, value } = e.target;
-    const key = activeTab === "how-it-works" ? "howItWorks" : activeTab;
     setContentState((prev) => ({
       ...prev,
-      [key]: { ...prev[key], [name]: value },
+      [currentKey]: { ...prev[currentKey], [name]: value },
     }));
   };
 
@@ -51,7 +61,7 @@ export const AdminWebsiteContentPage = () => {
       ...prev,
       contact: {
         ...prev.contact,
-        details: { ...prev.contact.details, [name]: value },
+        details: { ...prev.contact?.details, [name]: value },
       },
     }));
   };
@@ -62,9 +72,63 @@ export const AdminWebsiteContentPage = () => {
   };
 
   const handleSave = async () => {
-    const key = activeTab === "how-it-works" ? "howItWorks" : activeTab;
-    await contentService.updatePageContent(key, contentState[key]);
-    toast.success("Website content saved and reflected in real time!");
+    try {
+      const sectionData = contentState[currentKey] || {};
+      const payload = {
+        badge: sectionData.badge || "",
+        title: sectionData.title || "",
+        description: sectionData.description || "",
+        btn1Text: sectionData.btn1Text || "",
+        btn1Link: sectionData.btn1Link || "",
+        btn2Text: sectionData.btn2Text || "",
+        btn2Link: sectionData.btn2Link || "",
+        videoUrl: sectionData.videoUrl || null,
+        accentColor: sectionData.accentColor || "#0080f6",
+      };
+
+      if (currentKey === "features") {
+        payload.list = sectionData.list || [];
+      }
+      if (currentKey === "contact") {
+        payload.details = sectionData.details || { phone: "", email: "", address: "" };
+        payload.socialLinks = sectionData.socialLinks || [];
+      }
+
+      await updateMutation.mutateAsync({ section: currentKey, data: payload });
+    } catch {
+      // Toast already handled by mutation hook
+    }
+  };
+
+  const handleImageUpload = async (file) => {
+    try {
+      const updated = await uploadImageMutation.mutateAsync({ section: currentKey, file });
+      setContentState((prev) => ({
+        ...prev,
+        [currentKey]: {
+          ...prev[currentKey],
+          image: updated?.image || updated,
+        },
+      }));
+    } catch {
+      // Toast already handled by mutation hook
+    }
+  };
+
+  const handleVideoUpload = async (file) => {
+    try {
+      const updated = await uploadVideoMutation.mutateAsync({ section: currentKey, file });
+      setContentState((prev) => ({
+        ...prev,
+        [currentKey]: {
+          ...prev[currentKey],
+          video: updated?.video,
+          videoUrl: updated?.videoUrl || updated?.video?.url || prev[currentKey]?.videoUrl,
+        },
+      }));
+    } catch {
+      // Toast already handled by mutation hook
+    }
   };
 
   return (
@@ -104,10 +168,10 @@ export const AdminWebsiteContentPage = () => {
       {activeTab === "contact" && contactSubTab === "social" ? (
         <div className="space-y-6">
           <AdminContactInfoCard
-            details={contentState.contact.details}
+            details={contentState.contact?.details || {}}
             onChange={handleContactDetailsChange}
           />
-          <AdminSocialLinksTable links={contentState.contact.socialLinks} />
+          <AdminSocialLinksTable links={contentState.contact?.socialLinks || []} />
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
@@ -123,42 +187,18 @@ export const AdminWebsiteContentPage = () => {
           <div className="lg:col-span-4">
             <AdminSectionMediaCard
               data={currentData}
-              onColorChange={(c) => {
-                const key = activeTab === "how-it-works" ? "howItWorks" : activeTab;
-                setContentState((prev) => ({
-                  ...prev,
-                  [key]: { ...prev[key], accentColor: c },
-                }));
-              }}
+              onImageUpload={handleImageUpload}
+              onVideoUpload={handleVideoUpload}
             />
           </div>
         </div>
       )}
 
-      {/* Features List Section (Only on Features Tab) */}
-      {activeTab === "features" && (
-        <AdminFeaturesListCard
-          features={contentState.features.list}
-          onAddClick={() => setShowAddFeatureModal(true)}
-        />
-      )}
-
-      {/* Bottom Actions Bar */}
-      <AdminContentActionsBar onDiscard={handleDiscard} onSave={handleSave} />
-
-      {/* Add Feature Modal */}
-      <AdminAddFeatureModal
-        isOpen={showAddFeatureModal}
-        onClose={() => setShowAddFeatureModal(false)}
-        onAdd={(newFeat) => {
-          setContentState((prev) => ({
-            ...prev,
-            features: {
-              ...prev.features,
-              list: [...prev.features.list, newFeat],
-            },
-          }));
-        }}
+      {/* Bottom Actions Bar with loading state */}
+      <AdminContentActionsBar
+        onDiscard={handleDiscard}
+        onSave={handleSave}
+        isSaving={updateMutation.isLoading}
       />
     </div>
   );
