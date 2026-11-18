@@ -1,5 +1,5 @@
 import { api, setAuthToken, setAuthUser, clearAuthSession } from "./apiClient";
-import { API_ROUTES } from "./apiRoutes";
+import { API_ROUTES, ADMIN_ROUTES } from "./apiRoutes";
 import { LANDING_ROUTES } from "./landingRoute";
 import { liveStore, emitDataChange } from "./dataStore";
 
@@ -519,10 +519,22 @@ export const adminContactService = {
     const res = await api.delete(API_ROUTES.ADMIN.CONTACT.DELETE(id));
     return res;
   },
+  async getStats() {
+    const res = await api.get(API_ROUTES.ADMIN.CONTACT.STATS);
+    return res?.data !== undefined ? res.data : res;
+  },
+};
+
+export const adminDashboardService = {
+  async getDashboard() {
+    const res = await api.get(ADMIN_ROUTES.DASHBOARD);
+    return res?.data !== undefined ? res.data : res;
+  },
 };
 
 export default {
   auth: authService,
+  dashboard: adminDashboardService,
   students: studentService,
   teachers: teacherService,
   classes: classService,
