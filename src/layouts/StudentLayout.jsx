@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, Navigate, useNavigate } from "react-router-dom";
 import {
   Home, Layers, ClipboardList, BookOpen, BarChart2, Bell,
   Search, Headphones, User, ChevronDown, Menu, X, ArrowRight,
@@ -11,6 +11,7 @@ import { NotificationDropdown } from "@/features/students/components/notificatio
 import { StudentProfileDropdown } from "@/features/students/components/profile";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 import { notificationService } from "@/service/apiService";
+import { getAuthToken } from "@/service/apiClient";
 
 const navItems = [
   { label: "Dashboard", href: "/student", icon: Home, end: true },
@@ -23,6 +24,8 @@ const navItems = [
 ];
 
 export const StudentLayout = () => {
+  const token = getAuthToken();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
@@ -30,6 +33,18 @@ export const StudentLayout = () => {
   const dropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
   const { user, helpCard } = studentDashboardMock;
+
+  useEffect(() => {
+    const handleUnauthorized = (e) => {
+      navigate(e?.detail?.redirectUrl || "/auth/login", { replace: true });
+    };
+    window.addEventListener("kip:auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("kip:auth:unauthorized", handleUnauthorized);
+  }, [navigate]);
+
+  if (!token) {
+    return <Navigate to="/auth/login" replace />;
+  }
 
   useEffect(() => {
     notificationService

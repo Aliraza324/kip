@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
 import {
   Home, Users, GraduationCap, Layers, Monitor, Bell, Search,
   Menu, X, LogOut, ChevronDown, User, MessageSquare,
@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 import { notificationService, authService } from "@/service/apiService";
+import { getAuthToken } from "@/service/apiClient";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: Home, end: true },
@@ -20,11 +21,24 @@ const navItems = [
 ];
 
 export const AdminLayout = () => {
+  const token = getAuthToken();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const handleUnauthorized = (e) => {
+      navigate(e?.detail?.redirectUrl || "/auth/admin-login", { replace: true });
+    };
+    window.addEventListener("kip:auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("kip:auth:unauthorized", handleUnauthorized);
+  }, [navigate]);
+
+  if (!token) {
+    return <Navigate to="/auth/admin-login" replace />;
+  }
 
   const isNotificationsPage = location.pathname.includes("/admin/notifications");
 

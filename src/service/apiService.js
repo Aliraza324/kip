@@ -126,6 +126,15 @@ export const authService = {
 };
 
 export const studentService = {
+  async getNextCode() {
+    try {
+      const res = await api.get(ADMIN_ROUTES.STUDENTS.NEXT_CODE);
+      return res?.data?.code || res?.code || "";
+    } catch (err) {
+      console.warn("studentService.getNextCode error:", err);
+      return "";
+    }
+  },
   async getAll(params = {}) {
     try {
       const res = await api.get(API_ROUTES.ADMIN.STUDENTS.BASE, { params });
@@ -185,6 +194,15 @@ export const studentService = {
 };
 
 export const teacherService = {
+  async getNextCode() {
+    try {
+      const res = await api.get(ADMIN_ROUTES.TEACHERS.NEXT_CODE);
+      return res?.data?.code || res?.code || "";
+    } catch (err) {
+      console.warn("teacherService.getNextCode error:", err);
+      return "";
+    }
+  },
   async getAll(params = {}) {
     try {
       const res = await api.get(API_ROUTES.ADMIN.TEACHERS.BASE, { params });

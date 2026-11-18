@@ -40,6 +40,56 @@ export const setAuthUser = (user) => {
 export const clearAuthSession = () => {
   setAuthToken(null);
   setAuthUser(null);
+  if (typeof localStorage !== "undefined") {
+    localStorage.removeItem("kip_token");
+    localStorage.removeItem("token");
+    localStorage.removeItem("kip_user");
+  }
+};
+
+let isRedirecting = false;
+
+/**
+ * Handles 401 Unauthorized globally:
+ * Clears expired session and redirects to the appropriate portal login screen.
+ */
+export const handleAuthUnauthorized = () => {
+  clearAuthSession();
+
+  if (typeof window === "undefined") return;
+
+  const pathname = window.location.pathname || "";
+  const isAuthOrPublic =
+    pathname.startsWith("/auth/") ||
+    pathname === "/login" ||
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname === "/features" ||
+    pathname === "/how-it-works" ||
+    pathname === "/contact";
+
+  if (!isAuthOrPublic) {
+    let redirectUrl = "/auth/login";
+    if (pathname.startsWith("/admin")) {
+      redirectUrl = "/auth/admin-login";
+    } else if (pathname.startsWith("/teacher")) {
+      redirectUrl = "/auth/teacher-login";
+    }
+
+    if (!isRedirecting) {
+      isRedirecting = true;
+      try {
+        window.dispatchEvent(
+          new CustomEvent("kip:auth:unauthorized", { detail: { redirectUrl } })
+        );
+      } catch {}
+
+      setTimeout(() => {
+        isRedirecting = false;
+        window.location.replace(redirectUrl);
+      }, 50);
+    }
+  }
 };
 
 export async function apiRequest(path, { method = "GET", params, body, headers = {}, credentials = "include", ...rest } = {}) {
@@ -85,6 +135,11 @@ export async function apiRequest(path, { method = "GET", params, body, headers =
       : await response.text();
 
     if (!response.ok) {
+      // Automatic 401 redirect to login
+      if (response.status === 401) {
+        handleAuthUnauthorized();
+      }
+
       const err = new Error(data?.message || data?.error || `Request failed with ${response.status}`);
       err.status = response.status;
       err.data = data;
@@ -94,7 +149,9 @@ export async function apiRequest(path, { method = "GET", params, body, headers =
     }
     return data;
   } catch (err) {
-    console.warn(`[API ${method} ${path}]:`, err.message);
+    if (err?.status !== 401) {
+      console.warn(`[API ${method} ${path}]:`, err.message);
+    }
     throw err;
   }
 }

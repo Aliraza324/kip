@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, Navigate, useNavigate } from "react-router-dom";
 import {
   Home, Calendar, Layers, Users, ClipboardList,
   User, Bell, Search, Headphones, ChevronDown, Menu, X, ArrowRight,
@@ -8,6 +8,7 @@ import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherDashboardMock } from "@/mocks";
 import { TeacherProfileDropdown } from "@/features/teachers/components/TeacherProfileDropdown";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
+import { getAuthToken } from "@/service/apiClient";
 
 const navItems = [
   { label: "Dashboard", href: "/teacher", icon: Home, end: true },
@@ -20,10 +21,24 @@ const navItems = [
 ];
 
 export const TeacherLayout = () => {
+  const token = getAuthToken();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { teacher, helpCard } = teacherDashboardMock;
+
+  useEffect(() => {
+    const handleUnauthorized = (e) => {
+      navigate(e?.detail?.redirectUrl || "/auth/teacher-login", { replace: true });
+    };
+    window.addEventListener("kip:auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("kip:auth:unauthorized", handleUnauthorized);
+  }, [navigate]);
+
+  if (!token) {
+    return <Navigate to="/auth/teacher-login" replace />;
+  }
 
   useSocketNotifications({
     role: "teacher",

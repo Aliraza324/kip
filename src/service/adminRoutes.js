@@ -27,6 +27,7 @@ export const ADMIN_ROUTES = {
   },
   STUDENTS: {
     BASE: "/admin/students",
+    NEXT_CODE: "/admin/students/next-code",
     CREATE: "/admin/students",
     IMPORT_CSV: "/admin/students/import-csv",
     LOW_PROGRESS: "/admin/students/low-progress",
@@ -39,6 +40,7 @@ export const ADMIN_ROUTES = {
   },
   TEACHERS: {
     BASE: "/admin/teachers",
+    NEXT_CODE: "/admin/teachers/next-code",
     CREATE: "/admin/teachers",
     PENDING: "/admin/teachers?tab=pending",
     DETAIL: (teacherId) => `/admin/teachers/${teacherId}`,

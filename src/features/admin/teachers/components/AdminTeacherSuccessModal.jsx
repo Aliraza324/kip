@@ -20,6 +20,10 @@ export const AdminTeacherSuccessModal = ({ isOpen, onClose, teacherData, onReset
     teacherData?.teacher?.password ||
     teacherData?.password ||
     "—";
+  const teacherEmail =
+    teacherData?.teacher?.email ||
+    teacherData?.email ||
+    null;
 
   const handleCopyUser = () => {
     navigator.clipboard.writeText(username);
@@ -111,8 +115,13 @@ export const AdminTeacherSuccessModal = ({ isOpen, onClose, teacherData, onReset
         </div>
 
         {/* Green Alert Banner */}
-        <div className="mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-2">
+        <div className="mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1">
           <span>ⓘ Share these login details with the teacher to access their account.</span>
+          {teacherEmail && (
+            <span className="text-emerald-800 font-bold">
+              ✉ Login credentials have also been emailed to {teacherEmail}.
+            </span>
+          )}
         </div>
 
         {/* Action Buttons */}

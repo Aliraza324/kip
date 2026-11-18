@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { User, Loader2 } from "lucide-react";
+import { User, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
+import { teacherService } from "@/service/apiService";
 import { AdminTeacherAcademicAssignmentCard } from "./AdminTeacherAcademicAssignmentCard";
 
 export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
   const [formData, setFormData] = useState({
     fullName: "",
-    teacherId: "TE-1006",
+    teacherId: "",
     username: "",
     password: "",
     email: "",
@@ -18,9 +19,72 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
   });
   const [avatarFile, setAvatarFile] = useState(null);
   const [subjects, setSubjects] = useState(["Mathematics", "Physics"]);
+  const [assignedClasses, setAssignedClasses] = useState([]);
+  const [isGeneratingId, setIsGeneratingId] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [usernameEdited, setUsernameEdited] = useState(false);
+
+  // Maximum allowed DOB (must be at least 18 years old)
+  const maxDob = useMemo(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 18);
+    return d.toISOString().split("T")[0];
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const fetchNextCode = async () => {
+      try {
+        const code = await teacherService.getNextCode();
+        if (active && code) {
+          setFormData((prev) => (prev.teacherId ? prev : { ...prev, teacherId: code }));
+        }
+      } catch (err) {
+        console.warn("Could not fetch next teacher code:", err);
+      }
+    };
+    fetchNextCode();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const handleAutoGenerateCode = async () => {
+    setIsGeneratingId(true);
+    try {
+      const code = await teacherService.getNextCode();
+      if (code) {
+        setFormData((prev) => ({ ...prev, teacherId: code }));
+        toast.success(`Generated ID: ${code}`);
+      }
+    } catch {
+      toast.error("Failed to generate unique ID");
+    } finally {
+      setIsGeneratingId(false);
+    }
+  };
+
+  const handleFullNameChange = (e) => {
+    const name = e.target.value;
+    setFormData((prev) => {
+      const updates = { ...prev, fullName: name };
+      if (!usernameEdited) {
+        const slug = name
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\s]/g, "")
+          .replace(/\s+/g, ".");
+        updates.username = slug;
+      }
+      return updates;
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "username") {
+      setUsernameEdited(true);
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -30,24 +94,39 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
       toast.error("Please enter teacher's full name");
       return;
     }
+
+    if (formData.dob && formData.dob > maxDob) {
+      toast.error("Teacher must be at least 18 years old.");
+      return;
+    }
+
+    const classPairs = assignedClasses.map((item) => {
+      const classId = typeof item === "string" ? item : item.id || item._id;
+      return {
+        classId,
+        subject: item.subject || subjects[0] || undefined,
+      };
+    });
+
     const finalData = {
       fullName: formData.fullName.trim(),
       code: formData.teacherId?.trim() || undefined,
       username: formData.username?.trim() || undefined,
-      password: formData.password || undefined,
+      password: formData.password?.trim() || undefined,
       email: formData.email?.trim() || undefined,
       phone: formData.phone?.trim() || undefined,
       dob: formData.dob || undefined,
       gender: formData.gender,
       status: (formData.status || "active").toLowerCase(),
       subjects: subjects.length > 0 ? subjects : undefined,
+      classes: classPairs.length > 0 ? classPairs : undefined,
       avatar: avatarFile || undefined,
     };
     onSuccess(finalData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} autoComplete="off" className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* Left Column: Teacher Information */}
         <div className="lg:col-span-8 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-slate-100 shadow-2xs space-y-5">
@@ -62,8 +141,9 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
               <input
                 type="text"
                 name="fullName"
+                autoComplete="off"
                 value={formData.fullName}
-                onChange={handleChange}
+                onChange={handleFullNameChange}
                 placeholder="Enter teacher's full name"
                 className="w-full px-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
                 required
@@ -71,47 +151,78 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1.5">Teacher ID *</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-slate-700">Teacher ID</label>
+                <button
+                  type="button"
+                  onClick={handleAutoGenerateCode}
+                  disabled={isGeneratingId}
+                  className="text-[11px] font-bold text-[#0080f6] hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  title="Generate unique next ID"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isGeneratingId ? "animate-spin" : ""}`} />
+                  Auto Generate
+                </button>
+              </div>
               <input
                 type="text"
                 name="teacherId"
+                autoComplete="off"
                 value={formData.teacherId}
                 onChange={handleChange}
-                placeholder="Auto-generate or enter ID"
+                placeholder="Auto-generated (e.g. TE-1007)"
                 className="w-full px-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
-                required
               />
+              <span className="text-[10px] text-slate-400 mt-1 block px-2">
+                Leave blank or auto-generate for unique system ID (e.g. TE-1007)
+              </span>
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1.5">Username *</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">Username</label>
               <input
                 type="text"
                 name="username"
+                autoComplete="off"
                 value={formData.username}
                 onChange={handleChange}
-                placeholder="Enter username"
+                placeholder="Auto-generated from name or enter custom"
                 className="w-full px-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1.5">Password *</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••••"
-                className="w-full px-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
-              />
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Auto-generated or enter custom password"
+                  className="w-full pl-4 pr-11 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                  tabIndex={-1}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1.5">Email (Optional)</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                Email Address <span className="text-[11px] font-normal text-blue-600">(Login details sent here)</span>
+              </label>
               <input
                 type="email"
                 name="email"
+                autoComplete="off"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter email address"
@@ -124,6 +235,7 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
               <input
                 type="tel"
                 name="phone"
+                autoComplete="off"
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="Enter phone number"
@@ -132,10 +244,14 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1.5">Date of Birth (Optional)</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-slate-700">Date of Birth (Optional)</label>
+                <span className="text-[11px] text-slate-400 font-medium">18+ years required</span>
+              </div>
               <input
                 type="date"
                 name="dob"
+                max={maxDob}
                 value={formData.dob}
                 onChange={handleChange}
                 className="w-full px-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
@@ -163,7 +279,7 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
           </div>
         </div>
 
-        {/* Right Column: Profile Photo & Academic Assignment */}
+        {/* Right Column: Profile Photo, Academic Assignment & Class Assignment */}
         <div className="lg:col-span-4">
           <AdminTeacherAcademicAssignmentCard
             formData={formData}
@@ -172,6 +288,8 @@ export const AdminAddTeacherForm = ({ onSuccess, isSubmitting = false }) => {
             onAvatarChange={setAvatarFile}
             subjects={subjects}
             onSubjectsChange={setSubjects}
+            assignedClasses={assignedClasses}
+            onAssignedClassesChange={setAssignedClasses}
           />
         </div>
       </div>

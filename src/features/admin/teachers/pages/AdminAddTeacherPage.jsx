@@ -9,6 +9,7 @@ export const AdminAddTeacherPage = () => {
   const [createdTeacher, setCreatedTeacher] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formKey, setFormKey] = useState(0);
 
   const handleSuccess = async (teacherData) => {
     setIsSubmitting(true);
@@ -27,6 +28,7 @@ export const AdminAddTeacherPage = () => {
   const handleReset = () => {
     setShowSuccessModal(false);
     setCreatedTeacher(null);
+    setFormKey((prev) => prev + 1);
   };
 
   return (
@@ -50,7 +52,7 @@ export const AdminAddTeacherPage = () => {
       </div>
 
       {/* Form */}
-      <AdminAddTeacherForm onSuccess={handleSuccess} isSubmitting={isSubmitting} />
+      <AdminAddTeacherForm key={formKey} onSuccess={handleSuccess} isSubmitting={isSubmitting} />
 
       {/* Success Modal */}
       <AdminTeacherSuccessModal

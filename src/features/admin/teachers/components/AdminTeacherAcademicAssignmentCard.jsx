@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo, useEffect } from "react";
-import { User, UploadCloud, GraduationCap, ChevronDown, X, Plus, Check } from "lucide-react";
+import { User, UploadCloud, GraduationCap, ChevronDown, X, Plus, Check, Layers, BookOpen } from "lucide-react";
 import toast from "react-hot-toast";
+import { classService } from "@/service/apiService";
 
 const ALL_SUBJECTS = [
   "Mathematics",
@@ -23,10 +24,37 @@ export const AdminTeacherAcademicAssignmentCard = ({
   onAvatarChange,
   subjects = ["Mathematics", "Physics"],
   onSubjectsChange,
+  assignedClasses = [],
+  onAssignedClassesChange,
 }) => {
   const fileInputRef = useRef(null);
   const [showSubjectMenu, setShowSubjectMenu] = useState(false);
   const [customSubject, setCustomSubject] = useState("");
+  const [classesList, setClassesList] = useState([]);
+  const [selectedClassToAdd, setSelectedClassToAdd] = useState("");
+  const [isLoadingClasses, setIsLoadingClasses] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchClasses = async () => {
+      setIsLoadingClasses(true);
+      try {
+        const res = await classService.getAll({ limit: 100 });
+        const list = Array.isArray(res) ? res : res?.items || res?.data || [];
+        if (active) {
+          setClassesList(list);
+        }
+      } catch (err) {
+        console.warn("Could not load classes:", err);
+      } finally {
+        if (active) setIsLoadingClasses(false);
+      }
+    };
+    fetchClasses();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const previewUrl = useMemo(() => {
     if (!avatarFile) return null;
@@ -72,6 +100,37 @@ export const AdminTeacherAcademicAssignmentCard = ({
     }
     setCustomSubject("");
     setShowSubjectMenu(false);
+  };
+
+  const handleAddClass = (classId) => {
+    if (!classId) return;
+    const exists = assignedClasses.some(
+      (c) => (typeof c === "string" ? c : c.id || c._id) === classId
+    );
+    if (!exists) {
+      const clsObj = classesList.find((c) => (c.id || c._id) === classId);
+      if (clsObj) {
+        onAssignedClassesChange([
+          ...assignedClasses,
+          {
+            id: clsObj.id || clsObj._id,
+            _id: clsObj.id || clsObj._id,
+            name: clsObj.name,
+            grade: clsObj.grade,
+            section: clsObj.section,
+          },
+        ]);
+      }
+    }
+    setSelectedClassToAdd("");
+  };
+
+  const handleRemoveClass = (classId) => {
+    onAssignedClassesChange(
+      assignedClasses.filter(
+        (c) => (typeof c === "string" ? c : c.id || c._id) !== classId
+      )
+    );
   };
 
   return (
@@ -231,6 +290,79 @@ export const AdminTeacherAcademicAssignmentCard = ({
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Assigned Classes */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-slate-500" />
+                <span>Assign Classes (Optional)</span>
+              </label>
+              <span className="text-[11px] text-slate-400">
+                {assignedClasses.length} assigned
+              </span>
+            </div>
+
+            {/* Selected Classes Tags */}
+            <div className="w-full min-h-[42px] px-3 py-1.5 rounded-2xl border border-slate-200 flex flex-wrap items-center gap-1.5 bg-white mb-2">
+              {assignedClasses.map((item) => {
+                const cid = typeof item === "string" ? item : item.id || item._id;
+                const cls = classesList.find((c) => (c.id || c._id) === cid) || item;
+                const label = cls.name || `Grade ${cls.grade || ""} - ${cls.section || ""}`;
+                return (
+                  <span
+                    key={cid}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-xs border border-emerald-100"
+                  >
+                    <span>{label}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveClass(cid)}
+                      className="hover:text-emerald-900 cursor-pointer"
+                      title="Remove class"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                );
+              })}
+              {assignedClasses.length === 0 && (
+                <span className="text-xs text-slate-400">No classes assigned yet</span>
+              )}
+            </div>
+
+            {/* Select Class Dropdown */}
+            <div className="relative">
+              <select
+                value={selectedClassToAdd}
+                onChange={(e) => {
+                  handleAddClass(e.target.value);
+                }}
+                disabled={isLoadingClasses || classesList.length === 0}
+                className="w-full px-4 py-2.5 rounded-full border border-slate-200 text-xs text-slate-700 appearance-none bg-white focus:border-[#0080f6] outline-none cursor-pointer disabled:bg-slate-50 disabled:cursor-not-allowed"
+              >
+                <option value="">
+                  {isLoadingClasses
+                    ? "Loading classes..."
+                    : classesList.length === 0
+                    ? "No classes found"
+                    : "+ Select a class to assign"}
+                </option>
+                {classesList
+                  .filter((c) => !assignedClasses.some((ac) => (typeof ac === "string" ? ac : ac.id || ac._id) === (c.id || c._id)))
+                  .map((cls) => {
+                    const cid = cls.id || cls._id;
+                    const label = `${cls.name}${cls.grade ? ` (Grade ${cls.grade}${cls.section ? ` - ${cls.section}` : ""})` : ""}`;
+                    return (
+                      <option key={cid} value={cid}>
+                        {label}
+                      </option>
+                    );
+                  })}
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
 
           {/* Status Dropdown */}
