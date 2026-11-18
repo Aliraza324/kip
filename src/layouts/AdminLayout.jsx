@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Home, Users, GraduationCap, Layers, Monitor, Bell, Search,
@@ -7,6 +7,7 @@ import {
 import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
+import { notificationService } from "@/service/apiService";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: Home, end: true },
@@ -21,16 +22,37 @@ const navItems = [
 export const AdminLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
   const isNotificationsPage = location.pathname.includes("/admin/notifications");
+
+  // Fetch unread notifications count from backend
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await notificationService.getAll({ limit: 1 });
+      const count =
+        res?.meta?.unreadCount ??
+        (Array.isArray(res?.items) ? res.items.filter((n) => n.isUnread || !n.isRead).length : 0);
+      setUnreadCount(Number(count) || 0);
+    } catch {
+      setUnreadCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUnreadCount();
+  }, [fetchUnreadCount, location.pathname]);
 
   // Real-time WebSocket notifications across entire admin dashboard
   useSocketNotifications({
     role: "admin",
     enableToast: !isNotificationsPage,
     enableSound: !isNotificationsPage,
+    onNotification: () => {
+      setUnreadCount((prev) => prev + 1);
+    },
   });
 
   const handleLogout = () => {
@@ -45,13 +67,28 @@ export const AdminLayout = () => {
         <Link to="/admin">
           <img src={logoImg} alt="KIPClassin" className="h-7 w-auto object-contain" />
         </Link>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer"
-          aria-label="Toggle Navigation Menu"
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => navigate("/admin/notifications")}
+            className="relative p-2 rounded-xl text-slate-600 hover:text-[#0080f6] hover:bg-slate-100 transition-all cursor-pointer"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <Bell className="w-5 h-5" strokeWidth={2} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-0.5 rounded-full bg-[#0080f6] text-white text-[9px] font-bold flex items-center justify-center leading-none shadow-xs">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 cursor-pointer"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </header>
 
       {/* Sidebar */}
@@ -105,8 +142,16 @@ export const AdminLayout = () => {
                         />
                         <span>{item.label}</span>
                       </div>
-                      {item.hasBadge && (
-                        <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                      {item.hasBadge && unreadCount > 0 && (
+                        <span
+                          className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 leading-none ${
+                            isActive
+                              ? "bg-white text-[#0080f6]"
+                              : "bg-blue-100 text-[#0080f6]"
+                          }`}
+                        >
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
                       )}
                     </>
                   )}
@@ -139,12 +184,19 @@ export const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-5 ml-6">
+            {/* Notification Bell with Dynamic Unread Count Badge */}
             <button
+              onClick={() => navigate("/admin/notifications")}
               className="relative p-2 rounded-xl text-slate-600 hover:text-[#0080f6] hover:bg-white transition-all cursor-pointer"
               aria-label="Notifications"
+              title="Notifications"
             >
               <Bell className="w-5 h-5" strokeWidth={2} />
-              <span className="w-2 h-2 rounded-full bg-[#0080f6] absolute top-1.5 right-1.5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#0080f6] text-white text-[10px] font-bold flex items-center justify-center leading-none shadow-sm shadow-blue-500/40 animate-in zoom-in-75 duration-150">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </button>
 
             {/* Profile Dropdown */}

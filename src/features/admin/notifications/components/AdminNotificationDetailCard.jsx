@@ -241,22 +241,46 @@ export const AdminNotificationDetailCard = ({
       )}
 
       {/* Action Button */}
-      {(notification.link || details.actionUrl) && (
-        <button
-          type="button"
-          onClick={() => onActionClick?.(notification.link || details.actionUrl)}
-          className="w-full py-3 rounded-full bg-[#0080f6] hover:bg-blue-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <ExternalLink className="w-4 h-4" />
-          <span>
-            {metaType === "teacher_registration"
-              ? "Review Teacher Application"
-              : metaType === "contact_query"
-              ? "View & Reply Query"
-              : details.actionLabel || "View Details"}
-          </span>
-        </button>
-      )}
+      {(() => {
+        const studentId =
+          meta.studentId ||
+          (typeof notification.link === "string" && notification.link.includes("studentId=")
+            ? notification.link.split("studentId=")[1]?.split("&")[0]
+            : null);
+
+        let targetActionUrl = notification.link || details.actionUrl || null;
+        if (metaType === "low_progress" || studentId) {
+          targetActionUrl = studentId ? `/admin/students/${studentId}` : "/admin/students";
+        } else if (metaType === "teacher_registration") {
+          targetActionUrl = meta.teacherId
+            ? `/admin/teachers/approval/${meta.teacherId}`
+            : "/admin/teachers";
+        } else if (metaType === "contact_query") {
+          targetActionUrl = "/admin/contact-queries";
+        }
+
+        const actionLabel =
+          metaType === "teacher_registration"
+            ? "Review Teacher Application"
+            : metaType === "contact_query"
+            ? "View & Reply Query"
+            : metaType === "low_progress" || studentId
+            ? "View Student Details"
+            : details.actionLabel || "View Details";
+
+        if (!targetActionUrl) return null;
+
+        return (
+          <button
+            type="button"
+            onClick={() => onActionClick?.(targetActionUrl, notification)}
+            className="w-full py-3 rounded-full bg-[#0080f6] hover:bg-blue-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span>{actionLabel}</span>
+          </button>
+        );
+      })()}
     </div>
   );
 };

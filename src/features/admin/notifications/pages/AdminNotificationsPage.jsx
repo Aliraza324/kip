@@ -85,6 +85,14 @@ export const AdminNotificationsPage = () => {
       });
 
       setSelectedNotification((curr) => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const queryStudentId = searchParams.get("studentId");
+        if (queryStudentId) {
+          const matchingNotif = items.find(
+            (it) => it.meta?.studentId === queryStudentId || it.link?.includes(queryStudentId)
+          );
+          if (matchingNotif) return matchingNotif;
+        }
         if (!curr) return items[0] || null;
         const found = items.find((it) => it.id === curr.id);
         return found || items[0] || null;
@@ -174,8 +182,19 @@ export const AdminNotificationsPage = () => {
     }
   };
 
-  const handleActionRedirect = (url) => {
-    if (url) navigate(url);
+  const handleActionRedirect = (url, notif) => {
+    let target = url;
+    const studentId =
+      notif?.meta?.studentId ||
+      (typeof url === "string" && url.includes("studentId=")
+        ? url.split("studentId=")[1]?.split("&")[0]
+        : null);
+
+    if (studentId && (notif?.meta?.type === "low_progress" || url?.includes("studentId="))) {
+      target = `/admin/students/${studentId}`;
+    }
+
+    if (target) navigate(target);
   };
 
   const handleReachOutFromNotif = (studentMeta) => {
