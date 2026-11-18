@@ -6,9 +6,11 @@ import {
 } from "lucide-react";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import studentAvatarImg from "@/assets/images/Reference photograph (2).png";
-import { studentDashboardMock, studentNotificationsMock } from "@/mocks";
+import { studentDashboardMock } from "@/mocks";
 import { NotificationDropdown } from "@/features/students/components/notifications";
 import { StudentProfileDropdown } from "@/features/students/components/profile";
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
+import { notificationService } from "@/service/apiService";
 
 const navItems = [
   { label: "Dashboard", href: "/student", icon: Home, end: true },
@@ -24,10 +26,19 @@ export const StudentLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState(studentNotificationsMock);
+  const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
   const notifDropdownRef = useRef(null);
   const { user, helpCard } = studentDashboardMock;
+
+  useEffect(() => {
+    notificationService
+      .getAll()
+      .then((res) => {
+        setNotifications(res?.items || []);
+      })
+      .catch(() => setNotifications([]));
+  }, []);
 
   const profileUser = {
     name: user?.name || "Alex Student",
@@ -36,6 +47,21 @@ export const StudentLayout = () => {
   };
 
   const unreadCount = notifications.filter((n) => n.isUnread).length;
+
+  useSocketNotifications({
+    role: "student",
+    onNotification: (newNotif) => {
+      setNotifications((prev) => [
+        {
+          ...newNotif,
+          id: newNotif.id || `ws-${Date.now()}`,
+          isUnread: true,
+          dateText: "Just now",
+        },
+        ...prev,
+      ]);
+    },
+  });
 
   useEffect(() => {
     const handleOutside = (e) => {

@@ -1,33 +1,38 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Check, MoreHorizontal } from "lucide-react";
+import { Check, MoreHorizontal, Bell } from "lucide-react";
 import toast from "react-hot-toast";
-import { studentNotificationsMock } from "@/mocks";
+import { notificationService } from "@/service/apiService";
 import {
   NotificationItemRow,
   NotificationDetailCard,
 } from "../components/notifications";
 
-const CATEGORIES = [
-  { key: "all", label: "All (24)" },
-  { key: "assignments", label: "Assignments (8)" },
-  { key: "grades", label: "Grades (5)" },
-  { key: "announcements", label: "Announcements (4)" },
-  { key: "class-updates", label: "Class Updates (3)" },
-];
-
 export const StudentNotificationsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState(studentNotificationsMock);
+  const [notifications, setNotifications] = useState([]);
+  const [metaCounts, setMetaCounts] = useState(null);
   const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedNotification, setSelectedNotification] = useState(
-    notifications[0] || null
-  );
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
+  useEffect(() => {
+    notificationService
+      .getAll()
+      .then((res) => {
+        const items = res?.items || [];
+        setNotifications(items);
+        if (res?.meta?.counts) setMetaCounts(res.meta.counts);
+        setSelectedNotification(items[0] || null);
+      })
+      .catch(() => {
+        setNotifications([]);
+      });
+  }, []);
 
   // Auto-select if came from dropdown click
   useEffect(() => {
-    if (location.state?.selectedId) {
+    if (location.state?.selectedId && notifications.length > 0) {
       const match = notifications.find(
         (n) => n.id === location.state.selectedId
       );
@@ -37,17 +42,20 @@ export const StudentNotificationsPage = () => {
 
   const handleSelect = (notif) => {
     setSelectedNotification(notif);
-    // Mark clicked item as read
     setNotifications((prev) =>
       prev.map((item) =>
-        item.id === notif.id ? { ...item, isUnread: false } : item
+        item.id === notif.id ? { ...item, isUnread: false, isRead: true } : item
       )
     );
+    if (notif.id) {
+      notificationService.markAsRead(notif.id);
+    }
   };
 
-  const handleMarkAllRead = () => {
+  const handleMarkAllRead = async () => {
+    await notificationService.markAllAsRead();
     setNotifications((prev) =>
-      prev.map((item) => ({ ...item, isUnread: false }))
+      prev.map((item) => ({ ...item, isUnread: false, isRead: true }))
     );
     toast.success("All notifications marked as read");
   };
@@ -58,25 +66,36 @@ export const StudentNotificationsPage = () => {
     }
   };
 
-  // Filter
+  const counts = {
+    all: metaCounts?.all ?? notifications.length,
+    assignments: metaCounts?.assignments ?? notifications.filter((n) => n.category === "assignments").length,
+    grades: metaCounts?.grades ?? notifications.filter((n) => n.category === "grades").length,
+    announcements: metaCounts?.announcements ?? notifications.filter((n) => n.category === "announcements").length,
+    "class-updates": metaCounts?.["class-updates"] ?? notifications.filter((n) => n.category === "class-updates").length,
+  };
+
+  const categories = [
+    { key: "all", label: `All (${counts.all})` },
+    { key: "assignments", label: `Assignments (${counts.assignments})` },
+    { key: "grades", label: `Grades (${counts.grades})` },
+    { key: "announcements", label: `Announcements (${counts.announcements})` },
+    { key: "class-updates", label: `Class Updates (${counts["class-updates"]})` },
+  ];
+
   const filteredNotifications = notifications.filter((item) => {
     if (activeCategory === "all") return true;
     return item.category === activeCategory;
   });
 
-  const todayItems = filteredNotifications.filter((n) => n.group === "Today");
-  const yesterdayItems = filteredNotifications.filter(
-    (n) => n.group === "Yesterday"
-  );
-  const earlierItems = filteredNotifications.filter(
-    (n) => n.group === "Earlier"
-  );
+  const todayItems = filteredNotifications.filter((n) => n.group === "Today" || (n.createdAt && new Date(n.createdAt).toDateString() === new Date().toDateString()));
+  const yesterdayItems = filteredNotifications.filter((n) => n.group === "Yesterday");
+  const earlierItems = filteredNotifications.filter((n) => n.group !== "Today" && n.group !== "Yesterday" && (!n.createdAt || new Date(n.createdAt).toDateString() !== new Date().toDateString()));
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Title & Subtitle */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
           Notifications
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -84,39 +103,43 @@ export const StudentNotificationsPage = () => {
         </p>
       </div>
 
-      {/* Filter Row Matching Image 2 */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Filter Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Category Pills */}
-        <div className="flex flex-wrap items-center gap-2">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              type="button"
-              onClick={() => setActiveCategory(cat.key)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                activeCategory === cat.key
-                  ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
-                  : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat.key;
+            return (
+              <button
+                key={cat.key}
+                type="button"
+                onClick={() => setActiveCategory(cat.key)}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  isActive
+                    ? "bg-[#0080f6] text-white shadow-md shadow-blue-500/25"
+                    : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200/80"
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2">
+        {/* Action Controls */}
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
           <button
             type="button"
             onClick={handleMarkAllRead}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-slate-200/90 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer"
           >
-            <Check className="w-3.5 h-3.5 text-slate-500" />
+            <Check className="w-3.5 h-3.5 text-slate-500 stroke-[2.5]" />
             <span>Mark All as Read</span>
           </button>
+
           <button
             type="button"
-            className="w-9 h-9 rounded-full bg-white border border-slate-200/90 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+            className="p-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 shadow-2xs transition-colors cursor-pointer"
             aria-label="More Options"
           >
             <MoreHorizontal className="w-4 h-4" />
@@ -175,15 +198,35 @@ export const StudentNotificationsPage = () => {
               ))}
             </div>
           )}
+
+          {filteredNotifications.length === 0 && (
+            <div className="p-12 text-center bg-white rounded-3xl border border-slate-100 text-slate-400 space-y-2">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mx-auto">
+                <Bell className="w-5 h-5 stroke-[1.8]" />
+              </div>
+              <p className="text-xs sm:text-sm font-semibold text-slate-600">No notifications found</p>
+              <p className="text-[11px] text-slate-400">All announcements and class updates will appear here.</p>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Detail Card */}
         <div className="lg:col-span-5 sticky top-4">
-          <NotificationDetailCard
-            notification={selectedNotification}
-            onClose={() => setSelectedNotification(null)}
-            onActionClick={handleRedirect}
-          />
+          {selectedNotification ? (
+            <NotificationDetailCard
+              notification={selectedNotification}
+              onClose={() => setSelectedNotification(null)}
+              onActionClick={handleRedirect}
+            />
+          ) : (
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 text-center space-y-2">
+              <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#0080f6] flex items-center justify-center mx-auto">
+                <Bell className="w-5 h-5 stroke-[1.8]" />
+              </div>
+              <p className="text-xs sm:text-sm font-semibold text-slate-800">Notification Preview</p>
+              <p className="text-[11px] text-slate-400">Select any notification from the list to view its details.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -191,4 +234,3 @@ export const StudentNotificationsPage = () => {
 };
 
 export default StudentNotificationsPage;
-

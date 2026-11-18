@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Home, Users, GraduationCap, Layers, Monitor, Bell, Search,
   Menu, X, LogOut, ChevronDown, User, MessageSquare,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: Home, end: true },
@@ -21,6 +22,16 @@ export const AdminLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isNotificationsPage = location.pathname.includes("/admin/notifications");
+
+  // Real-time WebSocket notifications across entire admin dashboard
+  useSocketNotifications({
+    role: "admin",
+    enableToast: !isNotificationsPage,
+    enableSound: !isNotificationsPage,
+  });
 
   const handleLogout = () => {
     toast.success("Logged out successfully");

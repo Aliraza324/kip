@@ -412,21 +412,79 @@ export const contentService = {
 };
 
 export const notificationService = {
-  async getAll() {
+  async getAll(params = {}) {
     try {
-      const res = await api.get(API_ROUTES.NOTIFICATIONS.BASE);
-      if (res?.data) liveStore.set("notifications", res.data);
-      return res?.data || liveStore.get("notifications");
+      const res = await api.get(API_ROUTES.NOTIFICATIONS.BASE, { params });
+      const items = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res)
+        ? res
+        : Array.isArray(res?.items)
+        ? res.items
+        : [];
+      return {
+        items,
+        meta: res?.meta || {},
+      };
+    } catch (err) {
+      console.warn("Notifications fetch error:", err.message);
+      return { items: [], meta: {} };
+    }
+  },
+  async markAsRead(notificationId) {
+    try {
+      const res = await api.patch(`/me/notifications/${notificationId}/read`);
+      return res?.data || res;
     } catch {
-      return liveStore.get("notifications");
+      return null;
     }
   },
   async markAllAsRead() {
-    const current = liveStore.get("notifications") || [];
-    const updated = current.map((n) => ({ ...n, unread: false }));
-    liveStore.set("notifications", updated);
-    try { await api.put(API_ROUTES.NOTIFICATIONS.READ_ALL); } catch {}
-    return updated;
+    try {
+      const res = await api.patch(API_ROUTES.NOTIFICATIONS.READ_ALL);
+      return res?.data || res;
+    } catch {
+      return null;
+    }
+  },
+  async clearAll(category = null) {
+    try {
+      const params = category && category !== "all" ? { category } : {};
+      const res = await api.delete(API_ROUTES.NOTIFICATIONS.CLEAR_ALL, { params });
+      return res?.data || res;
+    } catch {
+      return null;
+    }
+  },
+  async deleteOne(id) {
+    try {
+      const res = await api.delete(API_ROUTES.NOTIFICATIONS.DELETE(id));
+      return res?.data || res;
+    } catch {
+      return null;
+    }
+  },
+};
+
+export const adminAnnouncementService = {
+  async create(data) {
+    const res = await api.post(ADMIN_ROUTES.ANNOUNCEMENTS.CREATE, data);
+    return res?.data || res;
+  },
+};
+
+export const adminLowProgressService = {
+  async getLowProgress() {
+    const res = await api.get(ADMIN_ROUTES.STUDENTS.LOW_PROGRESS);
+    return res?.data || res;
+  },
+  async reachOut(data) {
+    const res = await api.post(ADMIN_ROUTES.STUDENTS.REACH_OUT, data);
+    return res?.data || res;
+  },
+  async syncAlerts() {
+    const res = await api.post(ADMIN_ROUTES.STUDENTS.SYNC_LOW_PROGRESS);
+    return res?.data || res;
   },
 };
 
@@ -473,5 +531,7 @@ export default {
   newsletter: newsletterService,
   contactPublic: contactPublicService,
   adminContact: adminContactService,
+  announcements: adminAnnouncementService,
+  lowProgress: adminLowProgressService,
   notifications: notificationService,
 };

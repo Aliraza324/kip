@@ -49,6 +49,8 @@ export const API_ROUTES = {
   NOTIFICATIONS: {
     BASE: "/me/notifications",
     READ_ALL: "/me/notifications/read-all",
+    CLEAR_ALL: "/me/notifications/clear-all",
+    DELETE: (id) => `/me/notifications/${id}`,
   },
 };
 

@@ -7,6 +7,7 @@ import {
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherDashboardMock } from "@/mocks";
 import { TeacherProfileDropdown } from "@/features/teachers/components/TeacherProfileDropdown";
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 
 const navItems = [
   { label: "Dashboard", href: "/teacher", icon: Home, end: true },
@@ -23,6 +24,10 @@ export const TeacherLayout = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { teacher, helpCard } = teacherDashboardMock;
+
+  useSocketNotifications({
+    role: "teacher",
+  });
 
   useEffect(() => {
     const handleOutside = (e) => {

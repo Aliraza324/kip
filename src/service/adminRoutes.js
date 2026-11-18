@@ -22,10 +22,16 @@ export const ADMIN_ROUTES = {
     ENROLL_STUDENTS: (classId) => `/admin/classes/${classId}/enroll`,
     UNENROLL_STUDENTS: (classId) => `/admin/classes/${classId}/unenroll`,
   },
+  ANNOUNCEMENTS: {
+    CREATE: "/admin/announcements",
+  },
   STUDENTS: {
     BASE: "/admin/students",
     CREATE: "/admin/students",
     IMPORT_CSV: "/admin/students/import-csv",
+    LOW_PROGRESS: "/admin/students/low-progress",
+    REACH_OUT: "/admin/students/reach-out",
+    SYNC_LOW_PROGRESS: "/admin/students/sync-low-progress",
     DETAIL: (studentId) => `/admin/students/${studentId}`,
     UPDATE: (studentId) => `/admin/students/${studentId}`,
     DELETE: (studentId) => `/admin/students/${studentId}`,
@@ -65,6 +71,8 @@ export const ADMIN_ROUTES = {
     NOTIFICATIONS: "/me/notifications",
     MARK_NOTIFICATION_READ: (id) => `/me/notifications/${id}/read`,
     MARK_ALL_NOTIFICATIONS_READ: "/me/notifications/read-all",
+    CLEAR_ALL_NOTIFICATIONS: "/me/notifications/clear-all",
+    DELETE_NOTIFICATION: (id) => `/me/notifications/${id}`,
   },
 };
 
