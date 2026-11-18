@@ -7,7 +7,7 @@ import {
 import toast from "react-hot-toast";
 import logoImg from "@/assets/images/KIPClassin logo.png";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
-import { notificationService } from "@/service/apiService";
+import { notificationService, authService } from "@/service/apiService";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: Home, end: true },
@@ -55,7 +55,10 @@ export const AdminLayout = () => {
     },
   });
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch {}
     toast.success("Logged out successfully");
     navigate("/auth/admin-login");
   };

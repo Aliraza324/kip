@@ -1,5 +1,7 @@
 import { Edit3, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { authService } from "@/service/apiService";
 
 export const StudentProfileDropdown = ({
   isOpen,
@@ -15,8 +17,12 @@ export const StudentProfileDropdown = ({
     navigate("/student/profile");
   };
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     onClose();
+    try {
+      await authService.logout();
+    } catch {}
+    toast.success("Logged out successfully");
     navigate("/auth/login");
   };
 
