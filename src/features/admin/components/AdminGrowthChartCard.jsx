@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, RefreshCw } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAdminDashboard } from "@/hooks/admin";
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -35,8 +35,6 @@ export const AdminGrowthChartCard = ({
   queriesGrowth: propGrowth,
   totalQueries: propTotal,
   loading: propLoading,
-  onRefresh,
-  isRefreshing = false,
 }) => {
   // If props are not passed, fetch via hook
   const dashboard = useAdminDashboard();
@@ -124,21 +122,10 @@ export const AdminGrowthChartCard = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {onRefresh && (
-            <button
-              type="button"
-              onClick={onRefresh}
-              disabled={isRefreshing || isLoading}
-              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
-              title="Refresh queries data"
-            >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-[#0080f6]" : ""}`} />
-            </button>
-          )}
+        <div>
           <Link
             to="/admin/contact-queries"
-            className="text-xs sm:text-sm font-bold text-[#0080f6] hover:text-blue-700 inline-flex items-center gap-1 transition-colors group ml-1"
+            className="text-xs sm:text-sm font-bold text-[#0080f6] hover:text-blue-700 inline-flex items-center gap-1 transition-colors group"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />

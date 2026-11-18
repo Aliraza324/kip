@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, Search, Loader2, RefreshCw } from "lucide-react";
+import { ChevronDown, Search, Loader2 } from "lucide-react";
 import { useAdminTeachers } from "@/hooks/admin";
 import { AdminTeacherRow } from "./AdminTeacherRow";
 import { AdminEditTeacherModal } from "./AdminEditTeacherModal";
@@ -95,16 +95,6 @@ export const AdminTeachersTable = () => {
             Active <span className="ml-1 opacity-90 font-semibold">{counts.active}</span>
           </button>
         </div>
-
-        {/* Refresh button */}
-        <button
-          type="button"
-          onClick={() => refetch()}
-          title="Refresh table"
-          className="self-end sm:self-auto p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
-        >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin text-[#0080f6]" : ""}`} />
-        </button>
       </div>
 
       {/* Search & Filter Row */}

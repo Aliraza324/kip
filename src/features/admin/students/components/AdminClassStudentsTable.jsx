@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Search, ChevronDown, ChevronLeft, ChevronRight,
-  Eye, Edit2, Trash2, Users, RefreshCw, Loader2,
+  Eye, Edit2, Trash2, Users, Loader2,
 } from "lucide-react";
 import { useAdminStudents } from "@/hooks/admin";
 import { classService } from "@/service/apiService";
@@ -112,15 +112,6 @@ export const AdminClassStudentsTable = ({ classId: initialClassId }) => {
             </select>
             <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
-
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="p-2 rounded-full bg-white border border-slate-200/80 text-slate-500 hover:text-[#0080f6] hover:bg-slate-50 shadow-2xs transition-colors cursor-pointer"
-            title="Refresh list"
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin text-[#0080f6]" : ""}`} />
-          </button>
         </div>
 
         {/* Search Input */}

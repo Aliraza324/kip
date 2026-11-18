@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Plus, AlertTriangle, Volume2, RefreshCw, Bell } from "lucide-react";
+import { Plus, AlertTriangle, Volume2, Bell } from "lucide-react";
 import {
   AdminNotificationItemRow,
   AdminNotificationDetailCard,
@@ -264,16 +264,6 @@ export const AdminNotificationsPage = () => {
             className="p-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 shadow-2xs transition-colors cursor-pointer"
           >
             <Volume2 className="w-4 h-4 text-slate-500" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => fetchNotifications(false)}
-            disabled={loading}
-            title="Refresh notifications"
-            className="p-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? "animate-spin" : ""}`} />
           </button>
 
           <button

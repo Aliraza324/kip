@@ -105,15 +105,6 @@ export const AdminContactQueriesPage = () => {
             </p>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold shadow-2xs transition-colors cursor-pointer"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 text-slate-400 ${loading ? "animate-spin" : ""}`} />
-          <span>Refresh</span>
-        </button>
       </div>
 
       {/* Metrics Row */}
