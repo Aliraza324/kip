@@ -1,24 +1,72 @@
-import { useState } from "react";
-import { ChevronDown, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronDown, Loader2 } from "lucide-react";
+
+const calculateGradeLetter = (marksNum, total) => {
+  if (total <= 0) return "A";
+  const pct = (marksNum / total) * 100;
+  if (pct >= 90) return "A+";
+  if (pct >= 80) return "A";
+  if (pct >= 75) return "B+";
+  if (pct >= 70) return "B";
+  if (pct >= 65) return "C+";
+  if (pct >= 60) return "C";
+  if (pct >= 50) return "D";
+  return "F";
+};
 
 export const TeacherGradeSubmissionForm = ({
-  initialMarks = 92,
+  initialMarks = "",
   initialGrade = "A",
-  initialFeedback = "Excellent work! Your solutions are accurate and well-written. Keep up the great effort.",
+  initialFeedback = "",
   totalMarks = 100,
+  isSubmitting = false,
   onSave,
   onCancel,
 }) => {
   const [marks, setMarks] = useState(initialMarks);
   const [grade, setGrade] = useState(initialGrade);
   const [feedback, setFeedback] = useState(initialFeedback);
-  const [isSaved, setIsSaved] = useState(false);
+  const [gradeManuallySet, setGradeManuallySet] = useState(false);
+
+  useEffect(() => {
+    if (initialMarks !== undefined && initialMarks !== null) {
+      setMarks(initialMarks);
+    }
+  }, [initialMarks]);
+
+  useEffect(() => {
+    if (initialGrade) {
+      setGrade(initialGrade);
+    }
+  }, [initialGrade]);
+
+  useEffect(() => {
+    if (initialFeedback) {
+      setFeedback(initialFeedback);
+    }
+  }, [initialFeedback]);
+
+  const handleMarksChange = (val) => {
+    setMarks(val);
+    const num = Number(val);
+    if (!isNaN(num) && !gradeManuallySet) {
+      setGrade(calculateGradeLetter(num, totalMarks));
+    }
+  };
+
+  const handleGradeChange = (val) => {
+    setGrade(val);
+    setGradeManuallySet(true);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSaved(true);
     if (onSave) {
-      onSave({ marks, grade, feedback });
+      onSave({
+        marks: Number(marks),
+        gradeLetter: grade,
+        feedback: feedback.trim(),
+      });
     }
   };
 
@@ -42,7 +90,7 @@ export const TeacherGradeSubmissionForm = ({
             <input
               type="number"
               value={marks}
-              onChange={(e) => setMarks(e.target.value)}
+              onChange={(e) => handleMarksChange(e.target.value)}
               placeholder="0"
               max={totalMarks}
               min="0"
@@ -63,7 +111,7 @@ export const TeacherGradeSubmissionForm = ({
           <div className="relative">
             <select
               value={grade}
-              onChange={(e) => setGrade(e.target.value)}
+              onChange={(e) => handleGradeChange(e.target.value)}
               aria-label="Grade letter"
               className="w-full appearance-none px-4 pr-10 py-2.5 bg-emerald-50/70 border border-emerald-200/60 rounded-2xl text-xs sm:text-sm font-bold text-emerald-700 focus:outline-none focus:border-emerald-400 cursor-pointer transition-all"
             >
@@ -84,7 +132,7 @@ export const TeacherGradeSubmissionForm = ({
       {/* Feedback to Student */}
       <div className="space-y-1.5">
         <label className="text-xs sm:text-sm font-bold text-slate-800 block">
-          Feedback to Student
+          Feedback to Student (Optional)
         </label>
         <textarea
           rows={4}
@@ -99,28 +147,23 @@ export const TeacherGradeSubmissionForm = ({
         </div>
       </div>
 
-      {/* Success notification if saved */}
-      {isSaved && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-2xl text-xs font-bold animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-          <span>Grade has been saved successfully!</span>
-        </div>
-      )}
-
-      {/* Action buttons */}
-      <div className="flex items-center justify-end gap-3 pt-2">
+      {/* Buttons */}
+      <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2.5 rounded-full border border-slate-200 hover:border-slate-300 text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-800 bg-white transition-all cursor-pointer shadow-2xs"
+          className="px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold transition-all cursor-pointer"
         >
           Cancel
         </button>
+
         <button
           type="submit"
-          className="px-7 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all cursor-pointer"
+          disabled={isSubmitting}
+          className="inline-flex items-center gap-2 px-7 py-2.5 rounded-2xl bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none active:scale-95"
         >
-          Save Grade
+          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          <span>{isSubmitting ? "Saving..." : "Save Grade"}</span>
         </button>
       </div>
     </form>
@@ -128,4 +171,3 @@ export const TeacherGradeSubmissionForm = ({
 };
 
 export default TeacherGradeSubmissionForm;
-

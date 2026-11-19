@@ -605,6 +605,65 @@ export const teacherStudentService = {
   },
 };
 
+export const teacherAssignmentService = {
+  async getAssignments(params = {}) {
+    try {
+      const res = await api.get(TEACHER_ROUTES.ASSIGNMENTS.BASE, { params });
+      return {
+        items: res?.data || [],
+        meta: res?.meta || {},
+      };
+    } catch (err) {
+      console.error("teacherAssignmentService.getAssignments error:", err);
+      throw err;
+    }
+  },
+
+  async createAssignment(payload) {
+    try {
+      const res = await api.post(TEACHER_ROUTES.ASSIGNMENTS.CREATE, payload);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherAssignmentService.createAssignment error:", err);
+      throw err;
+    }
+  },
+
+  async getAssignmentSubmissions(assignmentId) {
+    try {
+      const res = await api.get(TEACHER_ROUTES.ASSIGNMENTS.SUBMISSIONS(assignmentId));
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`teacherAssignmentService.getAssignmentSubmissions(${assignmentId}) error:`, err);
+      throw err;
+    }
+  },
+
+  async getSubmission(submissionId) {
+    try {
+      const res = await api.get(`/teacher/submissions/${submissionId}`);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`teacherAssignmentService.getSubmission(${submissionId}) error:`, err);
+      throw err;
+    }
+  },
+
+  async gradeSubmission(submissionId, { marks, gradeLetter, feedback }) {
+    try {
+      const res = await api.patch(`/teacher/submissions/${submissionId}/grade`, {
+        marks,
+        gradeLetter,
+        feedback,
+      });
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`teacherAssignmentService.gradeSubmission(${submissionId}) error:`, err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -613,6 +672,7 @@ export default {
   classes: classService,
   teacherClasses: teacherClassService,
   teacherStudents: teacherStudentService,
+  teacherAssignments: teacherAssignmentService,
   content: contentService,
   landing: contentService,
   newsletter: newsletterService,

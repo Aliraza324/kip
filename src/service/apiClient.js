@@ -114,10 +114,16 @@ export async function apiRequest(path, { method = "GET", params, body, headers =
   const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
   const token = getAuthToken();
 
+  const customHeaders = { ...headers };
+  if (isFormData) {
+    delete customHeaders["Content-Type"];
+    delete customHeaders["content-type"];
+  }
+
   const requestHeaders = {
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...headers,
+    ...customHeaders,
   };
 
   try {

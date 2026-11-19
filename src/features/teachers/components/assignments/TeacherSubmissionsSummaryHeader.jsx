@@ -7,6 +7,24 @@ export const TeacherSubmissionsSummaryHeader = ({
   backLabel = "Back to Assignments",
   badgeText = "Active",
 }) => {
+  const className =
+    typeof assignment?.class === "string"
+      ? assignment.class
+      : assignment?.class?.label ||
+        assignment?.class?.name ||
+        (assignment?.class?.grade ? `Grade ${assignment.class.grade}` : "") ||
+        "Class";
+
+  const dueDateFormatted = assignment?.dueAt
+    ? new Date(assignment.dueAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : assignment?.dueDate || "—";
+
   return (
     <div className="space-y-4">
       {/* Back button and page title */}
@@ -37,23 +55,26 @@ export const TeacherSubmissionsSummaryHeader = ({
 
           <div className="space-y-1 min-w-0">
             <h2 className="text-base sm:text-lg font-bold text-slate-900 truncate">
-              {assignment?.title || "Quadratic Equations – Practice Problems"}
+              {assignment?.title || "Assignment Title"}
             </h2>
             <div className="flex items-center gap-3 sm:gap-5 text-xs text-slate-500 font-semibold flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-[#0080f6] shrink-0" />
-                <span>{assignment?.class || "Mathematics – Grade 9"}</span>
+                <span>
+                  {assignment?.subject ? `${assignment.subject} – ` : ""}
+                  {className}
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-[#0080f6] shrink-0" />
-                <span>Due: {assignment?.dueDate || "Nov 12, 2026, 11:59 PM"}</span>
+                <span>Due: {dueDateFormatted}</span>
               </div>
             </div>
           </div>
         </div>
 
         <div className="shrink-0 self-start sm:self-auto">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60 capitalize">
             {badgeText || assignment?.status || "Active"}
           </span>
         </div>

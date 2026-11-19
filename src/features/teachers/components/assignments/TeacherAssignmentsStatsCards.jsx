@@ -1,28 +1,28 @@
 import { Calendar, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
-export const TeacherAssignmentsStatsCards = ({ stats }) => {
+export const TeacherAssignmentsStatsCards = ({ stats = {} }) => {
   const cards = [
     {
       label: "Total Assignments",
-      value: stats?.totalAssignments || 24,
+      value: stats?.total ?? stats?.totalAssignments ?? 0,
       icon: Calendar,
       iconBg: "bg-blue-50 text-[#0080f6]",
     },
     {
       label: "Submitted",
-      value: stats?.submitted || 16,
+      value: stats?.submitted ?? 0,
       icon: CheckCircle2,
       iconBg: "bg-emerald-50 text-emerald-600",
     },
     {
       label: "Pending",
-      value: stats?.pending || 6,
+      value: stats?.pending ?? 0,
       icon: Clock,
       iconBg: "bg-amber-50 text-amber-600",
     },
     {
       label: "Overdue",
-      value: stats?.overdue || 2,
+      value: stats?.overdue ?? 0,
       icon: AlertCircle,
       iconBg: "bg-rose-50 text-rose-500",
     },

@@ -1,6 +1,43 @@
-import { Calendar, FileText, Download } from "lucide-react";
+import { Calendar, FileText, Download, User } from "lucide-react";
 
-export const TeacherGradeSubmissionStudentCard = ({ submission }) => {
+export const TeacherGradeSubmissionStudentCard = ({ submission, student }) => {
+  const stu = student || submission?.student || {};
+  const studentName = stu.fullName || stu.name || "Student";
+  const studentAvatar = typeof stu.avatar === "string" ? stu.avatar : stu.avatar?.url || null;
+  const sectionOrClass =
+    (stu.class?.grade ? `Grade ${stu.class.grade}` : "") ||
+    stu.class?.name ||
+    stu.grade ||
+    stu.section ||
+    "Enrolled Student";
+
+  const submittedOnFormatted = submission?.submittedAt
+    ? new Date(submission.submittedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "—";
+
+  const file = submission?.file || null;
+  const fileName = file?.name || "Submission_Document.pdf";
+  const fileUrl = file?.url || null;
+
+  const formatFileSize = (bytes) => {
+    if (!bytes || isNaN(bytes)) return "";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const handleDownload = () => {
+    if (fileUrl) {
+      window.open(fileUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-2xs space-y-5">
       <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
@@ -10,17 +47,23 @@ export const TeacherGradeSubmissionStudentCard = ({ submission }) => {
       {/* Student Identity and Submission time */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
         <div className="flex items-center gap-3.5">
-          <img
-            src={submission?.avatar}
-            alt={submission?.studentName}
-            className="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow-2xs shrink-0"
-          />
+          <div className="w-12 h-12 rounded-full bg-blue-50 text-[#0080f6] flex items-center justify-center font-bold overflow-hidden ring-2 ring-white shadow-2xs shrink-0">
+            {studentAvatar ? (
+              <img
+                src={studentAvatar}
+                alt={studentName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-6 h-6" />
+            )}
+          </div>
           <div>
             <h4 className="text-sm sm:text-base font-bold text-slate-900">
-              {submission?.studentName || "Hassan Raza"}
+              {studentName}
             </h4>
             <p className="text-xs text-slate-500 font-medium">
-              {submission?.section || "Grade 9 – Section A"}
+              {sectionOrClass}
             </p>
           </div>
         </div>
@@ -34,7 +77,7 @@ export const TeacherGradeSubmissionStudentCard = ({ submission }) => {
               Submitted On
             </span>
             <span className="text-slate-800 font-bold block">
-              {submission?.submittedOn || "Nov 11, 2026, 02:47 PM"}
+              {submittedOnFormatted}
             </span>
           </div>
         </div>
@@ -52,17 +95,21 @@ export const TeacherGradeSubmissionStudentCard = ({ submission }) => {
             </div>
             <div className="min-w-0">
               <span className="text-sm font-bold text-slate-800 block truncate">
-                {submission?.submissionFile || "Assignment.pdf"}
+                {fileName}
               </span>
-              <span className="text-xs text-slate-400 font-medium block">
-                {submission?.fileSize || "2.1 MB"}
-              </span>
+              {file?.size && (
+                <span className="text-xs text-slate-400 font-medium block">
+                  {formatFileSize(file.size)}
+                </span>
+              )}
             </div>
           </div>
 
           <button
             type="button"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-[#0080f6] border border-slate-200 hover:border-blue-200 text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-2xs"
+            onClick={handleDownload}
+            disabled={!fileUrl}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-[#0080f6] border border-slate-200 hover:border-blue-200 text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-2xs disabled:opacity-40 disabled:pointer-events-none active:scale-95"
           >
             <Download className="w-4 h-4" />
             <span>Download PDF</span>
@@ -74,4 +121,3 @@ export const TeacherGradeSubmissionStudentCard = ({ submission }) => {
 };
 
 export default TeacherGradeSubmissionStudentCard;
-

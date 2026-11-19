@@ -3,19 +3,21 @@ import { Filter, Calendar, Layers, UserCheck, ChevronDown } from "lucide-react";
 export const TeacherAssignmentsFilterBar = ({
   activeTab,
   onTabChange,
+  counts = {},
   selectedMonth,
   onMonthChange,
   selectedSubject,
   onSubjectChange,
+  availableSubjects = [],
   selectedStatus,
   onStatusChange,
   onResetFilters,
 }) => {
   const tabs = [
-    { id: "all", label: "All Assignments (24)" },
-    { id: "pending", label: "Pending (6)" },
-    { id: "submitted", label: "Submitted (16)" },
-    { id: "overdue", label: "Overdue (2)" },
+    { id: "all", label: `All Assignments (${counts.total ?? counts.all ?? 0})` },
+    { id: "pending", label: `Pending (${counts.pending ?? 0})` },
+    { id: "submitted", label: `Submitted (${counts.submitted ?? 0})` },
+    { id: "overdue", label: `Overdue (${counts.overdue ?? 0})` },
   ];
 
   return (
@@ -71,10 +73,11 @@ export const TeacherAssignmentsFilterBar = ({
             className="w-full sm:w-auto appearance-none pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] cursor-pointer transition-all"
           >
             <option value="all">All Subjects</option>
-            <option value="algebra">Algebra</option>
-            <option value="geometry">Geometry</option>
-            <option value="trigonometry">Trigonometry</option>
-            <option value="statistics">Statistics</option>
+            {availableSubjects.map((sub) => (
+              <option key={sub} value={sub.toLowerCase()}>
+                {sub}
+              </option>
+            ))}
           </select>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>

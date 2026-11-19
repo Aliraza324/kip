@@ -1,40 +1,85 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { liveStore } from "@/service/dataStore";
-import { teacherAssignClassesMock } from "@/mocks";
+import { useTeacherClasses, useTeacherCreateAssignment } from "@/hooks";
 import {
   TeacherCreateAssignmentForm,
   TeacherCreateAssignmentSidebar,
 } from "../components/assignments";
 
+const parseDueAt = (dateStr, timeStr) => {
+  if (!dateStr) return null;
+  let d = new Date(`${dateStr} ${timeStr || "23:59"}`);
+  if (!isNaN(d.getTime())) return d.toISOString();
+  d = new Date(`${dateStr}T${timeStr || "23:59"}:00`);
+  if (!isNaN(d.getTime())) return d.toISOString();
+  d = new Date(dateStr);
+  if (!isNaN(d.getTime())) return d.toISOString();
+  return null;
+};
+
 export const TeacherCreateAssignmentPage = () => {
   const navigate = useNavigate();
+  const { classes = [], isLoading: isLoadingClasses } = useTeacherClasses();
+  const { createAssignment, isSubmitting } = useTeacherCreateAssignment();
+
+  // Default due date = 7 days from today
+  const defaultDueDate = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d.toISOString().split("T")[0];
+  }, []);
 
   const [formData, setFormData] = useState({
-    title: "Quadratic Equations – Practice Problems",
-    subject: "Algebra",
-    description: "Solve the given quadratic equations and show complete steps.",
-    dueDate: "Nov 12, 2026",
-    dueTime: "11:59 PM",
+    title: "",
+    subject: "",
+    description: "",
+    dueDate: defaultDueDate,
+    dueTime: "23:59",
     totalMarks: "100",
   });
 
-  const [materials, setMaterials] = useState([
-    { name: "Practice_Sheet.pdf", size: "1.2 MB" },
-  ]);
-
-  const [selectedClasses, setSelectedClasses] = useState(["cls-1"]);
+  const [materials, setMaterials] = useState([]);
+  const [selectedClasses, setSelectedClasses] = useState([]);
   const [notifyStudents, setNotifyStudents] = useState(true);
+
+  // Auto-select first class when classes load
+  useEffect(() => {
+    if (classes.length > 0 && selectedClasses.length === 0) {
+      setSelectedClasses([classes[0].id]);
+    }
+  }, [classes, selectedClasses.length]);
+
+  // Compute available subjects for selected classes
+  const availableSubjects = useMemo(() => {
+    const subSet = new Set();
+    classes
+      .filter((c) => selectedClasses.includes(c.id))
+      .forEach((c) => {
+        if (Array.isArray(c.subjects)) {
+          c.subjects.forEach((s) => {
+            const name = typeof s === "string" ? s : s?.name;
+            if (name) subSet.add(name);
+          });
+        }
+      });
+    return Array.from(subSet);
+  }, [classes, selectedClasses]);
+
+  // Auto-select subject when availableSubjects changes
+  useEffect(() => {
+    if (availableSubjects.length > 0 && (!formData.subject || !availableSubjects.includes(formData.subject))) {
+      setFormData((prev) => ({ ...prev, subject: availableSubjects[0] }));
+    }
+  }, [availableSubjects, formData.subject]);
 
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAddMaterial = () => {
-    const newDocName = `Worksheet_${materials.length + 1}.pdf`;
-    setMaterials((prev) => [...prev, { name: newDocName, size: "1.5 MB" }]);
+  const handleAddFiles = (newFiles) => {
+    setMaterials((prev) => [...prev, ...newFiles]);
   };
 
   const handleRemoveMaterial = (index) => {
@@ -49,24 +94,56 @@ export const TeacherCreateAssignmentPage = () => {
     );
   };
 
-  const handleCreateAssignment = (e) => {
+  const handleCreateAssignment = async (e) => {
     e.preventDefault();
-    const newAsg = {
-      id: `asg-${Date.now()}`,
-      title: formData.title,
-      subject: formData.subject,
-      class: "Grade 9 – Section A",
-      assignedDate: "Today",
-      dueDate: formData.dueDate,
-      dueTime: formData.dueTime,
-      totalMarks: Number(formData.totalMarks) || 100,
-      totalSubmissions: 0,
-      totalStudents: 28,
-      status: "Active",
-    };
-    liveStore.add("assignments", newAsg);
-    toast.success("Assignment created successfully!");
-    navigate("/teacher/assignments");
+
+    if (!formData.title.trim()) {
+      toast.error("Please enter assignment title.");
+      return;
+    }
+    if (!formData.subject) {
+      toast.error("Please select a subject.");
+      return;
+    }
+    if (selectedClasses.length === 0) {
+      toast.error("Please select at least one class to assign.");
+      return;
+    }
+    if (!formData.dueDate || !formData.dueTime) {
+      toast.error("Please specify due date and time.");
+      return;
+    }
+
+    try {
+      const dueAt = parseDueAt(formData.dueDate, formData.dueTime);
+      if (!dueAt) {
+        toast.error("Please enter a valid due date and time.");
+        return;
+      }
+
+      const postData = new FormData();
+      postData.append("title", formData.title.trim());
+      postData.append("subject", formData.subject.trim());
+      postData.append("description", formData.description.trim());
+      postData.append("dueAt", dueAt);
+      postData.append("totalMarks", String(Number(formData.totalMarks) || 100));
+      postData.append("notifyStudents", String(notifyStudents));
+
+      // Append class IDs
+      selectedClasses.forEach((cid) => {
+        postData.append("classIds", cid);
+      });
+
+      // Append material files
+      materials.forEach((file) => {
+        postData.append("attachments", file);
+      });
+
+      await createAssignment(postData);
+      navigate("/teacher/assignments");
+    } catch {
+      // Error handled in hook toast
+    }
   };
 
   return (
@@ -98,8 +175,9 @@ export const TeacherCreateAssignmentPage = () => {
             <TeacherCreateAssignmentForm
               formData={formData}
               onChange={handleFieldChange}
+              availableSubjects={availableSubjects}
               materials={materials}
-              onAddMaterial={handleAddMaterial}
+              onAddFiles={handleAddFiles}
               onRemoveMaterial={handleRemoveMaterial}
             />
           </div>
@@ -107,29 +185,31 @@ export const TeacherCreateAssignmentPage = () => {
           {/* Right Column: Assign To & Settings */}
           <div className="lg:col-span-4">
             <TeacherCreateAssignmentSidebar
-              classes={teacherAssignClassesMock}
+              classes={classes}
               selectedClasses={selectedClasses}
               onToggleClass={handleToggleClass}
               notifyStudents={notifyStudents}
-              onToggleNotify={() => setNotifyStudents((prev) => !prev)}
+              onToggleNotify={() => setNotifyStudents((v) => !v)}
+              isLoading={isLoadingClasses}
             />
           </div>
         </div>
 
-        {/* Bottom Actions Row matching SS 2 */}
-        <div className="flex items-center justify-end gap-3 pt-2">
-          <button
-            type="button"
-            onClick={() => navigate("/teacher/assignments")}
-            className="px-6 py-2.5 rounded-full border border-slate-200 hover:border-slate-300 text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-800 bg-white transition-all cursor-pointer shadow-2xs"
+        {/* Action Buttons matching SS 2 */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <Link
+            to="/teacher/assignments"
+            className="px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold transition-all cursor-pointer"
           >
             Cancel
-          </button>
+          </Link>
           <button
             type="submit"
-            className="px-7 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all cursor-pointer"
+            disabled={isSubmitting}
+            className="inline-flex items-center gap-2 px-7 py-2.5 rounded-2xl bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none active:scale-95"
           >
-            Create Assignment
+            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            <span>{isSubmitting ? "Creating..." : "Create Assignment"}</span>
           </button>
         </div>
       </form>
@@ -138,4 +218,3 @@ export const TeacherCreateAssignmentPage = () => {
 };
 
 export default TeacherCreateAssignmentPage;
-

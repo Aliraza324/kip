@@ -10,9 +10,10 @@ export const TeacherCreateAssignmentSidebar = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredClasses = classes.filter((c) =>
-    c.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredClasses = classes.filter((c) => {
+    const name = c.name || c.label || "";
+    return name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div className="space-y-5">
@@ -26,7 +27,7 @@ export const TeacherCreateAssignmentSidebar = ({
         <div>
           <button
             type="button"
-            className="px-4 py-1.5 rounded-full bg-[#0080f6] text-white text-xs font-bold shadow-xs cursor-pointer"
+            className="px-4 py-1.5 rounded-full bg-[#0080f6] text-white text-xs font-bold shadow-xs cursor-default"
           >
             By Class
           </button>
@@ -45,39 +46,46 @@ export const TeacherCreateAssignmentSidebar = ({
         </div>
 
         {/* Class checkboxes list */}
-        <div className="space-y-2 pt-1">
-          {filteredClasses.map((cls) => {
-            const isChecked = selectedClasses.includes(cls.id);
-            return (
-              <label
-                key={cls.id}
-                onClick={() => onToggleClass(cls.id)}
-                className={`flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${
-                  isChecked
-                    ? "bg-blue-50/50 border-blue-200 text-slate-900"
-                    : "bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all ${
-                      isChecked
-                        ? "bg-[#0080f6] border-[#0080f6] text-white"
-                        : "border-slate-300 bg-white"
-                    }`}
-                  >
-                    {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+        <div className="space-y-2 pt-1 max-h-60 overflow-y-auto no-scrollbar">
+          {filteredClasses.length === 0 ? (
+            <p className="text-xs text-slate-400 py-3 text-center">
+              No assigned classes found.
+            </p>
+          ) : (
+            filteredClasses.map((cls) => {
+              const isChecked = selectedClasses.includes(cls.id);
+              const displayName = cls.label || cls.name || "Class";
+              return (
+                <div
+                  key={cls.id}
+                  onClick={() => onToggleClass(cls.id)}
+                  className={`flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${
+                    isChecked
+                      ? "bg-blue-50/50 border-blue-200 text-slate-900"
+                      : "bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all shrink-0 ${
+                        isChecked
+                          ? "bg-[#0080f6] border-[#0080f6] text-white"
+                          : "border-slate-300 bg-white"
+                      }`}
+                    >
+                      {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </div>
+                    <span className="text-xs sm:text-sm font-bold truncate">
+                      {displayName}
+                    </span>
                   </div>
-                  <span className="text-xs sm:text-sm font-bold truncate">
-                    {cls.name}
+                  <span className="text-[11px] font-semibold text-slate-400 shrink-0 ml-2">
+                    {cls.studentsCount ?? 0} Students
                   </span>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-400 shrink-0 ml-2">
-                  {cls.studentsCount} Students
-                </span>
-              </label>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -114,4 +122,3 @@ export const TeacherCreateAssignmentSidebar = ({
 };
 
 export default TeacherCreateAssignmentSidebar;
-
