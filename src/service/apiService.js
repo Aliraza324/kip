@@ -700,6 +700,69 @@ export const studentAssignmentService = {
   },
 };
 
+export const teacherProfileService = {
+  async getProfile() {
+    try {
+      const res = await api.get(TEACHER_ROUTES.PROFILE.BASE);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherProfileService.getProfile error:", err);
+      throw err;
+    }
+  },
+
+  async updateProfile(payload) {
+    try {
+      const res = await api.patch(TEACHER_ROUTES.PROFILE.UPDATE, payload);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherProfileService.updateProfile error:", err);
+      throw err;
+    }
+  },
+
+  async changePassword({ newPassword, confirmPassword }) {
+    try {
+      const res = await api.patch(TEACHER_ROUTES.PROFILE.UPDATE_PASSWORD, {
+        newPassword,
+        confirmPassword,
+      });
+      if (res?.data?.accessToken) {
+        setAuthToken(res.data.accessToken);
+      }
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherProfileService.changePassword error:", err);
+      throw err;
+    }
+  },
+
+  async updateAvatar(fileOrFormData) {
+    try {
+      let formData = fileOrFormData;
+      if (fileOrFormData instanceof File) {
+        formData = new FormData();
+        formData.append("avatar", fileOrFormData);
+      }
+      const res = await api.put(TEACHER_ROUTES.PROFILE.AVATAR, formData);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherProfileService.updateAvatar error:", err);
+      throw err;
+    }
+  },
+
+  async removeAvatar() {
+    try {
+      const res = await api.delete(TEACHER_ROUTES.PROFILE.AVATAR);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherProfileService.removeAvatar error:", err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -709,6 +772,7 @@ export default {
   teacherClasses: teacherClassService,
   teacherStudents: teacherStudentService,
   teacherAssignments: teacherAssignmentService,
+  teacherProfile: teacherProfileService,
   studentAssignments: studentAssignmentService,
   content: contentService,
   landing: contentService,

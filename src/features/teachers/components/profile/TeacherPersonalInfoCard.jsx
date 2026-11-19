@@ -1,38 +1,64 @@
-import { useState } from "react";
-import { User, Edit2, Mail, Phone, Calendar, Users2, Check } from "lucide-react";
-import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
+import { User, Edit2, Mail, Phone, Calendar, Users2, Check, Loader2 } from "lucide-react";
 
-export const TeacherPersonalInfoCard = ({ profile, onUpdateProfile }) => {
+export const TeacherPersonalInfoCard = ({ profile, onUpdateProfile, isUpdating = false }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: profile.fullName || "Alex",
-    username: profile.username || "@alexteacher",
-    email: profile.email || "alex.teacher@kipclassin.com",
-    phone: profile.phone || "+92 300 1234567",
-    dob: profile.dob || "Mar 15, 2011",
-    gender: profile.gender || "Male",
+    fullName: "",
+    username: "",
+    email: "",
+    phone: "",
+    dob: "",
+    gender: "Male",
   });
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        fullName: profile.fullName || profile.name || "",
+        username: profile.username ? `@${profile.username.replace(/^@/, "")}` : "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        dob: profile.dob ? new Date(profile.dob).toISOString().split("T")[0] : "",
+        gender: profile.gender || "Male",
+      });
+    }
+  }, [profile]);
 
   const handleChange = (field, val) => {
     setFormData((prev) => ({ ...prev, [field]: val }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    onUpdateProfile(formData);
-    setIsEditing(false);
-    toast.success("Personal information updated!");
+    if (onUpdateProfile) {
+      try {
+        await onUpdateProfile({
+          fullName: formData.fullName,
+          username: formData.username.replace(/^@/, ""),
+          email: formData.email,
+          phone: formData.phone,
+          dob: formData.dob || undefined,
+          gender: formData.gender,
+        });
+        setIsEditing(false);
+      } catch {
+        // Error handled in parent hook
+      }
+    }
   };
 
   const handleCancel = () => {
-    setFormData({
-      fullName: profile.fullName || "Alex",
-      username: profile.username || "@alexteacher",
-      email: profile.email || "alex.teacher@kipclassin.com",
-      phone: profile.phone || "+92 300 1234567",
-      dob: profile.dob || "Mar 15, 2011",
-      gender: profile.gender || "Male",
-    });
+    if (profile) {
+      setFormData({
+        fullName: profile.fullName || profile.name || "",
+        username: profile.username ? `@${profile.username.replace(/^@/, "")}` : "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        dob: profile.dob ? new Date(profile.dob).toISOString().split("T")[0] : "",
+        gender: profile.gender || "Male",
+      });
+    }
     setIsEditing(false);
   };
 
@@ -44,6 +70,22 @@ export const TeacherPersonalInfoCard = ({ profile, onUpdateProfile }) => {
     { key: "dob", label: "Date of Birth", icon: Calendar },
     { key: "gender", label: "Gender", icon: Users2 },
   ];
+
+  const formatDisplayValue = (key, val) => {
+    if (!val) return "—";
+    if (key === "dob") {
+      try {
+        return new Date(val).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      } catch {
+        return val;
+      }
+    }
+    return val;
+  };
 
   return (
     <div className="bg-white rounded-3xl p-5 sm:p-7 border border-slate-100 shadow-2xs space-y-4">
@@ -77,12 +119,24 @@ export const TeacherPersonalInfoCard = ({ profile, onUpdateProfile }) => {
             {fields.map((f) => (
               <div key={f.key} className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">{f.label}</label>
-                <input
-                  type="text"
-                  value={formData[f.key]}
-                  onChange={(e) => handleChange(f.key, e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#0080f6] focus:bg-white transition-all"
-                />
+                {f.key === "gender" ? (
+                  <select
+                    value={formData[f.key]}
+                    onChange={(e) => handleChange(f.key, e.target.value)}
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#0080f6] focus:bg-white transition-all cursor-pointer"
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                ) : (
+                  <input
+                    type={f.key === "dob" ? "date" : f.key === "email" ? "email" : "text"}
+                    value={formData[f.key]}
+                    onChange={(e) => handleChange(f.key, e.target.value)}
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-[#0080f6] focus:bg-white transition-all"
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -91,16 +145,27 @@ export const TeacherPersonalInfoCard = ({ profile, onUpdateProfile }) => {
             <button
               type="button"
               onClick={handleCancel}
-              className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
+              disabled={isUpdating}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-[#0080f6] text-white text-xs font-bold shadow-xs hover:bg-[#006fd6] transition-all cursor-pointer flex items-center gap-1.5"
+              disabled={isUpdating}
+              className="px-5 py-2 rounded-xl bg-[#0080f6] text-white text-xs font-bold shadow-xs hover:bg-[#006fd6] transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
             >
-              <Check className="w-3.5 h-3.5" />
-              <span>Save Changes</span>
+              {isUpdating ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Save Changes</span>
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -115,7 +180,7 @@ export const TeacherPersonalInfoCard = ({ profile, onUpdateProfile }) => {
                   <span>{f.label}</span>
                 </div>
                 <span className="font-bold text-slate-900 truncate ml-2">
-                  {formData[f.key]}
+                  {formatDisplayValue(f.key, formData[f.key])}
                 </span>
               </div>
             );

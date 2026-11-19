@@ -52,8 +52,10 @@ export const TEACHER_ROUTES = {
   },
   PROFILE: {
     ME: "/me",
-    UPDATE_PASSWORD: "/me/password",
-    AVATAR: "/me/avatar",
+    BASE: "/teacher/profile",
+    UPDATE: "/teacher/profile",
+    UPDATE_PASSWORD: "/teacher/profile/password",
+    AVATAR: "/teacher/profile/avatar",
     NOTIFICATIONS: "/me/notifications",
     MARK_NOTIFICATION_READ: (id) => `/me/notifications/${id}/read`,
     MARK_ALL_NOTIFICATIONS_READ: "/me/notifications/read-all",

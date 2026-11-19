@@ -8,7 +8,7 @@ import logoImg from "@/assets/images/KIPClassin logo.png";
 import { teacherDashboardMock } from "@/mocks";
 import { TeacherProfileDropdown } from "@/features/teachers/components/TeacherProfileDropdown";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
-import { getAuthToken } from "@/service/apiClient";
+import { getAuthToken, getAuthUser } from "@/service/apiClient";
 
 const navItems = [
   { label: "Dashboard", href: "/teacher", icon: Home, end: true },
@@ -27,6 +27,13 @@ export const TeacherLayout = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { teacher, helpCard } = teacherDashboardMock;
+  const authUser = getAuthUser();
+  const displayTeacher = {
+    name: authUser?.fullName || authUser?.name || teacher.name,
+    avatar: authUser?.avatar || teacher.avatar,
+    email: authUser?.email || teacher.email,
+    role: "Teacher",
+  };
 
   useEffect(() => {
     const handleUnauthorized = (e) => {
@@ -172,12 +179,12 @@ export const TeacherLayout = () => {
                 className="flex items-center gap-2.5 py-1 px-2 rounded-2xl hover:bg-white/80 transition-all cursor-pointer select-none"
               >
                 <img
-                  src={teacher.avatar}
-                  alt={teacher.name}
+                  src={displayTeacher.avatar}
+                  alt={displayTeacher.name}
                   className="w-9 h-9 rounded-full object-cover shrink-0 shadow-xs border border-blue-200"
                 />
                 <span className="text-sm font-bold text-slate-800 whitespace-nowrap">
-                  {teacher.name}
+                  {displayTeacher.name}
                 </span>
                 <ChevronDown
                   className={`w-4 h-4 text-slate-500 transition-transform ${
@@ -188,7 +195,7 @@ export const TeacherLayout = () => {
               <TeacherProfileDropdown
                 isOpen={profileDropdownOpen}
                 onClose={() => setProfileDropdownOpen(false)}
-                user={teacher}
+                user={displayTeacher}
               />
             </div>
           </div>

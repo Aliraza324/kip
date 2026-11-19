@@ -1,6 +1,16 @@
 import { Camera, Check } from "lucide-react";
+import defaultAvatar from "@/assets/images/image 13.png";
 
-export const TeacherProfileHeroCard = ({ profile, onAvatarClick }) => {
+export const TeacherProfileHeroCard = ({ profile = {}, onAvatarClick }) => {
+  const name = profile?.fullName || profile?.name || "Alex Teacher";
+  const username = profile?.username ? `@${profile.username.replace(/^@/, "")}` : "@alexteacher";
+  const role = profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : "Teacher";
+  const subject =
+    (Array.isArray(profile?.subjects) && profile.subjects[0]) ||
+    profile?.subject ||
+    "Mathematics";
+  const avatar = profile?.avatar || defaultAvatar;
+
   return (
     <div className="relative rounded-[32px] bg-gradient-to-r from-[#eef7ff] via-[#f5f9ff] to-[#e8f3fe] p-6 sm:p-8 border border-blue-100/80 shadow-2xs overflow-hidden flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
       {/* Decorative Wave/Glow */}
@@ -10,8 +20,8 @@ export const TeacherProfileHeroCard = ({ profile, onAvatarClick }) => {
       <div className="relative shrink-0">
         <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-white border-2 border-blue-100 shadow-md overflow-hidden">
           <img
-            src={profile.avatar}
-            alt={profile.name}
+            src={avatar}
+            alt={name}
             className="w-full h-full rounded-full object-cover"
           />
         </div>
@@ -30,21 +40,21 @@ export const TeacherProfileHeroCard = ({ profile, onAvatarClick }) => {
       <div className="space-y-2 text-center sm:text-left min-w-0">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            {profile.name}
+            {name}
           </h2>
           <p className="text-xs sm:text-sm font-semibold text-slate-400">
-            {profile.username}
+            {username}
           </p>
         </div>
 
         {/* 3 Badges: Teacher, Mathematics, Verified */}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
           <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-[#0080f6] border border-blue-100/80 shadow-2xs">
-            {profile.role || "Teacher"}
+            {role}
           </span>
 
           <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 shadow-2xs">
-            {profile.subject || "Mathematics"}
+            {subject}
           </span>
 
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/70 shadow-2xs">

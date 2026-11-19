@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { User } from "lucide-react";
-import { teacherProfileMock } from "@/mocks";
+import { Loader2, User } from "lucide-react";
+import { useTeacherProfile } from "@/hooks";
 import {
   TeacherProfileHeroCard,
   TeacherPersonalInfoCard,
@@ -10,18 +9,24 @@ import {
 } from "../components/profile";
 
 export const TeacherProfilePage = () => {
-  const [profile, setProfile] = useState(teacherProfileMock);
+  const {
+    profile,
+    isLoading,
+    isUpdating,
+    updateProfile,
+    changePassword,
+    updateAvatar,
+    removeAvatar,
+  } = useTeacherProfile();
 
-  const handleUpdateProfile = (updatedFields) => {
-    setProfile((prev) => ({ ...prev, ...updatedFields }));
-  };
-
-  const handleAvatarChange = (newAvatarUrl) => {
-    setProfile((prev) => ({
-      ...prev,
-      avatar: newAvatarUrl || teacherProfileMock.avatar,
-    }));
-  };
+  if (isLoading && !profile) {
+    return (
+      <div className="bg-white rounded-3xl p-16 flex flex-col items-center justify-center border border-slate-100 shadow-2xs max-w-7xl mx-auto">
+        <Loader2 className="w-8 h-8 text-[#0080f6] animate-spin mb-3" />
+        <p className="text-sm font-semibold text-slate-600">Loading profile details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-14">
@@ -54,23 +59,29 @@ export const TeacherProfilePage = () => {
         <div className="lg:col-span-7 space-y-6">
           <TeacherPersonalInfoCard
             profile={profile}
-            onUpdateProfile={handleUpdateProfile}
+            onUpdateProfile={updateProfile}
+            isUpdating={isUpdating}
           />
 
           <TeacherProfilePhotoCard
-            avatar={profile.avatar}
-            onAvatarChange={handleAvatarChange}
+            avatar={profile?.avatar}
+            onAvatarUpload={updateAvatar}
+            onAvatarRemove={removeAvatar}
+            isUpdating={isUpdating}
           />
 
           <TeacherNotificationAlertsCard
-            initialEnabled={profile.notificationAlerts}
-            onToggle={(val) => setProfile((p) => ({ ...p, notificationAlerts: val }))}
+            initialEnabled={profile?.notificationAlerts}
+            onToggle={(val) => updateProfile({ notificationAlerts: val })}
           />
         </div>
 
-        {/* Right Column: Account & Security */}
+        {/* Right Column: Account & Security (Current Password input removed) */}
         <div className="lg:col-span-5">
-          <TeacherAccountSecurityCard />
+          <TeacherAccountSecurityCard
+            onChangePassword={changePassword}
+            isUpdating={isUpdating}
+          />
         </div>
       </div>
     </div>

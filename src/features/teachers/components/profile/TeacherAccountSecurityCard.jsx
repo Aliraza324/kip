@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Shield, Lock, Eye, EyeOff, Check, Info } from "lucide-react";
+import { Shield, Lock, Eye, EyeOff, Check, Info, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
-export const TeacherAccountSecurityCard = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
+export const TeacherAccountSecurityCard = ({ onChangePassword, isUpdating = false }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -26,20 +24,24 @@ export const TeacherAccountSecurityCard = () => {
 
   const strength = calculateStrength(newPassword);
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!currentPassword) return toast.error("Please enter your current password.");
     if (!newPassword) return toast.error("Please enter a new password.");
     if (newPassword.length < 8) return toast.error("New password must be at least 8 characters.");
     if (newPassword !== confirmPassword) return toast.error("Passwords do not match.");
-    toast.success("Password updated successfully!");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+
+    if (onChangePassword) {
+      try {
+        await onChangePassword({ newPassword, confirmPassword });
+        setNewPassword("");
+        setConfirmPassword("");
+      } catch {
+        // Handled in parent hook
+      }
+    }
   };
 
   const handleCancel = () => {
-    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
   };
@@ -56,30 +58,8 @@ export const TeacherAccountSecurityCard = () => {
         </h3>
       </div>
 
-      {/* Password Change Form */}
+      {/* Password Change Form (Current Password removed as requested) */}
       <form onSubmit={handleUpdate} className="space-y-3.5">
-        {/* Current Password */}
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-700">Current Password</label>
-          <div className="relative">
-            <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type={showCurrent ? "text" : "password"}
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Enter current password"
-              className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0080f6] focus:bg-white transition-all"
-            />
-            <button
-              type="button"
-              onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-            >
-              {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-
         {/* New Password */}
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700">New Password</label>
@@ -95,7 +75,7 @@ export const TeacherAccountSecurityCard = () => {
             <button
               type="button"
               onClick={() => setShowNew(!showNew)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
             >
               {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -130,7 +110,7 @@ export const TeacherAccountSecurityCard = () => {
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
             >
               {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -164,15 +144,24 @@ export const TeacherAccountSecurityCard = () => {
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2.5 rounded-2xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
+            disabled={isUpdating}
+            className="px-4 py-2.5 rounded-2xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-2xl bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+            disabled={isUpdating}
+            className="px-6 py-2.5 rounded-2xl bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-xs transition-all cursor-pointer disabled:opacity-60 flex items-center gap-1.5"
           >
-            ✓ Update Password
+            {isUpdating ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Updating...</span>
+              </>
+            ) : (
+              <span>✓ Update Password</span>
+            )}
           </button>
         </div>
       </form>
