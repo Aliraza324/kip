@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Lock, Mail, Phone, Calendar, Shield, Home, AlertCircle } from "lucide-react";
+import { User, Lock, Mail, Phone, Calendar, Shield, Home, AlertCircle, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 import { AdminStudentProfilePhotoCard } from "./AdminStudentProfilePhotoCard";
 import { AdminStudentAcademicCard } from "./AdminStudentAcademicCard";
@@ -24,6 +24,7 @@ export const AdminAddStudentForm = ({ onSuccess, isSubmitting = false }) => {
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -146,15 +147,24 @@ export const AdminAddStudentForm = ({ onSuccess, isSubmitting = false }) => {
               <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2 sm:gap-4">
                 <label className="text-xs sm:text-sm font-bold text-slate-700">Password</label>
                 <div className="sm:col-span-2 relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
+                    autoComplete="new-password"
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Leave blank to auto-generate secure password"
-                    className="w-full pl-11 pr-4 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                    className="w-full pl-11 pr-11 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { X, UploadCloud, Loader2, User, ChevronDown, Lock, Mail, Phone, Calendar, Home } from "lucide-react";
+import { X, UploadCloud, Loader2, User, ChevronDown, Lock, Mail, Phone, Calendar, Home, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 import { studentService, classService } from "@/service/apiService";
 
@@ -27,6 +27,7 @@ export const AdminEditStudentModal = ({ isOpen, onClose, student, onUpdated }) =
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -438,15 +439,24 @@ export const AdminEditStudentModal = ({ isOpen, onClose, student, onUpdated }) =
                 Reset Password <span className="text-slate-400 font-normal">(leave blank to keep current)</span>
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
+                  autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter new password (optional)"
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] outline-none"
+                  className="w-full pl-10 pr-10 py-2 rounded-xl border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-[#0080f6] outline-none"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
