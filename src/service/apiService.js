@@ -1,6 +1,7 @@
 import { api, setAuthToken, setAuthUser, clearAuthSession } from "./apiClient";
 import { API_ROUTES, ADMIN_ROUTES } from "./apiRoutes";
 import { LANDING_ROUTES } from "./landingRoute";
+import { TEACHER_ROUTES } from "./teacherRoutes";
 import { liveStore, emitDataChange } from "./dataStore";
 
 export const authService = {
@@ -550,12 +551,46 @@ export const adminDashboardService = {
   },
 };
 
+export const teacherClassService = {
+  async getClasses() {
+    try {
+      const res = await api.get(TEACHER_ROUTES.CLASSES.BASE);
+      return res?.data !== undefined ? res.data : (Array.isArray(res) ? res : []);
+    } catch (err) {
+      console.error("teacherClassService.getClasses error:", err);
+      throw err;
+    }
+  },
+  async getClassDetail(classId) {
+    try {
+      const res = await api.get(TEACHER_ROUTES.CLASSES.DETAIL(classId));
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`teacherClassService.getClassDetail(${classId}) error:`, err);
+      throw err;
+    }
+  },
+  async getClassStudents(classId, params = {}) {
+    try {
+      const res = await api.get(TEACHER_ROUTES.CLASSES.STUDENTS(classId), { params });
+      return {
+        data: res?.data || [],
+        meta: res?.meta || {},
+      };
+    } catch (err) {
+      console.error(`teacherClassService.getClassStudents(${classId}) error:`, err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
   students: studentService,
   teachers: teacherService,
   classes: classService,
+  teacherClasses: teacherClassService,
   content: contentService,
   landing: contentService,
   newsletter: newsletterService,

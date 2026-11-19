@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Users, Layers, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Users, Layers, Calendar } from "lucide-react";
 
-export const TeacherClassDetailHeader = ({ classItem }) => {
+export const TeacherClassDetailHeader = ({ classItem = {} }) => {
+  const subjectsCount =
+    classItem.subjectsCount ??
+    (Array.isArray(classItem.subjects) ? classItem.subjects.length : 0);
+  const studentsCount = classItem.studentsCount ?? 0;
+
   return (
     <div className="space-y-4">
       {/* Back button and page title */}
@@ -23,12 +28,14 @@ export const TeacherClassDetailHeader = ({ classItem }) => {
         </div>
       </div>
 
-      {/* Main Class Hero Card matching SS 2 & SS 3 */}
+      {/* Main Class Hero Card matching SS 2 */}
       <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 overflow-hidden">
         {/* Left: Class identity & metrics */}
         <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
           <div
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center font-serif font-black text-xl shrink-0 ${classItem.colorClass}`}
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center font-serif font-black text-xl shrink-0 ${
+              classItem.colorClass || "bg-purple-50 text-purple-600"
+            }`}
           >
             {classItem.symbol || "√x"}
           </div>
@@ -36,9 +43,9 @@ export const TeacherClassDetailHeader = ({ classItem }) => {
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 truncate">
-                {classItem.name}
+                {classItem.name || classItem.label || "Class"}
               </h2>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60 capitalize">
                 {classItem.status || "Active"}
               </span>
             </div>
@@ -46,12 +53,12 @@ export const TeacherClassDetailHeader = ({ classItem }) => {
             <div className="flex items-center gap-4 text-xs sm:text-sm text-slate-500 font-semibold flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-[#0080f6] shrink-0" />
-                <span className="text-slate-800 font-bold">{classItem.studentsCount}</span>
+                <span className="text-slate-800 font-bold">{studentsCount}</span>
                 <span>Students</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-[#0080f6] shrink-0" />
-                <span className="text-slate-800 font-bold">{classItem.subjectsCount || classItem.subjects?.length || 4}</span>
+                <span className="text-slate-800 font-bold">{subjectsCount}</span>
                 <span>Subjects</span>
               </div>
             </div>
@@ -70,12 +77,22 @@ export const TeacherClassDetailHeader = ({ classItem }) => {
             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Class Schedule
             </h4>
-            <p className="text-sm font-bold text-slate-900 mt-0.5">
-              {classItem.scheduleDays || "Mon, Wed, Fri"}
-            </p>
-            <p className="text-xs text-slate-500 font-medium">
-              {classItem.scheduleTime || "10:00 AM – 11:00 AM"}
-            </p>
+            {classItem.scheduleDays || classItem.scheduleTime ? (
+              <>
+                <p className="text-sm font-bold text-slate-900 mt-0.5">
+                  {classItem.scheduleDays}
+                </p>
+                {classItem.scheduleTime && (
+                  <p className="text-xs text-slate-500 font-medium">
+                    {classItem.scheduleTime}
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-xs text-slate-400 font-medium mt-1">
+                Not scheduled yet
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -84,4 +101,3 @@ export const TeacherClassDetailHeader = ({ classItem }) => {
 };
 
 export default TeacherClassDetailHeader;
-

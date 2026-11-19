@@ -1,27 +1,75 @@
-import { useState, useMemo } from "react";
-import { Search, GraduationCap, Layers, ChevronDown } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Search, Layers, ChevronDown, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { useTeacherClassStudents } from "@/hooks";
 
-export const TeacherClassStudentsTab = ({ students = [] }) => {
+export const TeacherClassStudentsTab = ({
+  classId,
+  classItem = {},
+  assignedSubjects = [],
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGrade, setSelectedGrade] = useState("all");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const filteredStudents = useMemo(() => {
-    return students.filter((stu) => {
-      const matchesSearch =
-        stu.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        stu.roll.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesGrade =
-        selectedGrade === "all" || stu.grade.toLowerCase().includes(selectedGrade.toLowerCase());
-      const matchesCourse =
-        selectedCourse === "all" || stu.course.toLowerCase().includes(selectedCourse.toLowerCase());
-      return matchesSearch && matchesGrade && matchesCourse;
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm.trim());
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Combine subjects list from props and classItem
+  const availableCourses = useMemo(() => {
+    const list = [];
+    if (Array.isArray(assignedSubjects)) {
+      list.push(...assignedSubjects);
+    }
+    if (Array.isArray(classItem?.subjects)) {
+      classItem.subjects.forEach((s) => {
+        const name = typeof s === "string" ? s : s.name;
+        if (name && !list.includes(name)) list.push(name);
+      });
+    }
+    return list;
+  }, [assignedSubjects, classItem]);
+
+  const { students, meta, classInfo, isLoading, isError, error, refetch } =
+    useTeacherClassStudents(classId, {
+      search: debouncedSearch,
+      subject: selectedCourse,
+      page: currentPage,
+      limit: itemsPerPage,
     });
-  }, [students, searchTerm, selectedGrade, selectedCourse]);
+
+  const totalCount = meta?.total ?? students.length;
+  const totalPages = meta?.totalPages ?? Math.max(1, Math.ceil(totalCount / itemsPerPage));
+  const startItem = totalCount === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalCount);
+
+  // Generate page numbers
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== "...") {
+        pages.push("...");
+      }
+    }
+    return pages;
+  }, [currentPage, totalPages]);
 
   return (
     <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-2xs space-y-5">
-      {/* Search and Filters Bar matching SS 3 */}
+      {/* Search and Filters Bar (Grade/Class: All removed per user instructions) */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
@@ -35,40 +83,47 @@ export const TeacherClassStudentsTab = ({ students = [] }) => {
           />
         </div>
 
-        {/* Grade / Class Filter */}
-        <div className="relative min-w-[150px]">
-          <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <select
-            value={selectedGrade}
-            onChange={(e) => setSelectedGrade(e.target.value)}
-            aria-label="Filter by Grade or Class"
-            className="w-full appearance-none pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] focus:bg-white cursor-pointer transition-all"
-          >
-            <option value="all">Grade/Class: All</option>
-            <option value="grade 9">Grade 9</option>
-            <option value="grade 8">Grade 8</option>
-          </select>
-          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-        </div>
-
-        {/* Course Filter */}
-        <div className="relative min-w-[150px]">
+        {/* Course / Subject Filter (Populated with assigned subjects) */}
+        <div className="relative min-w-[170px]">
           <Layers className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <select
             value={selectedCourse}
-            onChange={(e) => setSelectedCourse(e.target.value)}
+            onChange={(e) => {
+              setSelectedCourse(e.target.value);
+              setCurrentPage(1);
+            }}
             aria-label="Filter by Course"
             className="w-full appearance-none pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#0080f6] focus:bg-white cursor-pointer transition-all"
           >
             <option value="all">Course: All</option>
-            <option value="mathematics">Mathematics</option>
-            <option value="science">Science</option>
+            {availableCourses.map((crs) => (
+              <option key={crs} value={crs}>
+                {crs}
+              </option>
+            ))}
           </select>
           <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 
-      {/* Table Container - View Icon removed per user command #3 */}
+      {/* Error display */}
+      {!isLoading && isError && (
+        <div className="bg-red-50 border border-red-200/80 rounded-2xl p-4 text-center space-y-2">
+          <AlertCircle className="w-5 h-5 text-red-500 mx-auto" />
+          <p className="text-xs text-red-600 font-semibold">
+            {error?.message || "Failed to load class students."}
+          </p>
+          <button
+            type="button"
+            onClick={refetch}
+            className="text-xs font-bold text-red-700 underline cursor-pointer"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Table Container */}
       <div className="overflow-x-auto no-scrollbar -mx-4 sm:mx-0">
         <div className="inline-block min-w-full align-middle px-4 sm:px-0">
           <table className="min-w-full text-left text-xs sm:text-sm">
@@ -81,61 +136,172 @@ export const TeacherClassStudentsTab = ({ students = [] }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-8 text-center text-slate-400">
-                    No students found matching your criteria.
-                  </td>
-                </tr>
-              ) : (
-                filteredStudents.map((stu) => (
-                  <tr key={stu.id} className="hover:bg-slate-50/50 transition-colors">
-                    {/* Student Name */}
+              {isLoading ? (
+                /* Skeleton rows */
+                [1, 2, 3, 4, 5].map((n) => (
+                  <tr key={n} className="animate-pulse">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
-                        <img
-                          src={stu.avatar}
-                          alt={stu.name}
-                          className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-100 shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <span className="font-bold text-slate-800 block truncate">
-                            {stu.name}
-                          </span>
-                          <span className="text-[11px] text-slate-400 font-medium block">
-                            {stu.roll}
-                          </span>
+                        <div className="w-8 h-8 rounded-full bg-slate-100 shrink-0" />
+                        <div className="space-y-1.5">
+                          <div className="w-24 h-3 bg-slate-100 rounded" />
+                          <div className="w-14 h-2.5 bg-slate-100 rounded" />
                         </div>
                       </div>
                     </td>
-
-                    {/* Grade / Class */}
-                    <td className="py-3.5 px-4 text-slate-600 font-medium whitespace-nowrap">
-                      {stu.grade}
+                    <td className="py-3.5 px-4">
+                      <div className="w-16 h-3 bg-slate-100 rounded" />
                     </td>
-
-                    {/* Course */}
-                    <td className="py-3.5 px-4 text-slate-600 font-medium whitespace-nowrap">
-                      {stu.course}
+                    <td className="py-3.5 px-4">
+                      <div className="w-20 h-3 bg-slate-100 rounded" />
                     </td>
-
-                    {/* Status */}
-                    <td className="py-3.5 px-4 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        {stu.status}
-                      </span>
+                    <td className="py-3.5 px-4">
+                      <div className="w-14 h-5 bg-slate-100 rounded-full" />
                     </td>
                   </tr>
                 ))
+              ) : students.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-8 text-center text-slate-400">
+                    No students found in this class.
+                  </td>
+                </tr>
+              ) : (
+                students.map((stu) => {
+                  const studentName = stu.fullName || stu.name || "Student";
+                  const studentRoll = stu.code || stu.roll || "—";
+                  const studentGrade =
+                    stu.grade || classInfo?.name || classItem?.name || "Class";
+                  const studentCourse =
+                    selectedCourse !== "all"
+                      ? selectedCourse
+                      : stu.course || availableCourses[0] || classItem?.name || "General";
+                  const isActive = (stu.status || "active").toLowerCase() === "active";
+
+                  return (
+                    <tr
+                      key={stu.id || stu._id || studentRoll}
+                      className="hover:bg-slate-50/50 transition-colors"
+                    >
+                      {/* Student Name */}
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          {stu.avatar ? (
+                            <img
+                              src={typeof stu.avatar === "string" ? stu.avatar : stu.avatar?.url}
+                              alt={studentName}
+                              className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-100 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-blue-100 text-[#0080f6] font-bold text-xs flex items-center justify-center shrink-0">
+                              {(studentName || "S")[0].toUpperCase()}
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <span className="font-bold text-slate-800 block truncate">
+                              {studentName}
+                            </span>
+                            <span className="text-[11px] text-slate-400 font-medium block">
+                              {studentRoll}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Grade / Class */}
+                      <td className="py-3.5 px-4 text-slate-600 font-medium whitespace-nowrap">
+                        {studentGrade}
+                      </td>
+
+                      {/* Course */}
+                      <td className="py-3.5 px-4 text-slate-600 font-medium whitespace-nowrap">
+                        {studentCourse}
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+                            isActive
+                              ? "bg-emerald-50 text-emerald-600 border-emerald-200/60"
+                              : "bg-slate-50 text-slate-500 border-slate-200"
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              isActive ? "bg-emerald-500" : "bg-slate-400"
+                            }`}
+                          />
+                          <span className="capitalize">{stu.status || "Active"}</span>
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Pagination Footer */}
+      {!isLoading && totalCount > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <p className="text-xs text-slate-500 font-medium">
+            Showing <span className="font-bold text-slate-800">{startItem}</span> to{" "}
+            <span className="font-bold text-slate-800">{endItem}</span> of{" "}
+            <span className="font-bold text-slate-800">{totalCount}</span> students
+          </p>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="w-8 h-8 rounded-xl border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              title="Previous Page"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {pageNumbers.map((p, idx) =>
+              p === "..." ? (
+                <span
+                  key={`ellipsis-${idx}`}
+                  className="w-8 h-8 flex items-center justify-center text-slate-400 text-xs font-bold"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setCurrentPage(p)}
+                  className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    currentPage === p
+                      ? "bg-[#0080f6] text-white shadow-2xs"
+                      : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              )
+            )}
+
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className="w-8 h-8 rounded-xl border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              title="Next Page"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default TeacherClassStudentsTab;
-
