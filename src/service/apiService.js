@@ -2,6 +2,7 @@ import { api, setAuthToken, setAuthUser, clearAuthSession } from "./apiClient";
 import { API_ROUTES, ADMIN_ROUTES } from "./apiRoutes";
 import { LANDING_ROUTES } from "./landingRoute";
 import { TEACHER_ROUTES } from "./teacherRoutes";
+import { STUDENT_ROUTES } from "./studentRoutes";
 import { liveStore, emitDataChange } from "./dataStore";
 
 export const authService = {
@@ -664,6 +665,41 @@ export const teacherAssignmentService = {
   },
 };
 
+export const studentAssignmentService = {
+  async getAssignments(params = {}) {
+    try {
+      const res = await api.get(STUDENT_ROUTES.ASSIGNMENTS.BASE, { params });
+      return {
+        items: res?.data || [],
+        meta: res?.meta || {},
+      };
+    } catch (err) {
+      console.error("studentAssignmentService.getAssignments error:", err);
+      throw err;
+    }
+  },
+
+  async getAssignment(assignmentId) {
+    try {
+      const res = await api.get(STUDENT_ROUTES.ASSIGNMENTS.DETAIL(assignmentId));
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`studentAssignmentService.getAssignment(${assignmentId}) error:`, err);
+      throw err;
+    }
+  },
+
+  async submitAssignment(assignmentId, formData) {
+    try {
+      const res = await api.post(STUDENT_ROUTES.ASSIGNMENTS.SUBMIT(assignmentId), formData);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`studentAssignmentService.submitAssignment(${assignmentId}) error:`, err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -673,6 +709,7 @@ export default {
   teacherClasses: teacherClassService,
   teacherStudents: teacherStudentService,
   teacherAssignments: teacherAssignmentService,
+  studentAssignments: studentAssignmentService,
   content: contentService,
   landing: contentService,
   newsletter: newsletterService,

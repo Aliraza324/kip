@@ -5,6 +5,7 @@ import { BASE_URL } from "./baseURL";
 export const SOCKET_URL = BASE_URL.replace(/\/api\/v1\/?$/, "");
 
 let socketInstance = null;
+let currentRoomInfo = null;
 
 export const getSocket = () => {
   if (!socketInstance) {
@@ -18,6 +19,9 @@ export const getSocket = () => {
 
     socketInstance.on("connect", () => {
       console.log("⚡ Socket.io connected to server:", socketInstance.id);
+      if (currentRoomInfo?.userId || currentRoomInfo?.role) {
+        socketInstance.emit("join", currentRoomInfo);
+      }
     });
 
     socketInstance.on("disconnect", (reason) => {
@@ -32,13 +36,10 @@ export const getSocket = () => {
 };
 
 export const joinSocketRoom = ({ userId, role = "admin" } = {}) => {
+  currentRoomInfo = { userId, role };
   const s = getSocket();
-  if (s.connected) {
+  if (s.connected && (userId || role)) {
     s.emit("join", { userId, role });
-  } else {
-    s.once("connect", () => {
-      s.emit("join", { userId, role });
-    });
   }
 };
 

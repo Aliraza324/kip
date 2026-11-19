@@ -60,10 +60,9 @@ export const StudentNotificationsPage = () => {
     toast.success("All notifications marked as read");
   };
 
-  const handleRedirect = (url) => {
-    if (url) {
-      navigate(url);
-    }
+  const handleRedirect = (url, notif) => {
+    const target = url || notif?.link || notif?.redirectUrl || "/student/assignments";
+    navigate(target, { state: { assignmentId: notif?.meta?.assignmentId || selectedNotification?.meta?.assignmentId } });
   };
 
   const counts = {

@@ -61,7 +61,7 @@ export const StudentLayout = () => {
     avatar: studentAvatarImg,
   };
 
-  const unreadCount = notifications.filter((n) => n.isUnread).length;
+  const unreadCount = notifications.filter((n) => n.isUnread || n.isRead === false).length;
 
   useSocketNotifications({
     role: "student",
@@ -71,6 +71,7 @@ export const StudentLayout = () => {
           ...newNotif,
           id: newNotif.id || `ws-${Date.now()}`,
           isUnread: true,
+          isRead: false,
           dateText: "Just now",
         },
         ...prev,

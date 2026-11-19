@@ -104,10 +104,10 @@ export const TeacherNotificationDetailCard = ({
       )}
 
       {/* Action Button */}
-      {notification.redirectUrl && (
+      {(notification.link || notification.redirectUrl) && (
         <button
           type="button"
-          onClick={() => onActionClick(notification.redirectUrl)}
+          onClick={() => onActionClick(notification.link || notification.redirectUrl, notification)}
           className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer active:scale-98"
         >
           <span>{notification.redirectButtonLabel || "View Details"}</span>

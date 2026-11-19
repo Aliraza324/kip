@@ -13,13 +13,28 @@ export const NotificationDetailCard = ({ notification, onClose, onActionClick })
 
   const { meta } = notification;
 
+  const targetUrl = notification.link || notification.redirectUrl || "/student/assignments";
+
+  const dueObj = meta?.dueAt ? new Date(meta.dueAt) : null;
+  const dueDate =
+    meta?.dueDate ||
+    (dueObj
+      ? dueObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      : null);
+  const dueTime =
+    meta?.dueTime ||
+    (dueObj
+      ? dueObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+      : null);
+  const totalMarks = meta?.totalMarks || null;
+
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-2xs space-y-5 animate-in fade-in duration-150">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3.5 min-w-0">
           <div
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${notification.iconBg}`}
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${notification.iconBg || "bg-blue-50 text-[#0080f6]"}`}
           >
             <FileText className="w-6 h-6 stroke-[2.2]" />
           </div>
@@ -29,10 +44,10 @@ export const NotificationDetailCard = ({ notification, onClose, onActionClick })
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-xs text-slate-400">
-                {notification.dateText}
+                {notification.dateText || (notification.createdAt ? new Date(notification.createdAt).toLocaleDateString() : "")}
               </span>
-              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${notification.badgeColor}`}>
-                {notification.badgeLabel}
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${notification.badgeColor || "bg-blue-50 text-[#0080f6]"}`}>
+                {notification.badgeLabel || notification.category || "Notification"}
               </span>
             </div>
           </div>
@@ -52,36 +67,65 @@ export const NotificationDetailCard = ({ notification, onClose, onActionClick })
         {notification.message}
       </p>
 
+      {/* Graded Details (Score, Grade, Feedback) */}
+      {meta?.score && (
+        <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 space-y-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-[11px] font-bold text-slate-500 uppercase block">Your Score</span>
+              <span className="text-xl font-black text-slate-900">{meta.score}</span>
+            </div>
+            {meta.grade && (
+              <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200">
+                Grade: {meta.grade}
+              </span>
+            )}
+          </div>
+          {meta.feedback && (
+            <p className="text-xs text-slate-700 pt-1.5 border-t border-emerald-200/50 leading-relaxed">
+              <span className="font-semibold text-slate-900">Feedback: </span>
+              {meta.feedback}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Metadata Card (Due Date, Time, Marks) */}
-      {meta?.dueDate && (
+      {(dueDate || totalMarks) && (
         <div className="grid grid-cols-3 gap-2 py-3 px-4 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-          <div>
-            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-400 uppercase">
-              <Calendar className="w-3 h-3 text-slate-400" />
-              <span>Due Date</span>
+          {dueDate && (
+            <div>
+              <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-400 uppercase">
+                <Calendar className="w-3 h-3 text-slate-400" />
+                <span>Due Date</span>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
+                {dueDate}
+              </p>
             </div>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
-              {meta.dueDate}
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-400 uppercase">
-              <Clock className="w-3 h-3 text-slate-400" />
-              <span>Due Time</span>
+          )}
+          {dueTime && (
+            <div>
+              <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-400 uppercase">
+                <Clock className="w-3 h-3 text-slate-400" />
+                <span>Due Time</span>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
+                {dueTime}
+              </p>
             </div>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
-              {meta.dueTime}
-            </p>
-          </div>
-          <div>
-            <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-400 uppercase">
-              <Award className="w-3 h-3 text-slate-400" />
-              <span>Total Marks</span>
+          )}
+          {totalMarks && (
+            <div>
+              <div className="flex items-center justify-center gap-1 text-[11px] font-bold text-slate-400 uppercase">
+                <Award className="w-3 h-3 text-slate-400" />
+                <span>Total Marks</span>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
+                {totalMarks}
+              </p>
             </div>
-            <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">
-              {meta.totalMarks}
-            </p>
-          </div>
+          )}
         </div>
       )}
 
@@ -120,13 +164,15 @@ export const NotificationDetailCard = ({ notification, onClose, onActionClick })
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => toast.success("Opening attached guidelines...")}
-              className="px-3.5 py-1 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-700 transition-colors cursor-pointer shrink-0"
-            >
-              View PDF
-            </button>
+            {meta.attachment.url && (
+              <button
+                type="button"
+                onClick={() => window.open(meta.attachment.url, "_blank", "noopener,noreferrer")}
+                className="px-3.5 py-1 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-semibold text-slate-700 transition-colors cursor-pointer shrink-0"
+              >
+                View PDF
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -135,7 +181,7 @@ export const NotificationDetailCard = ({ notification, onClose, onActionClick })
       <div className="pt-2">
         <button
           type="button"
-          onClick={() => onActionClick(notification.redirectUrl)}
+          onClick={() => onActionClick(targetUrl, notification)}
           className="w-full py-3 px-6 rounded-2xl bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
         >
           <ExternalLink className="w-4 h-4" />

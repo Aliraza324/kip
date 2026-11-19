@@ -3,6 +3,7 @@ import { StudentAssignmentRow } from "./StudentAssignmentRow";
 
 export const StudentAssignmentsTable = ({
   assignments,
+  counts,
   activeTab,
   onTabChange,
   sortOrder,
@@ -10,10 +11,10 @@ export const StudentAssignmentsTable = ({
   onViewAssignment,
 }) => {
   const tabs = [
-    { id: "all", label: "All" },
-    { id: "pending", label: "Pending" },
-    { id: "submitted", label: "Submitted" },
-    { id: "overdue", label: "Overdue" },
+    { id: "all", label: counts?.all !== undefined ? `All (${counts.all})` : "All" },
+    { id: "pending", label: counts?.pending !== undefined ? `Pending (${counts.pending})` : "Pending" },
+    { id: "submitted", label: counts?.submitted !== undefined ? `Submitted (${counts.submitted})` : "Submitted" },
+    { id: "overdue", label: counts?.overdue !== undefined ? `Overdue (${counts.overdue})` : "Overdue" },
   ];
 
   return (

@@ -7,31 +7,33 @@ import {
   Calendar,
 } from "lucide-react";
 
-const getSubjectIcon = (iconType, subject) => {
-  if (iconType === "sqrt" || subject === "Mathematics") {
+const getSubjectIcon = (iconType, subject = "") => {
+  const s = String(subject || "").toLowerCase();
+  if (iconType === "sqrt" || s.includes("math") || s.includes("algebra")) {
     return <span className="text-sm font-black text-purple-600">√x</span>;
   }
-  if (iconType === "flask" || subject === "Science") {
+  if (iconType === "flask" || s.includes("science") || s.includes("chem")) {
     return <FlaskConical className="w-3.5 h-3.5 text-sky-500" strokeWidth={2.2} />;
   }
-  if (iconType === "book" || subject === "English") {
+  if (iconType === "book" || s.includes("english") || s.includes("lit") || s.includes("urdu")) {
     return <BookOpen className="w-3.5 h-3.5 text-amber-500" strokeWidth={2.2} />;
   }
-  if (iconType === "atom" || subject === "Physics") {
+  if (iconType === "atom" || s.includes("phys")) {
     return <Atom className="w-3.5 h-3.5 text-indigo-500" strokeWidth={2.2} />;
   }
   return <Share2 className="w-3.5 h-3.5 text-teal-500" strokeWidth={2.2} />;
 };
 
 const getStatusBadge = (status) => {
-  if (status === "Submitted") {
+  const s = String(status || "").toLowerCase();
+  if (s === "submitted") {
     return (
       <span className="inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200/70 whitespace-nowrap">
         Submitted
       </span>
     );
   }
-  if (status === "Overdue") {
+  if (s === "overdue") {
     return (
       <span className="inline-flex items-center px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-200/70 whitespace-nowrap">
         Overdue
@@ -46,6 +48,23 @@ const getStatusBadge = (status) => {
 };
 
 export const StudentAssignmentRow = ({ assignment, onView }) => {
+  const dueObj = assignment.dueAt ? new Date(assignment.dueAt) : null;
+  const dueDate =
+    assignment.dueDate ||
+    (dueObj
+      ? dueObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      : "—");
+  const dueTime =
+    assignment.dueTime ||
+    (dueObj
+      ? dueObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+      : "—");
+
+  const subtitle =
+    assignment.subtitle ||
+    (assignment.totalMarks
+      ? `Total Marks: ${assignment.totalMarks}`
+      : assignment.attachments?.[0]?.name || "Assignment");
   return (
     <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 p-3.5 sm:p-4 shadow-2xs hover:border-blue-200 hover:shadow-xs transition-all">
       {/* Mobile Card Layout (< md) */}
@@ -61,7 +80,7 @@ export const StudentAssignmentRow = ({ assignment, onView }) => {
                 {assignment.title}
               </h4>
               <p className="text-[11px] text-slate-400 mt-0.5">
-                {assignment.subtitle}
+                {subtitle}
               </p>
             </div>
           </div>
@@ -81,7 +100,7 @@ export const StudentAssignmentRow = ({ assignment, onView }) => {
 
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium shrink-0">
             <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span>{assignment.dueDate} • {assignment.dueTime}</span>
+            <span>{dueDate} • {dueTime}</span>
           </div>
         </div>
 
@@ -108,7 +127,7 @@ export const StudentAssignmentRow = ({ assignment, onView }) => {
               {assignment.title}
             </h4>
             <p className="text-xs text-slate-400 truncate mt-0.5">
-              {assignment.subtitle}
+              {subtitle}
             </p>
           </div>
         </div>
@@ -123,8 +142,8 @@ export const StudentAssignmentRow = ({ assignment, onView }) => {
         </div>
 
         <div className="flex items-center gap-4 text-xs sm:text-sm text-slate-600 font-medium md:w-2/12">
-          <span className="truncate">{assignment.dueDate}</span>
-          <span className="text-slate-400 truncate">{assignment.dueTime}</span>
+          <span className="truncate">{dueDate}</span>
+          <span className="text-slate-400 truncate">{dueTime}</span>
         </div>
 
         <div className="md:w-1.5/12 flex items-center">

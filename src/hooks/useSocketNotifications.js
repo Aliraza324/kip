@@ -2,19 +2,24 @@ import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { getSocket, joinSocketRoom } from "@/service/socket";
 import { playNotificationSound } from "@/utils/notificationSound";
+import { getAuthUser } from "@/service/apiClient";
 
 export const useSocketNotifications = ({
-  role = "admin",
+  role = null,
   userId = null,
   onNotification = null,
   enableToast = true,
   enableSound = true,
 } = {}) => {
   useEffect(() => {
+    const authUser = getAuthUser();
+    const effectiveUserId = userId || authUser?.id || authUser?._id;
+    const effectiveRole = role || authUser?.role || "student";
+
     const socket = getSocket();
 
     // Join room
-    joinSocketRoom({ userId, role });
+    joinSocketRoom({ userId: effectiveUserId, role: effectiveRole });
 
     const handleNewNotification = (notif) => {
       if (!notif) return;
@@ -26,12 +31,19 @@ export const useSocketNotifications = ({
 
       // 2. Show Toast notification
       if (enableToast) {
+        const cat = notif.category || notif.meta?.type || "";
         const iconEmoji =
-          notif.meta?.type === "low_progress"
+          cat === "assignments" || cat === "assignment"
+            ? "📝"
+            : cat === "submissions" || cat === "submission"
+            ? "📥"
+            : cat === "grades" || cat === "grade"
+            ? "🏆"
+            : cat === "low_progress"
             ? "⚠️"
-            : notif.meta?.type === "teacher_registration"
+            : cat === "teacher_registration"
             ? "👨‍🏫"
-            : notif.meta?.type === "contact_query"
+            : cat === "contact_query"
             ? "💬"
             : "📢";
 

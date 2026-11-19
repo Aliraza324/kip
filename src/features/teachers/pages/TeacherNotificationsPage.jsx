@@ -49,10 +49,9 @@ export const TeacherNotificationsPage = () => {
     toast.success("All notifications marked as read");
   };
 
-  const handleRedirect = (url) => {
-    if (url) {
-      navigate(url);
-    }
+  const handleRedirect = (url, notif) => {
+    const target = url || notif?.link || notif?.redirectUrl || "/teacher/assignments";
+    navigate(target);
   };
 
   const counts = {
