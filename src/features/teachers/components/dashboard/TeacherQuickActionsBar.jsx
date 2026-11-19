@@ -27,12 +27,16 @@ export const TeacherQuickActionsBar = ({ actions = [] }) => {
   const navigate = useNavigate();
 
   const handleClick = (action) => {
-    if (action.id === "start-live") {
-      navigate("/teacher/sessions/session-1?live=true");
+    if (action.id === "start-live" || action.id === "start_live") {
+      navigate("/teacher/sessions");
       return;
     }
-    if (action.id === "schedule") {
+    if (action.id === "schedule" || action.id === "schedule_class") {
       navigate("/teacher/sessions");
+      return;
+    }
+    if (action.id === "upload_material" || action.id === "upload-material") {
+      navigate("/teacher/classes");
       return;
     }
     toast.success(`Action triggered: ${action.label}`);

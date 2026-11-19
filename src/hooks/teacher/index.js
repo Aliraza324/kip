@@ -3,3 +3,4 @@ export * from "./useTeacherClasses";
 export * from "./useTeacherStudents";
 export * from "./useTeacherAssignments";
 export * from "./useTeacherProfile";
+export * from "./useTeacherDashboard";

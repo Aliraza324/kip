@@ -552,6 +552,18 @@ export const adminDashboardService = {
   },
 };
 
+export const teacherDashboardService = {
+  async getDashboard() {
+    try {
+      const res = await api.get(TEACHER_ROUTES.DASHBOARD);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("teacherDashboardService.getDashboard error:", err);
+      throw err;
+    }
+  },
+};
+
 export const teacherClassService = {
   async getClasses() {
     try {
@@ -773,6 +785,7 @@ export default {
   teacherStudents: teacherStudentService,
   teacherAssignments: teacherAssignmentService,
   teacherProfile: teacherProfileService,
+  teacherDashboard: teacherDashboardService,
   studentAssignments: studentAssignmentService,
   content: contentService,
   landing: contentService,

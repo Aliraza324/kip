@@ -35,46 +35,58 @@ export const TeacherTodayScheduleCard = ({ schedule = [] }) => {
 
         {/* Schedule List */}
         <div className="space-y-2.5 sm:space-y-3 pt-3.5 sm:pt-4">
-          {schedule.map((item) => (
-            <div
-              key={item.id}
-              className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 transition-colors ${
-                item.isActive
-                  ? "bg-[#eaf4fe]/90 border border-blue-200/70 shadow-xs"
-                  : "bg-white hover:bg-slate-50/70 border border-slate-100"
-              }`}
-            >
-              {/* Time */}
-              <div className="text-xs sm:text-sm font-semibold text-slate-700 sm:w-44 shrink-0">
-                {item.time}
+          {schedule.length === 0 ? (
+            <div className="py-10 px-4 rounded-xl sm:rounded-2xl bg-slate-50/70 border border-dashed border-slate-200 text-center flex flex-col items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-blue-50 text-[#0080f6] flex items-center justify-center mb-2">
+                <Calendar className="w-5 h-5 stroke-[2.2]" />
               </div>
-
-              {/* Subject Title & Type */}
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm sm:text-base font-bold text-slate-900 truncate">
-                  {item.title}
-                </h4>
-                <div className="flex items-center gap-1.5 text-xs text-[#0080f6] font-medium mt-0.5">
-                  <Video className="w-3.5 h-3.5" />
-                  <span>{item.type}</span>
-                </div>
-              </div>
-
-              {/* Start Class Action Button */}
-              <button
-                type="button"
-                onClick={() => handleStartClass(item)}
-                className={`w-full sm:w-auto px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              <p className="text-sm font-bold text-slate-800">No sessions scheduled for today</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-xs">
+                Your upcoming scheduled and live lectures will appear here.
+              </p>
+            </div>
+          ) : (
+            schedule.map((item) => (
+              <div
+                key={item.id}
+                className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 transition-colors ${
                   item.isActive
-                    ? "bg-[#0080f6] hover:bg-[#006fd6] text-white shadow-md shadow-blue-500/25 active:scale-95"
-                    : "border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                    ? "bg-[#eaf4fe]/90 border border-blue-200/70 shadow-xs"
+                    : "bg-white hover:bg-slate-50/70 border border-slate-100"
                 }`}
               >
-                <Video className="w-3.5 h-3.5" />
-                <span>{item.buttonText}</span>
-              </button>
-            </div>
-          ))}
+                {/* Time */}
+                <div className="text-xs sm:text-sm font-semibold text-slate-700 sm:w-44 shrink-0">
+                  {item.time}
+                </div>
+
+                {/* Subject Title & Type */}
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm sm:text-base font-bold text-slate-900 truncate">
+                    {item.title}
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-xs text-[#0080f6] font-medium mt-0.5">
+                    <Video className="w-3.5 h-3.5" />
+                    <span>{item.type}</span>
+                  </div>
+                </div>
+
+                {/* Start Class Action Button */}
+                <button
+                  type="button"
+                  onClick={() => handleStartClass(item)}
+                  className={`w-full sm:w-auto px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    item.isActive
+                      ? "bg-[#0080f6] hover:bg-[#006fd6] text-white shadow-md shadow-blue-500/25 active:scale-95"
+                      : "border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                  }`}
+                >
+                  <Video className="w-3.5 h-3.5" />
+                  <span>{item.buttonText || "Start Class"}</span>
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

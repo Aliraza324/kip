@@ -1,4 +1,4 @@
-import { teacherDashboardMock } from "@/mocks";
+import { useTeacherDashboard } from "@/hooks/teacher";
 import {
   TeacherGreetingHeroCard,
   TeacherKpiStats,
@@ -6,16 +6,34 @@ import {
   TeacherMyClassesCard,
   TeacherQuickActionsBar,
 } from "../components/dashboard";
+import { Loader2 } from "lucide-react";
 
 export const TeacherDashboardPage = () => {
-  const { teacher, greeting, kpiStats, todaySchedule, myClasses, quickActions } =
-    teacherDashboardMock;
+  const {
+    isLoading,
+    teacher,
+    greeting,
+    kpiStats,
+    todaySchedule,
+    myClasses,
+    quickActions,
+  } = useTeacherDashboard();
+
+  if (isLoading && !kpiStats) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 text-[#0080f6] animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-4">
       {/* 1. Greeting Hero Section */}
       <TeacherGreetingHeroCard
         displayName={teacher.displayName}
+        avatar={teacher.avatar}
+        title={greeting.title}
         subtitle={greeting.subtitle}
       />
 
@@ -35,4 +53,3 @@ export const TeacherDashboardPage = () => {
 };
 
 export default TeacherDashboardPage;
-
