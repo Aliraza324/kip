@@ -584,6 +584,27 @@ export const teacherClassService = {
   },
 };
 
+export const teacherStudentService = {
+  async getStudent(studentId) {
+    try {
+      const res = await api.get(TEACHER_ROUTES.STUDENTS.DETAIL(studentId));
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`teacherStudentService.getStudent(${studentId}) error:`, err);
+      throw err;
+    }
+  },
+  async markAttendance(studentId, lectureId, status) {
+    try {
+      const res = await api.patch(TEACHER_ROUTES.STUDENTS.MARK_ATTENDANCE(studentId, lectureId), { status });
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error(`teacherStudentService.markAttendance error:`, err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -591,6 +612,7 @@ export default {
   teachers: teacherService,
   classes: classService,
   teacherClasses: teacherClassService,
+  teacherStudents: teacherStudentService,
   content: contentService,
   landing: contentService,
   newsletter: newsletterService,

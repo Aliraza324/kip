@@ -51,15 +51,15 @@ export const TeacherStudentDetailHeader = ({
           <div className="space-y-0.5 sm:space-y-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base sm:text-xl font-black text-slate-900 truncate">
-                {student?.name || "Ayesha Ali"}
+                {student?.name || "Student"}
               </h2>
-              <span className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60">
+              <span className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200/60 capitalize">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 <span>{student?.status || "Active"}</span>
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-500 font-semibold truncate">
-              {student?.grade || "Grade 9"} | {student?.course || "Mathematics"}
+              {student?.grade || "Class"}{student?.course ? ` | ${student.course}` : ""}
             </p>
           </div>
         </div>

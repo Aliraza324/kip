@@ -2,10 +2,17 @@ import { Calendar, Layers, Star } from "lucide-react";
 
 export const TeacherStudentProgressTab = ({ student }) => {
   const factors = student?.progressFactors || [
-    { id: "att", label: "Attendance", percentage: 92, iconType: "calendar" },
-    { id: "asg", label: "Assignments", percentage: 67, iconType: "layers" },
-    { id: "live", label: "live class", percentage: 85, iconType: "star" },
+    { id: "att", label: "Attendance", percentage: 0, iconType: "calendar" },
+    { id: "asg", label: "Assignments", percentage: 0, iconType: "layers" },
+    { id: "live", label: "Live Class", percentage: 0, iconType: "star" },
   ];
+
+  const overallProgressNum =
+    typeof student?.kpi?.overallProgress === "number"
+      ? student.kpi.overallProgress
+      : parseInt(student?.kpi?.overallProgress || "0", 10) || 0;
+
+  const progressFraction = Math.min(100, Math.max(0, overallProgressNum)) / 100;
 
   const getFactorIcon = (type) => {
     if (type === "calendar") return <Calendar className="w-4 h-4 text-[#0080f6]" />;
@@ -46,7 +53,7 @@ export const TeacherStudentProgressTab = ({ student }) => {
                 className="stroke-[#0080f6] transition-all duration-1000 ease-out"
                 strokeWidth="10"
                 strokeDasharray={301.6}
-                strokeDashoffset={301.6 * (1 - 0.78)}
+                strokeDashoffset={301.6 * (1 - progressFraction)}
                 strokeLinecap="round"
                 fill="none"
               />
@@ -55,7 +62,7 @@ export const TeacherStudentProgressTab = ({ student }) => {
             {/* Inner Content */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <span className="text-3xl sm:text-4xl font-black text-slate-900">
-                {student?.kpi?.overallProgress || "78%"}
+                {student?.kpi?.overallProgress || `${overallProgressNum}%`}
               </span>
               <span className="text-xs text-slate-400 font-semibold mt-0.5">
                 Overall Progress

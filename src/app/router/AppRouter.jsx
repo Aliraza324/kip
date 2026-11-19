@@ -138,6 +138,7 @@ export const AppRouter = () => {
             <Route path="students/class/:classId" element={<TeacherClassStudentsListPage />} />
             <Route path="students/class/:classId/:studentId" element={<TeacherStudentDetailPage />} />
             <Route path="students/detail/:studentId" element={<TeacherStudentDetailPage />} />
+            <Route path="students/:studentId" element={<TeacherStudentDetailPage />} />
             <Route path="profile" element={<TeacherProfilePage />} />
             <Route path="notifications" element={<TeacherNotificationsPage />} />
             <Route path="*" element={<Navigate to="/teacher" replace />} />

@@ -2,22 +2,23 @@ import { CheckCircle2, XCircle, Calendar, ChevronDown } from "lucide-react";
 import TeacherStudentAttendanceHistoryCard from "./TeacherStudentAttendanceHistoryCard";
 
 export const TeacherStudentAttendanceTab = ({ student }) => {
-  const stats = student?.attendanceStats || {
-    percentage: 92,
-    present: 23,
-    absent: 2,
-    total: 25,
-    trendWeeks: [
-      { week: "Week 1", percentage: 100 },
-      { week: "Week 2", percentage: 88 },
-      { week: "Week 3", percentage: 92 },
-      { week: "Week 4", percentage: 88 },
-    ],
-    history: [
-      { id: "1", date: "Nov 5, 2024", subject: "Mathematics", status: "Present" },
-      { id: "2", date: "Nov 4, 2024", subject: "Mathematics", status: "Present" },
-      { id: "3", date: "Nov 3, 2024", subject: "Mathematics", status: "Absent" },
-    ],
+  const defaultTrend = [
+    { week: "Week 1", percentage: 0 },
+    { week: "Week 2", percentage: 0 },
+    { week: "Week 3", percentage: 0 },
+    { week: "Week 4", percentage: 0 },
+  ];
+
+  const stats = {
+    percentage: student?.attendanceStats?.percentage ?? 0,
+    present: student?.attendanceStats?.present ?? 0,
+    absent: student?.attendanceStats?.absent ?? 0,
+    total: student?.attendanceStats?.total ?? 0,
+    trendWeeks:
+      student?.attendanceStats?.trendWeeks && student.attendanceStats.trendWeeks.length > 0
+        ? student.attendanceStats.trendWeeks
+        : defaultTrend,
+    history: student?.attendanceStats?.history || [],
   };
 
   return (

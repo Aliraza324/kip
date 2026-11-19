@@ -16,31 +16,31 @@ export const TeacherStudentOverviewTab = ({ student }) => {
   const kpiStats = [
     {
       label: "Lectures Watched",
-      value: student?.kpi?.lecturesWatched || 12,
+      value: student?.kpi?.lecturesWatched ?? 0,
       icon: Video,
       color: "bg-blue-50 text-[#0080f6]",
     },
     {
       label: "Assignments",
-      value: student?.kpi?.assignmentsCount || "2/3",
+      value: student?.kpi?.assignmentsCount ?? "0/0",
       icon: FileText,
       color: "bg-emerald-50 text-emerald-600",
     },
     {
       label: "Overall Progress",
-      value: student?.kpi?.overallProgress || "78%",
+      value: student?.kpi?.overallProgress ?? "0%",
       icon: BarChart3,
       color: "bg-purple-50 text-purple-600",
     },
   ];
 
   const infoRows = [
-    { label: "Full Name", value: student?.name || "Ayesha Ali", icon: User },
-    { label: "Email", value: student?.email || "ayesha.ali@kipclassin.com", icon: Mail },
-    { label: "Phone", value: student?.phone || "+92 300 1234567", icon: Phone },
-    { label: "Date of Birth", value: student?.dob || "Mar 15, 2010", icon: Calendar },
-    { label: "Grade/Class", value: student?.grade || "Grade 9", icon: GraduationCap },
-    { label: "Course", value: student?.course || "Mathematics", icon: Layers },
+    { label: "Full Name", value: student?.name || "—", icon: User },
+    { label: "Email", value: student?.email || "—", icon: Mail },
+    { label: "Phone", value: student?.phone || "—", icon: Phone },
+    { label: "Date of Birth", value: student?.dob || "—", icon: Calendar },
+    { label: "Grade/Class", value: student?.grade || "—", icon: GraduationCap },
+    { label: "Course", value: student?.course || "—", icon: Layers },
   ];
 
   return (
