@@ -26,6 +26,17 @@ export const StudentClassCard = ({ classItem, onEnterClass }) => {
               <span className="truncate">{classItem.teacher}</span>
             </div>
           </div>
+
+          {/* Timetable / Duration */}
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium mt-1">
+            <span className="text-slate-400">🕒</span>
+            <span>{classItem.scheduleTime}</span>
+            {classItem.isExpired && (
+              <span className="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.2 rounded border border-red-100">
+                Ended
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -71,10 +82,15 @@ export const StudentClassCard = ({ classItem, onEnterClass }) => {
         <button
           type="button"
           onClick={() => onEnterClass(classItem)}
-          className="w-full sm:w-auto py-2.5 px-5 rounded-full bg-gradient-to-r from-[#0060d0] to-[#0080f6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+          disabled={classItem.isExpired && !classItem.isLive}
+          className={`w-full sm:w-auto py-2.5 px-5 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+            classItem.isExpired && !classItem.isLive
+              ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+              : "bg-gradient-to-r from-[#0060d0] to-[#0080f6] text-white shadow-md shadow-blue-500/20 hover:opacity-95 cursor-pointer active:scale-95"
+          }`}
         >
           <Video className="w-4 h-4" />
-          <span>Enter Class</span>
+          <span>{classItem.isExpired && !classItem.isLive ? "Session Expired" : "Enter Class"}</span>
         </button>
       </div>
     </div>

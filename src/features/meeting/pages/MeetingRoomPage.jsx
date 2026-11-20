@@ -22,11 +22,11 @@ export const MeetingRoomPage = () => {
   const navigate = useNavigate();
   const storedUser = getStoredUser();
 
-  const isTeacher = storedUser?.role === "teacher";
+  const isTeacher = storedUser?.role?.toLowerCase() === "teacher";
   const userInfo = {
     userId: storedUser?.id || storedUser?._id || "unknown",
     name: storedUser?.fullName || "Unknown",
-    role: storedUser?.role || "student",
+    role: storedUser?.role?.toLowerCase() || "student",
   };
 
   const [showParticipants, setShowParticipants] = useState(false);

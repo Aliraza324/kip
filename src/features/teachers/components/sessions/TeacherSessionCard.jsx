@@ -53,15 +53,40 @@ export const TeacherSessionCard = ({ session, onEdit, onDelete }) => {
             </Link>
             <span
               className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold shrink-0 ${
-                session.type === "instant"
+                session.isLive
+                  ? "bg-rose-50 text-rose-600 border border-rose-200 animate-pulse"
+                  : session.isExpired
+                  ? "bg-slate-100 text-slate-600 border border-slate-200"
+                  : session.type === "instant"
                   ? "bg-emerald-50 text-emerald-600 border border-emerald-200/60"
                   : "bg-blue-50 text-[#0080f6] border border-blue-200/60"
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${session.type === "instant" ? "bg-emerald-500" : "bg-[#0080f6]"}`} />
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  session.isLive
+                    ? "bg-rose-500"
+                    : session.isExpired
+                    ? "bg-slate-400"
+                    : session.type === "instant"
+                    ? "bg-emerald-500"
+                    : "bg-[#0080f6]"
+                }`}
+              />
               <span>{session.statusBadge}</span>
             </span>
           </div>
+
+          {/* Timetable / Duration */}
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-1.5">
+            <span className="text-slate-400">🕒</span>
+            <span>{session.timingText || session.duration}</span>
+            {session.isExpired && (
+              <span className="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.2 rounded border border-red-100">
+                Ended
+              </span>
+            )}
+          </p>
         </div>
       </div>
 
@@ -89,14 +114,17 @@ export const TeacherSessionCard = ({ session, onEdit, onDelete }) => {
         <button
           type="button"
           onClick={handleEnterSession}
+          disabled={session.isExpired && !session.isLive}
           className={`flex-1 sm:flex-initial px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer ${
-            session.type === "instant"
+            session.isExpired && !session.isLive
+              ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+              : session.isLive || session.type === "instant"
               ? "bg-[#0080f6] hover:bg-[#006fd6] text-white shadow-md shadow-blue-500/25 active:scale-95"
               : "border border-slate-200 hover:bg-slate-50 text-slate-700"
           }`}
         >
           <Video className="w-3.5 h-3.5" />
-          <span>Enter Session</span>
+          <span>{session.isExpired && !session.isLive ? "Session Expired" : "Enter Session"}</span>
         </button>
 
         {/* 3 Dots Menu with View, Edit, Delete */}

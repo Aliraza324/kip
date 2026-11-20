@@ -14,8 +14,23 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
   const [selectedDays, setSelectedDays] = useState(["Mon", "Wed", "Fri"]);
   const [startTime, setStartTime] = useState("10:00 AM");
   const [endTime, setEndTime] = useState("10:45 AM");
+  const [instantDurationMinutes, setInstantDurationMinutes] = useState(60);
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const format12Hour = (date) => {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const strMinutes = minutes < 10 ? "0" + minutes : minutes;
+    return `${hours}:${strMinutes} ${ampm}`;
+  };
+
+  const now = new Date();
+  const calculatedInstantStart = format12Hour(now);
+  const calculatedInstantEnd = format12Hour(new Date(now.getTime() + instantDurationMinutes * 60000));
 
   // Fetch teacher's real assigned classes
   useEffect(() => {
@@ -97,8 +112,9 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
             }
           : {
               days: [],
-              startTime: undefined,
-              endTime: undefined,
+              startTime: calculatedInstantStart,
+              endTime: calculatedInstantEnd,
+              durationMinutes: instantDurationMinutes,
             }),
       };
 
@@ -211,6 +227,45 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
               </div>
             </div>
           </div>
+
+          {/* Instant Details: Duration & Timetable Preview */}
+          {type === "instant" && (
+            <div className="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-3.5 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-emerald-900">Meeting Duration</span>
+                <span className="text-[11px] font-semibold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                  Link expires in {instantDurationMinutes} mins
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[
+                  { label: "30 Mins", value: 30 },
+                  { label: "45 Mins", value: 45 },
+                  { label: "1 Hour", value: 60 },
+                  { label: "2 Hours", value: 120 },
+                ].map((d) => (
+                  <button
+                    key={d.value}
+                    type="button"
+                    onClick={() => setInstantDurationMinutes(d.value)}
+                    className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      instantDurationMinutes === d.value
+                        ? "bg-emerald-600 text-white shadow-xs"
+                        : "bg-white text-slate-700 hover:bg-emerald-100/50 border border-emerald-100"
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-emerald-800 pt-1.5 border-t border-emerald-100/80">
+                <span className="font-medium">🕒 Timetable:</span>
+                <span className="font-bold">
+                  Starts: {calculatedInstantStart} • Ends: {calculatedInstantEnd}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Scheduled Details: Week Days + Durations Dropdown */}
           {type === "scheduled" && (

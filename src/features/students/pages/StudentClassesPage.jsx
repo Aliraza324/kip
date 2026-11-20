@@ -10,7 +10,18 @@ import { LiveClassroomView } from "../components/classroom/LiveClassroomView";
 const formatStudentClass = (c) => {
   const isInstant = c.type === "instant";
   const isLive = Boolean(c.isLive);
-  const statusText = isLive ? "Live Now" : c.status === "completed" ? "Completed" : "In Progress";
+  const isExpired = Boolean(
+    c.isExpired ||
+      (isInstant && c.expiresAt && new Date() > new Date(c.expiresAt) && !isLive) ||
+      (isInstant && c.status === "completed")
+  );
+  const statusText = isLive
+    ? "Live Now"
+    : isExpired
+    ? "Expired"
+    : c.status === "completed"
+    ? "Completed"
+    : "In Progress";
   const teacherName = c.teacher?.fullName || "Assigned Teacher";
   const courseSubject = c.subject || c.title || "General";
 
@@ -25,9 +36,16 @@ const formatStudentClass = (c) => {
 
   const statusBadge = isLive
     ? "bg-rose-50 text-rose-600 border border-rose-200 animate-pulse"
-    : c.status === "completed"
+    : isExpired || c.status === "completed"
     ? "bg-slate-100 text-slate-600 border border-slate-200"
     : "bg-blue-50 text-[#0080f6] border border-blue-200/60";
+
+  const scheduleTime =
+    c.startTime && c.endTime
+      ? `${c.startTime} – ${c.endTime}`
+      : isInstant
+      ? "Instant Session"
+      : "10:00 AM – 10:45 AM";
 
   return {
     id: c.id || String(c._id),
@@ -42,8 +60,10 @@ const formatStudentClass = (c) => {
     scheduledCount: c.type === "scheduled" ? 1 : 0,
     status: statusText,
     statusBadge,
+    isExpired,
+    isLive,
     days: c.days?.length ? c.days.join(", ") : isInstant ? "Today" : "Mon – Fri",
-    scheduleTime: c.startTime && c.endTime ? `${c.startTime} – ${c.endTime}` : "10:00 AM – 10:45 AM",
+    scheduleTime,
     nextClassDate: c.nextOccurrence || "Upcoming",
     nextClassTopic: c.title,
     isClassTimeActive: isLive || isInstant || c.status === "active",

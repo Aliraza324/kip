@@ -13,15 +13,63 @@ export const VideoTile = ({
   isVideoOn = true,
   handRaised = false,
   isLocal = false,
-  isMain = false, // larger hero tile for teacher
+  isMain = false, // larger hero tile for teacher or screen share
+  isScreenShare = false,
 }) => {
   const videoRef = useRef(null);
+  const audioRef = useRef(null);
+
+  // Check if stream looks like screen share
+  const isScreenTrack =
+    isScreenShare ||
+    Boolean(
+      stream
+        ?.getVideoTracks()
+        ?.some(
+          (t) =>
+            t.label.toLowerCase().includes("screen") ||
+            t.label.toLowerCase().includes("display") ||
+            t.contentHint === "detail"
+        )
+    );
+
+  const setVideoRef = (node) => {
+    videoRef.current = node;
+    if (node && stream) {
+      if (node.srcObject !== stream) {
+        node.srcObject = stream;
+      }
+      node.play().catch(() => {});
+    }
+  };
+
+  const setAudioRef = (node) => {
+    audioRef.current = node;
+    if (node && stream && !isLocal) {
+      if (node.srcObject !== stream) {
+        node.srcObject = stream;
+      }
+      node.play().catch(() => {});
+    }
+  };
 
   useEffect(() => {
     if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+      if (videoRef.current.srcObject !== stream) {
+        videoRef.current.srcObject = stream;
+      }
+      videoRef.current.play().catch(() => {});
     }
-  }, [stream]);
+  }, [stream, isVideoOn]);
+
+  useEffect(() => {
+    if (audioRef.current && stream && !isLocal) {
+      if (audioRef.current.srcObject !== stream) {
+        audioRef.current.srcObject = stream;
+      }
+      audioRef.current.play().catch(() => {});
+    }
+  }, [stream, isLocal]);
 
   const initials = name
     .split(" ")
@@ -33,29 +81,40 @@ export const VideoTile = ({
   return (
     <div
       className={`relative bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center ${
-        isMain ? "aspect-video" : "aspect-video"
+        isMain ? "aspect-video w-full h-full" : "aspect-video"
       }`}
     >
+      {/* Remote Audio output guarantee */}
+      {!isLocal && stream && (
+        <audio ref={setAudioRef} autoPlay playsInline />
+      )}
+
       {/* Video element */}
       {stream && isVideoOn ? (
         <video
-          ref={videoRef}
+          ref={setVideoRef}
           autoPlay
           playsInline
           muted={isLocal}
-          className="w-full h-full object-cover"
+          className={`w-full h-full ${
+            isScreenTrack || (isMain && !isLocal)
+              ? "object-contain bg-black"
+              : isLocal
+              ? "object-cover scale-x-[-1]"
+              : "object-cover"
+          }`}
         />
       ) : (
         <div className="flex flex-col items-center gap-2">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
             <span className="text-white font-bold text-xl">{initials}</span>
           </div>
-          <span className="text-white/60 text-xs">{isVideoOn ? "No stream" : "Camera off"}</span>
+          <span className="text-white/60 text-xs">{isVideoOn ? "Connecting..." : "Camera off"}</span>
         </div>
       )}
 
       {/* Overlay: name + badges */}
-      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent flex items-center justify-between">
+      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent flex items-center justify-between pointer-events-none">
         <span className="text-white text-xs font-semibold truncate max-w-[70%]">
           {isLocal ? `${name} (You)` : name}
         </span>
@@ -73,7 +132,7 @@ export const VideoTile = ({
       )}
 
       {/* Teacher badge */}
-      {role === "teacher" && (
+      {role?.toLowerCase() === "teacher" && (
         <div className="absolute top-2 left-2 bg-blue-600 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow">
           Teacher
         </div>

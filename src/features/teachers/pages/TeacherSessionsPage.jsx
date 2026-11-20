@@ -11,7 +11,21 @@ import {
 
 export const formatTeacherSession = (s) => {
   const isInstant = s.type === "instant";
-  const statusBadge = s.isLive ? "Live Now" : isInstant ? "Instant" : s.status === "completed" ? "Completed" : "Scheduled";
+  const isExpired = Boolean(
+    s.isExpired ||
+      (isInstant && s.expiresAt && new Date() > new Date(s.expiresAt) && !s.isLive) ||
+      (isInstant && s.status === "completed")
+  );
+  const statusBadge = s.isLive
+    ? "Live Now"
+    : isExpired
+    ? "Expired"
+    : isInstant
+    ? "Instant"
+    : s.status === "completed"
+    ? "Completed"
+    : "Scheduled";
+
   const course = s.subject || s.class?.name || "General";
   const grade = s.class?.grade || s.class?.name || "Class";
   const iconType = course.toLowerCase().includes("math")
@@ -29,12 +43,24 @@ export const formatTeacherSession = (s) => {
     ? "bg-emerald-100 text-emerald-600"
     : "bg-blue-100 text-blue-600";
 
+  const timingText =
+    s.startTime && s.endTime
+      ? `${s.startTime} – ${s.endTime}`
+      : isInstant
+      ? "Instant Session"
+      : "10:00 AM – 10:45 AM";
+
   return {
     id: s.id || String(s._id),
     title: s.title,
     type: s.type,
     statusBadge,
-    duration: isInstant ? "Instant Live" : (s.startTime && s.endTime ? `${s.startTime} – ${s.endTime}` : "10:00 AM – 10:45 AM"),
+    isExpired,
+    isLive: Boolean(s.isLive),
+    startTime: s.startTime,
+    endTime: s.endTime,
+    timingText,
+    duration: timingText,
     scheduleDays: s.days?.length ? s.days.join(", ") : isInstant ? "Instant" : "Weekly",
     repeatRule: isInstant ? "One-time Live" : (s.days?.length ? `Weekly (${s.days.join(", ")})` : "Weekly"),
     studentsCount: s.studentsCount ?? s.studentIds?.length ?? 0,
