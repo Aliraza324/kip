@@ -34,9 +34,8 @@ export const MeetingRoomPage = () => {
     [storedUser]
   );
 
-  const [showParticipants, setShowParticipants] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [showMaterials, setShowMaterials] = useState(false);
+  // Single active panel at a time ('people' | 'chat' | 'notes' | null) to prevent screen overflow
+  const [activePanel, setActivePanel] = useState(null);
   const [unreadChat, setUnreadChat] = useState(0);
 
   const {
@@ -62,17 +61,18 @@ export const MeetingRoomPage = () => {
     }
   }, [localStream, waitingToJoin]);
 
-  // Track unread messages when chat is closed
+  // Track unread messages when chat panel is closed
   useEffect(() => {
-    if (!showChat && chatMessages.length > 0) {
+    if (activePanel !== "chat" && chatMessages.length > 0) {
       setUnreadChat((prev) => prev + 1);
     }
-  }, [chatMessages.length, showChat]);
+  }, [chatMessages.length, activePanel]);
 
-  const handleToggleChat = useCallback(() => {
-    setShowChat((prev) => {
-      if (!prev) setUnreadChat(0);
-      return !prev;
+  const togglePanel = useCallback((panelName) => {
+    setActivePanel((prev) => {
+      const next = prev === panelName ? null : panelName;
+      if (next === "chat") setUnreadChat(0);
+      return next;
     });
   }, []);
 
@@ -243,7 +243,7 @@ export const MeetingRoomPage = () => {
 
   // ── ACTIVE LIVE MEETING ROOM ────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col overflow-hidden relative">
+    <div className="h-screen h-[100dvh] max-h-screen w-screen max-w-full bg-slate-900 flex flex-col overflow-hidden relative">
       {/* ── Teacher Floating Join Request Notification Popup ─────────────── */}
       {isTeacher && joinRequests.length > 0 && (
         <div className="absolute top-16 right-4 sm:right-6 z-50 max-w-sm w-full space-y-2 animate-in fade-in slide-in-from-top-4 duration-200">
@@ -285,7 +285,7 @@ export const MeetingRoomPage = () => {
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => setShowParticipants(true)}
+                onClick={() => togglePanel("people")}
                 className="text-[11px] text-blue-400 hover:underline font-semibold bg-slate-900/80 px-3 py-1 rounded-full border border-blue-500/20"
               >
                 +{joinRequests.length - 3} more waiting (open People)
@@ -296,7 +296,7 @@ export const MeetingRoomPage = () => {
       )}
 
       {/* ── Top Bar ─────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/95 border-b border-white/5">
+      <div className="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/95 border-b border-white/5">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
             <span className="text-white font-black text-xs">KIP</span>
@@ -341,11 +341,11 @@ export const MeetingRoomPage = () => {
           />
         </div>
 
-        {/* Side Panels */}
-        {(showParticipants || showChat || showMaterials) && (
-          <div className="w-72 sm:w-80 border-l border-white/5 flex flex-col p-3 gap-3 overflow-hidden">
-            {showParticipants && (
-              <div className="flex-1 min-h-0">
+        {/* Side Panels - Google Meet style (Only 1 active panel at a time, internal scrolling) */}
+        {activePanel && (
+          <div className="w-72 sm:w-80 md:w-88 border-l border-white/5 flex flex-col p-2.5 overflow-hidden h-full min-h-0 shrink-0 bg-slate-900/90">
+            {activePanel === "people" && (
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
                 <ParticipantsList
                   participants={participants}
                   joinRequests={joinRequests}
@@ -354,26 +354,26 @@ export const MeetingRoomPage = () => {
                   onDeny={denyStudent}
                   onMuteUser={muteUser}
                   onKickUser={kickUser}
-                  onClose={() => setShowParticipants(false)}
+                  onClose={() => setActivePanel(null)}
                 />
               </div>
             )}
-            {showChat && (
-              <div className="flex-1 min-h-0">
+            {activePanel === "chat" && (
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
                 <MeetingChat
                   messages={chatMessages}
                   onSend={sendChat}
                   currentUserId={getSocket()?.id}
-                  onClose={handleToggleChat}
+                  onClose={() => setActivePanel(null)}
                 />
               </div>
             )}
-            {showMaterials && (
-              <div className="flex-1 min-h-0">
+            {activePanel === "notes" && (
+              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
                 <MeetingMaterialsPanel
                   roomId={roomId}
                   isTeacher={isTeacher}
-                  onClose={() => setShowMaterials(false)}
+                  onClose={() => setActivePanel(null)}
                   onShareToChat={(material) => {
                     sendChat(`Shared Class Note: ${material.title} - ${material.url || ""}`);
                   }}
@@ -385,28 +385,30 @@ export const MeetingRoomPage = () => {
       </div>
 
       {/* ── Controls Bar ─────────────────────────────────────────────── */}
-      <MeetingControls
-        isTeacher={isTeacher}
-        isAudioOn={isAudioOn}
-        isVideoOn={isVideoOn}
-        isScreenSharing={isScreenSharing}
-        isRecording={isRecording}
-        handRaised={handRaised}
-        onToggleAudio={toggleAudio}
-        onToggleVideo={toggleVideo}
-        onToggleScreen={toggleScreenShare}
-        onToggleHand={toggleHand}
-        onStartRecording={startRecording}
-        onStopRecording={stopRecording}
-        onToggleChat={handleToggleChat}
-        onToggleParticipants={() => setShowParticipants((p) => !p)}
-        onToggleMaterials={() => setShowMaterials((m) => !m)}
-        showMaterials={showMaterials}
-        onLeave={handleLeave}
-        onEnd={handleEnd}
-        participantsCount={participants.length}
-        unreadChat={showChat ? 0 : unreadChat}
-      />
+      <div className="shrink-0 border-t border-white/5">
+        <MeetingControls
+          isTeacher={isTeacher}
+          isAudioOn={isAudioOn}
+          isVideoOn={isVideoOn}
+          isScreenSharing={isScreenSharing}
+          isRecording={isRecording}
+          handRaised={handRaised}
+          onToggleAudio={toggleAudio}
+          onToggleVideo={toggleVideo}
+          onToggleScreen={toggleScreenShare}
+          onToggleHand={toggleHand}
+          onStartRecording={startRecording}
+          onStopRecording={stopRecording}
+          onToggleChat={() => togglePanel("chat")}
+          onToggleParticipants={() => togglePanel("people")}
+          onToggleMaterials={() => togglePanel("notes")}
+          showMaterials={activePanel === "notes"}
+          onLeave={handleLeave}
+          onEnd={handleEnd}
+          participantsCount={participants.length}
+          unreadChat={activePanel === "chat" ? 0 : unreadChat}
+        />
+      </div>
     </div>
   );
 };

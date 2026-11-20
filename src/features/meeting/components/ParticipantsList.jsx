@@ -10,9 +10,9 @@ export const ParticipantsList = ({
   onKickUser,
   onClose,
 }) => (
-  <div className="flex flex-col h-full bg-slate-800 rounded-2xl overflow-hidden">
+  <div className="flex flex-col h-full min-h-0 bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
     {/* Header */}
-    <div className="flex items-center justify-between p-4 border-b border-white/10">
+    <div className="flex items-center justify-between p-3.5 border-b border-white/10 shrink-0 bg-slate-800/90">
       <h3 className="text-white font-bold text-sm">
         Participants ({participants.length})
       </h3>
@@ -64,7 +64,7 @@ export const ParticipantsList = ({
     )}
 
     {/* In-Call Participants List */}
-    <div className="flex-1 overflow-y-auto p-3 space-y-2">
+    <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-2">
       {participants.length === 0 ? (
         <p className="text-white/40 text-xs text-center pt-8">No participants yet</p>
       ) : (

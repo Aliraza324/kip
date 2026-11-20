@@ -229,16 +229,12 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
 
     // Handle remote track received
     pc.ontrack = (event) => {
-      const incomingStream = event.streams?.[0] || new MediaStream([event.track]);
+      const track = event.track;
       setRemoteStreams((prev) => {
         const existing = prev[socketId];
-        if (existing) {
-          if (!existing.getTracks().some((t) => t.id === event.track.id)) {
-            existing.addTrack(event.track);
-          }
-          return { ...prev, [socketId]: existing };
-        }
-        return { ...prev, [socketId]: incomingStream };
+        const existingTracks = existing ? existing.getTracks().filter((t) => t.id !== track.id) : [];
+        const nextStream = new MediaStream([...existingTracks, track]);
+        return { ...prev, [socketId]: nextStream };
       });
     };
 
@@ -581,12 +577,10 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
         if (prev.some((p) => p.socketId === info.socketId)) return prev;
         return [...prev, info];
       });
-      // Teacher initiates WebRTC connection
-      if (isTeacher) {
-        setTimeout(() => {
-          makeOfferRef.current(info.socketId);
-        }, 150);
-      }
+      // Every existing participant in the room initiates a WebRTC connection to the new joiner
+      setTimeout(() => {
+        makeOfferRef.current(info.socketId);
+      }, 200);
     };
 
     const onParticipantLeft = ({ socketId }) => {
@@ -609,6 +603,10 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       if (!mounted) return;
       try {
         const pc = createPeerConnectionRef.current(fromSocketId);
+        if (pc.signalingState !== "stable") {
+          console.warn("Signaling state is not stable on offer, rolling back:", pc.signalingState);
+          await pc.setLocalDescription({ type: "rollback" }).catch(() => {});
+        }
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         // Flush any queued ICE candidates that arrived before offer
         await flushQueuedCandidatesRef.current(fromSocketId, pc);

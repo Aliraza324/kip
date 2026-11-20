@@ -21,17 +21,17 @@ export const MeetingChat = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-800 rounded-2xl overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
-        <h3 className="text-white font-bold text-sm">Chat</h3>
-        <button onClick={onClose} className="text-white/50 hover:text-white transition-colors cursor-pointer">
+      <div className="flex items-center justify-between p-3.5 border-b border-white/10 shrink-0 bg-slate-800/90">
+        <h3 className="text-white font-bold text-sm">In-Class Chat</h3>
+        <button onClick={onClose} className="text-white/50 hover:text-white transition-colors cursor-pointer p-1">
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-2.5">
         {messages.length === 0 ? (
           <p className="text-white/40 text-xs text-center pt-8">
             No messages yet. Say hello! 👋
@@ -62,7 +62,7 @@ export const MeetingChat = ({
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-white/10 flex gap-2">
+      <div className="p-2.5 border-t border-white/10 flex gap-2 shrink-0 bg-slate-800">
         <input
           type="text"
           value={input}
