@@ -6,6 +6,8 @@ const STUN_CONFIG = {
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
     { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" },
   ],
 };
 
@@ -229,13 +231,20 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
 
     // Handle remote track received
     pc.ontrack = (event) => {
-      const track = event.track;
-      setRemoteStreams((prev) => {
-        const existing = prev[socketId];
-        const existingTracks = existing ? existing.getTracks().filter((t) => t.id !== track.id) : [];
-        const nextStream = new MediaStream([...existingTracks, track]);
-        return { ...prev, [socketId]: nextStream };
-      });
+      if (event.streams && event.streams[0]) {
+        setRemoteStreams((prev) => ({
+          ...prev,
+          [socketId]: event.streams[0],
+        }));
+      } else if (event.track) {
+        setRemoteStreams((prev) => {
+          const current = prev[socketId] || new MediaStream();
+          if (!current.getTracks().some((t) => t.id === event.track.id)) {
+            current.addTrack(event.track);
+          }
+          return { ...prev, [socketId]: current };
+        });
+      }
     };
 
     // Send ICE candidates to the remote peer
@@ -561,14 +570,15 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     const onParticipants = (list) => {
       if (!mounted) return;
       setParticipants(list);
-      // If teacher, make offer to every other participant
-      if (isTeacher) {
-        list.forEach(({ socketId }) => {
-          if (socketId !== socket.id) {
-            setTimeout(() => makeOfferRef.current(socketId), 150);
-          }
-        });
-      }
+      // Socket ID comparison initiator rule:
+      // Exactly ONE peer initiates the offer per pair (peer with greater socketId).
+      // Eliminates signaling collisions, glare, and race conditions for 2, 3, 4+ participants.
+      const myId = socket.id;
+      list.forEach(({ socketId }) => {
+        if (socketId && socketId !== myId && myId > socketId) {
+          setTimeout(() => makeOfferRef.current(socketId), 100);
+        }
+      });
     };
 
     const onParticipantJoined = (info) => {
@@ -577,10 +587,14 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
         if (prev.some((p) => p.socketId === info.socketId)) return prev;
         return [...prev, info];
       });
-      // Every existing participant in the room initiates a WebRTC connection to the new joiner
-      setTimeout(() => {
-        makeOfferRef.current(info.socketId);
-      }, 200);
+      // If my socket ID is greater than the incoming peer's socket ID, I create the offer.
+      // Otherwise, the incoming peer will create the offer when it receives onParticipants.
+      const myId = socket.id;
+      if (info.socketId && myId && myId > info.socketId) {
+        setTimeout(() => {
+          makeOfferRef.current(info.socketId);
+        }, 100);
+      }
     };
 
     const onParticipantLeft = ({ socketId }) => {
@@ -603,10 +617,6 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       if (!mounted) return;
       try {
         const pc = createPeerConnectionRef.current(fromSocketId);
-        if (pc.signalingState !== "stable") {
-          console.warn("Signaling state is not stable on offer, rolling back:", pc.signalingState);
-          await pc.setLocalDescription({ type: "rollback" }).catch(() => {});
-        }
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         // Flush any queued ICE candidates that arrived before offer
         await flushQueuedCandidatesRef.current(fromSocketId, pc);
