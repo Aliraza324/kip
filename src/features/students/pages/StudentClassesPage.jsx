@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Calendar, User, Layers, ChevronDown } from "lucide-react";
+import { api } from "@/service/apiClient";
 import { studentClassesListMock } from "@/mocks";
 import { StudentClassCard } from "../components/classes/StudentClassCard";
 import { StudentClassDetailView } from "../components/classes/StudentClassDetailView";
 import { LiveClassroomView } from "../components/classroom/LiveClassroomView";
 
 export const StudentClassesPage = () => {
+  const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState(null);
   const [isLiveClassOpen, setIsLiveClassOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
@@ -16,12 +19,29 @@ export const StudentClassesPage = () => {
     return <LiveClassroomView onLeaveClass={() => setIsLiveClassOpen(false)} />;
   }
 
-  if (selectedClass) {
+    if (selectedClass) {
     return (
       <StudentClassDetailView
         classData={selectedClass}
         onBack={() => setSelectedClass(null)}
-        onJoinLiveClass={() => setIsLiveClassOpen(true)}
+        onJoinLiveClass={async () => {
+          try {
+            const classId = selectedClass.id;
+            const data = await api.post(`/student/classes/${classId}/join`);
+            const roomId = data?.data?.roomId || data?.data?.lectureId || data?.roomId || classId;
+            if (roomId) {
+              navigate(`/meeting/${roomId}`);
+            } else {
+              setIsLiveClassOpen(true);
+            }
+          } catch {
+            if (selectedClass?.id) {
+              navigate(`/meeting/${selectedClass.id}`);
+            } else {
+              setIsLiveClassOpen(true);
+            }
+          }
+        }}
       />
     );
   }

@@ -7,6 +7,7 @@ import {
   teacherSessionScheduleListMock,
 } from "@/mocks";
 import { LiveClassroomView } from "@/features/students/components/classroom";
+import { api } from "@/service/apiClient";
 import {
   TeacherSessionDetailHeader,
   TeacherSessionOverviewTab,
@@ -49,9 +50,25 @@ export const TeacherSessionDetailPage = () => {
     { id: "schedule", label: "Schedule" },
   ];
 
-  const handleStartLive = (title) => {
-    setActiveLiveTitle(title || session.title);
-    setIsLiveClassOpen(true);
+  const handleStartLive = async (title) => {
+    try {
+      const data = await api.post(`/teacher/sessions/${sessionId}/start`, { title: title || session.title });
+      const roomId = data?.data?.roomId || data?.data?.lectureId || data?.roomId || sessionId;
+      if (roomId) {
+        navigate(`/meeting/${roomId}`);
+      } else {
+        setActiveLiveTitle(title || session.title);
+        setIsLiveClassOpen(true);
+      }
+    } catch {
+      // Fallback to meeting room using sessionId or inline classroom
+      if (sessionId) {
+        navigate(`/meeting/${sessionId}`);
+      } else {
+        setActiveLiveTitle(title || session.title);
+        setIsLiveClassOpen(true);
+      }
+    }
   };
 
   const handleSaveEditedSession = (updatedData) => {

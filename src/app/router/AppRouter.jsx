@@ -59,6 +59,9 @@ const StudentProgressPage = lazy(() => import("@/features/students/pages/Student
 const StudentProfilePage = lazy(() => import("@/features/students/pages/StudentProfilePage"));
 const StudentNotificationsPage = lazy(() => import("@/features/students/pages/StudentNotificationsPage"));
 
+// Meeting Room (WebRTC full-screen live meeting)
+const MeetingRoomPage = lazy(() => import("@/features/meeting/pages/MeetingRoomPage"));
+
 // Clean fallback loader complying with Core Web Vitals (prevents layout shift)
 const PageFallbackLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-white">
@@ -155,6 +158,9 @@ export const AppRouter = () => {
             <Route path="notifications" element={<StudentNotificationsPage />} />
             <Route path="*" element={<Navigate to="/student" replace />} />
           </Route>
+
+          {/* Meeting Room - Full screen, accessible to teacher and student */}
+          <Route path="/meeting/:roomId" element={<MeetingRoomPage />} />
 
           {/* Fallback Catch-All */}
           <Route path="*" element={<Navigate to="/" replace />} />
