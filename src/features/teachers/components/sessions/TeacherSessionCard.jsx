@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { api } from "@/service/apiClient";
 import {
   Video, Users, BookOpen, Calendar, MoreVertical, Eye, Edit2, Trash2,
   FlaskConical, Code2,
