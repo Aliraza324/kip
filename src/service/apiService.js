@@ -775,6 +775,69 @@ export const teacherProfileService = {
   },
 };
 
+export const studentProfileService = {
+  async getProfile() {
+    try {
+      const res = await api.get(STUDENT_ROUTES.PROFILE.BASE);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("studentProfileService.getProfile error:", err);
+      throw err;
+    }
+  },
+
+  async updateProfile(data) {
+    try {
+      const res = await api.patch(STUDENT_ROUTES.PROFILE.UPDATE, data);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("studentProfileService.updateProfile error:", err);
+      throw err;
+    }
+  },
+
+  async changePassword({ newPassword, confirmPassword }) {
+    try {
+      const res = await api.patch(STUDENT_ROUTES.PROFILE.UPDATE_PASSWORD, {
+        newPassword,
+        confirmPassword,
+      });
+      if (res?.data?.accessToken) {
+        setAuthToken(res.data.accessToken);
+      }
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("studentProfileService.changePassword error:", err);
+      throw err;
+    }
+  },
+
+  async updateAvatar(fileOrFormData) {
+    try {
+      let formData = fileOrFormData;
+      if (fileOrFormData instanceof File) {
+        formData = new FormData();
+        formData.append("avatar", fileOrFormData);
+      }
+      const res = await api.put(STUDENT_ROUTES.PROFILE.AVATAR, formData);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("studentProfileService.updateAvatar error:", err);
+      throw err;
+    }
+  },
+
+  async removeAvatar() {
+    try {
+      const res = await api.delete(STUDENT_ROUTES.PROFILE.AVATAR);
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("studentProfileService.removeAvatar error:", err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -785,6 +848,7 @@ export default {
   teacherStudents: teacherStudentService,
   teacherAssignments: teacherAssignmentService,
   teacherProfile: teacherProfileService,
+  studentProfile: studentProfileService,
   teacherDashboard: teacherDashboardService,
   studentAssignments: studentAssignmentService,
   content: contentService,

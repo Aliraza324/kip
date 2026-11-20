@@ -26,9 +26,10 @@ export const STUDENT_ROUTES = {
     BASE: "/student/progress",
   },
   PROFILE: {
-    ME: "/me",
-    UPDATE_PASSWORD: "/me/password",
-    AVATAR: "/me/avatar",
+    BASE: "/student/profile",
+    UPDATE: "/student/profile",
+    UPDATE_PASSWORD: "/student/profile/password",
+    AVATAR: "/student/profile/avatar",
     NOTIFICATIONS: "/me/notifications",
     MARK_NOTIFICATION_READ: (id) => `/me/notifications/${id}/read`,
     MARK_ALL_NOTIFICATIONS_READ: "/me/notifications/read-all",

@@ -11,7 +11,7 @@ import { NotificationDropdown } from "@/features/students/components/notificatio
 import { StudentProfileDropdown } from "@/features/students/components/profile";
 import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 import { notificationService } from "@/service/apiService";
-import { getAuthToken } from "@/service/apiClient";
+import { getAuthToken, getAuthUser } from "@/service/apiClient";
 
 const navItems = [
   { label: "Dashboard", href: "/student", icon: Home, end: true },
@@ -55,10 +55,20 @@ export const StudentLayout = () => {
       .catch(() => setNotifications([]));
   }, []);
 
+  const [authUser, setLocalAuthUser] = useState(getAuthUser());
+
+  useEffect(() => {
+    const handleUserUpdate = () => {
+      setLocalAuthUser(getAuthUser());
+    };
+    window.addEventListener("kip:user:updated", handleUserUpdate);
+    return () => window.removeEventListener("kip:user:updated", handleUserUpdate);
+  }, []);
+
   const profileUser = {
-    name: user?.name || "Alex Student",
-    role: user?.role || "Student",
-    avatar: studentAvatarImg,
+    name: authUser?.fullName || authUser?.name || user?.name || "Alex Student",
+    role: "Student",
+    avatar: authUser?.avatar || studentAvatarImg,
   };
 
   const unreadCount = notifications.filter((n) => n.isUnread || n.isRead === false).length;
@@ -211,8 +221,8 @@ export const StudentLayout = () => {
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center gap-2.5 py-1 px-2 rounded-2xl hover:bg-white/80 transition-all cursor-pointer"
               >
-                <img src={studentAvatarImg} alt={user.name} className="w-9 h-9 rounded-full object-cover shrink-0 shadow-xs border border-blue-200" />
-                <span className="text-sm font-bold text-slate-800 whitespace-nowrap">{user.name}</span>
+                <img src={profileUser.avatar} alt={profileUser.name} className="w-9 h-9 rounded-full object-cover shrink-0 shadow-xs border border-blue-200" />
+                <span className="text-sm font-bold text-slate-800 whitespace-nowrap">{profileUser.name}</span>
                 <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`} />
               </div>
               <StudentProfileDropdown

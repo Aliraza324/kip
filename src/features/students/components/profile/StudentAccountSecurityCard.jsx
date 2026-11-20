@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Shield, Lock, Eye, EyeOff, Check, Info } from "lucide-react";
+import { Shield, Lock, Eye, EyeOff, Check, Info, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
-export const StudentAccountSecurityCard = () => {
+export const StudentAccountSecurityCard = ({
+  onUpdatePassword,
+  isUpdating = false,
+}) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNew, setShowNew] = useState(false);
@@ -24,14 +27,25 @@ export const StudentAccountSecurityCard = () => {
 
   const strength = calculateStrength(newPassword);
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     if (!newPassword) return toast.error("Please enter a new password.");
     if (newPassword.length < 8) return toast.error("New password must be at least 8 characters.");
     if (newPassword !== confirmPassword) return toast.error("Passwords do not match.");
-    toast.success("Password updated successfully!");
-    setNewPassword("");
-    setConfirmPassword("");
+
+    if (onUpdatePassword) {
+      try {
+        await onUpdatePassword({ newPassword, confirmPassword });
+        setNewPassword("");
+        setConfirmPassword("");
+      } catch (err) {
+        // handled in hook
+      }
+    } else {
+      toast.success("Password updated successfully!");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
   };
 
   const handleCancel = () => {
@@ -125,21 +139,32 @@ export const StudentAccountSecurityCard = () => {
           </ul>
         </div>
 
-        {/* Action Buttons Matching Image 4 */}
+        {/* Action Buttons Matching Image */}
         <div className="flex items-center justify-between pt-3">
           <button
             type="button"
             onClick={handleCancel}
+            disabled={isUpdating}
             className="px-2 py-2 text-slate-700 hover:text-slate-900 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
+            disabled={isUpdating}
+            className="px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 disabled:opacity-70"
           >
-            <Check className="w-4 h-4 stroke-[2.5]" />
-            <span>Update Password</span>
+            {isUpdating ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Updating...</span>
+              </>
+            ) : (
+              <>
+                <Check className="w-4 h-4 stroke-[2.5]" />
+                <span>Update Password</span>
+              </>
+            )}
           </button>
         </div>
       </form>
