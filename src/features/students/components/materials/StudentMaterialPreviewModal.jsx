@@ -1,13 +1,18 @@
 import { X, Download, ExternalLink, FileText, Play, Check } from "lucide-react";
-import { openMaterialInBrowser, downloadMaterialFile } from "../../utils/pdfGenerator";
+import { openMaterialInBrowser, downloadMaterialFile } from "../../utils/materialUtils";
 import toast from "react-hot-toast";
 
 export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
   if (!isOpen || !material) return null;
 
   const isVideo = material.type === "video";
+  const targetUrl = material.url || material.file?.url;
 
   const handleOpenBrowserTab = () => {
+    if (!targetUrl) {
+      toast.error("File URL is not available.");
+      return;
+    }
     const success = openMaterialInBrowser(material);
     if (!success) {
       toast.error("Popup blocked. Please allow popups for this site.");
@@ -17,6 +22,10 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
   };
 
   const handleDownload = () => {
+    if (!targetUrl) {
+      toast.error("File URL is not available for download.");
+      return;
+    }
     downloadMaterialFile(material);
     toast.success(`Downloading ${material.title}...`);
   };
@@ -28,7 +37,7 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
         <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3 min-w-0">
             <div
-              className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${material.iconBg}`}
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${material.iconBg || "bg-blue-50 text-[#0080f6]"}`}
             >
               {isVideo ? (
                 <Play className="w-5 h-5 fill-current" />
@@ -57,26 +66,28 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
         {/* Content Details */}
         <div className="space-y-3.5">
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            {material.description}
+            {material.description || "No description provided."}
           </p>
 
-          {/* Key Topics List */}
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-xs sm:text-sm text-slate-700 space-y-2 max-h-56 overflow-y-auto">
-            <p className="font-bold text-slate-900 text-xs uppercase tracking-wider mb-2">
-              Resource Outline &amp; Topics:
-            </p>
-            {material.previewContent?.map((item, idx) => (
-              <div key={idx} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <span className="leading-snug">{item}</span>
-              </div>
-            ))}
-          </div>
+          {/* Key Topics List (if available) */}
+          {Array.isArray(material.previewContent) && material.previewContent.length > 0 && (
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-xs sm:text-sm text-slate-700 space-y-2 max-h-56 overflow-y-auto">
+              <p className="font-bold text-slate-900 text-xs uppercase tracking-wider mb-2">
+                Resource Outline &amp; Topics:
+              </p>
+              {material.previewContent.map((item, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <span className="leading-snug">{item}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Meta Info Pill */}
           <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-            <span>Instructor: {material.author}</span>
-            <span>Uploaded: {material.uploadedDate}</span>
+            <span>{material.author ? `Instructor: ${material.author}` : "Academic Resource"}</span>
+            <span>{material.uploadedDate ? `Uploaded: ${material.uploadedDate}` : ""}</span>
           </div>
         </div>
 
@@ -89,7 +100,7 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
           >
             Close
           </button>
-          {!isVideo && (
+          {!isVideo && targetUrl && (
             <button
               type="button"
               onClick={handleOpenBrowserTab}
@@ -99,14 +110,16 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
               <span>Open in Browser</span>
             </button>
           )}
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="w-full sm:w-auto px-5 py-2 sm:py-2.5 rounded-full bg-[#0080f6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-[#0060d0] transition-all cursor-pointer active:scale-95 text-center"
-          >
-            <Download className="w-4 h-4" />
-            <span>Download ({material.format})</span>
-          </button>
+          {targetUrl && (
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="w-full sm:w-auto px-5 py-2 sm:py-2.5 rounded-full bg-[#0080f6] text-white text-xs sm:text-sm font-bold shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 hover:bg-[#0060d0] transition-all cursor-pointer active:scale-95 text-center"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download ({material.format || "File"})</span>
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -114,4 +127,3 @@ export const StudentMaterialPreviewModal = ({ isOpen, onClose, material }) => {
 };
 
 export default StudentMaterialPreviewModal;
-

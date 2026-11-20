@@ -850,6 +850,18 @@ export const studentProgressService = {
   },
 };
 
+export const studentMaterialService = {
+  async getMaterials(params = {}) {
+    try {
+      const res = await api.get(STUDENT_ROUTES.MATERIALS.BASE, { params });
+      return res;
+    } catch (err) {
+      console.error("studentMaterialService.getMaterials error:", err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -862,6 +874,7 @@ export default {
   teacherProfile: teacherProfileService,
   studentProfile: studentProfileService,
   studentProgress: studentProgressService,
+  studentMaterials: studentMaterialService,
   teacherDashboard: teacherDashboardService,
   studentAssignments: studentAssignmentService,
   content: contentService,
