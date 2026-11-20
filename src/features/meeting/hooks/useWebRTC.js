@@ -133,6 +133,7 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
   const [error, setError]                     = useState(null);
 
   // ── Waiting Room State ──────────────────────────────────────────────────
+  const [screenSharerSocketId, setScreenSharerSocketId] = useState(null);
   const [waitingToJoin, setWaitingToJoin]     = useState(!isTeacher);
   const [wasDenied, setWasDenied]             = useState(false);
   const [joinRequests, setJoinRequests]       = useState([]);
@@ -315,6 +316,7 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       setLocalStream(camStream);
     }
     setIsScreenSharing(false);
+    setScreenSharerSocketId(null);
     try {
       const socket = getSocket();
       socket.emit(MEETING_EVENTS.SCREEN_SHARE_STOPPED, { roomId });
@@ -347,6 +349,7 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
         ]);
         setLocalStream(displayStream);
         setIsScreenSharing(true);
+        setScreenSharerSocketId("local");
 
         try {
           const socket = getSocket();
@@ -588,6 +591,7 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
 
     const onParticipantLeft = ({ socketId }) => {
       if (!mounted) return;
+      setScreenSharerSocketId((prev) => (prev === socketId ? null : prev));
       setParticipants((prev) => prev.filter((p) => p.socketId !== socketId));
       setRemoteStreams((prev) => {
         const next = { ...prev };
@@ -685,8 +689,14 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       );
     };
 
-    const onScreenShareStarted = () => {};
-    const onScreenShareStopped = () => {};
+    const onScreenShareStarted = ({ socketId } = {}) => {
+      if (!mounted) return;
+      setScreenSharerSocketId(socketId || "remote");
+    };
+    const onScreenShareStopped = () => {
+      if (!mounted) return;
+      setScreenSharerSocketId(null);
+    };
 
     const handleReconnect = () => {
       if (!mounted) return;
@@ -779,6 +789,7 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     toggleHand, sendChat,
     muteUser, kickUser,
     leaveRoom, endMeeting,
+    screenSharerSocketId,
   };
 };
 

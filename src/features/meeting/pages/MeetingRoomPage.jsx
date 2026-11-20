@@ -49,6 +49,7 @@ export const MeetingRoomPage = () => {
     toggleHand, sendChat,
     muteUser, kickUser,
     leaveRoom, endMeeting,
+    screenSharerSocketId,
   } = useWebRTC({ roomId, userInfo, isTeacher });
 
   // Waiting room preview video ref
@@ -333,6 +334,8 @@ export const MeetingRoomPage = () => {
             participants={participants}
             localUser={userInfo}
             isTeacher={isTeacher}
+            isScreenSharing={isScreenSharing}
+            screenSharerSocketId={screenSharerSocketId}
           />
         </div>
 

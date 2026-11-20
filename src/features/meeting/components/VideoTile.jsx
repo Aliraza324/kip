@@ -15,6 +15,8 @@ export const VideoTile = ({
   isLocal = false,
   isMain = false, // larger hero tile for teacher or screen share
   isScreenShare = false,
+  isPinned = false,
+  onClick = null,
 }) => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
@@ -76,9 +78,10 @@ export const VideoTile = ({
 
   return (
     <div
-      className={`relative bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center ${
-        isMain ? "aspect-video w-full h-full" : "aspect-video"
-      }`}
+      onClick={onClick}
+      className={`relative bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center transition-all ${
+        isMain ? "aspect-video w-full h-full" : "aspect-video cursor-pointer hover:ring-2 hover:ring-blue-500/60"
+      } ${isPinned && !isMain ? "ring-2 ring-blue-500" : ""}`}
     >
       {/* Remote Audio output guarantee */}
       {!isLocal && stream && (
@@ -134,6 +137,22 @@ export const VideoTile = ({
       {role?.toLowerCase() === "teacher" && (
         <div className="absolute top-2 left-2 bg-blue-600 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow">
           Teacher
+        </div>
+      )}
+
+      {/* Screen share presenting badge */}
+      {isScreenTrack && (
+        <div className="absolute top-2 right-2 bg-emerald-600/90 text-white rounded-full px-2.5 py-0.5 text-xs font-bold shadow flex items-center gap-1 z-10">
+          <span>🖥️</span>
+          <span>{isLocal ? "Your Screen" : `${name}'s Screen`}</span>
+        </div>
+      )}
+
+      {/* Pinned indicator */}
+      {isPinned && !isScreenTrack && (
+        <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] rounded-full px-2 py-0.5 shadow flex items-center gap-1 z-10">
+          <span>📌</span>
+          <span>Pinned</span>
         </div>
       )}
     </div>
