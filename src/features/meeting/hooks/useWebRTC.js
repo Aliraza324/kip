@@ -36,7 +36,7 @@ const MEETING_EVENTS = {
 };
 
 /**
- * Creates a synthetic animated canvas video track if camera is locked by another window
+ * Creates an animated canvas video track if camera is locked by another window
  */
 const createDummyVideoTrack = (label = "User") => {
   const canvas = document.createElement("canvas");
@@ -44,38 +44,76 @@ const createDummyVideoTrack = (label = "User") => {
   canvas.height = 360;
   const ctx = canvas.getContext("2d");
 
-  let step = 0;
   const render = () => {
-    step = (step + 1) % 360;
+    const now = Date.now();
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, "#0f172a");
-    gradient.addColorStop(1, "#1e293b");
+    gradient.addColorStop(0, "#0b132b");
+    gradient.addColorStop(1, "#1c2541");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Glowing circle
+    // Pulsing glowing circle based on time
+    const pulse = 45 + Math.sin(now / 250) * 8;
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2 - 20, 50, 0, Math.PI * 2);
+    ctx.arc(canvas.width / 2, canvas.height / 2 - 25, pulse, 0, Math.PI * 2);
     ctx.fillStyle = "#0080f6";
+    ctx.shadowColor = "#0080f6";
+    ctx.shadowBlur = 15;
     ctx.fill();
+    ctx.shadowBlur = 0;
 
     // User initials
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 32px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText((label || "U").slice(0, 2).toUpperCase(), canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText((label || "U").slice(0, 2).toUpperCase(), canvas.width / 2, canvas.height / 2 - 25);
 
     // Label
-    ctx.font = "16px sans-serif";
-    ctx.fillStyle = "#94a3b8";
-    ctx.fillText(label || "User", canvas.width / 2, canvas.height / 2 + 50);
-  };
-  render();
-  setInterval(render, 1000);
+    ctx.font = "bold 16px sans-serif";
+    ctx.fillStyle = "#e2e8f0";
+    ctx.fillText(label || "User", canvas.width / 2, canvas.height / 2 + 45);
 
-  const stream = canvas.captureStream(15);
-  return stream.getVideoTracks()[0];
+    // Live clock timestamp (forces Chrome WebRTC video encoder to stream packets continuously)
+    ctx.font = "12px monospace";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText(`LIVE • ${new Date().toLocaleTimeString()}`, canvas.width / 2, canvas.height / 2 + 75);
+  };
+
+  render();
+  const intervalId = setInterval(render, 40); // 25 FPS
+
+  const stream = canvas.captureStream(25);
+  const track = stream.getVideoTracks()[0];
+  if (track) {
+    const origStop = track.stop.bind(track);
+    track.stop = () => {
+      clearInterval(intervalId);
+      origStop();
+    };
+  }
+  return track;
+};
+
+/**
+ * Creates a silent audio track using Web Audio API if microphone is unavailable
+ */
+const createDummyAudioTrack = () => {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const dst = ctx.createMediaStreamDestination();
+    const gain = ctx.createGain();
+    gain.gain.value = 0.0001; // virtually silent
+    osc.connect(gain);
+    gain.connect(dst);
+    osc.start();
+    return dst.stream.getAudioTracks()[0];
+  } catch {
+    return null;
+  }
 };
 
 export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
@@ -126,7 +164,10 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       } catch {
         // Full fallback: dummy audio and video
         const canvasTrack = createDummyVideoTrack(userInfo.name);
-        const fallbackStream = new MediaStream([canvasTrack]);
+        const dummyAudio = createDummyAudioTrack();
+        const tracks = [canvasTrack];
+        if (dummyAudio) tracks.push(dummyAudio);
+        const fallbackStream = new MediaStream(tracks);
         localStreamRef.current = fallbackStream;
         setLocalStream(fallbackStream);
         return fallbackStream;
@@ -164,6 +205,16 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
           console.warn("Error adding track:", e);
         }
       });
+    }
+
+    // Guarantee bidirectional media negotiation even if local track is missing
+    const hasAudio = stream && stream.getAudioTracks().length > 0;
+    const hasVideo = stream && stream.getVideoTracks().length > 0;
+    if (!hasAudio) {
+      try { pc.addTransceiver("audio", { direction: "recvonly" }); } catch (_) {}
+    }
+    if (!hasVideo) {
+      try { pc.addTransceiver("video", { direction: "recvonly" }); } catch (_) {}
     }
 
     // Handle remote track received
@@ -478,7 +529,9 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       // If teacher, make offer to every other participant
       if (isTeacher) {
         list.forEach(({ socketId }) => {
-          if (socketId !== socket.id) makeOffer(socketId);
+          if (socketId !== socket.id) {
+            setTimeout(() => makeOffer(socketId), 150);
+          }
         });
       }
     };
@@ -491,7 +544,9 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       });
       // Teacher initiates WebRTC connection
       if (isTeacher) {
-        makeOffer(info.socketId);
+        setTimeout(() => {
+          makeOffer(info.socketId);
+        }, 150);
       }
     };
 

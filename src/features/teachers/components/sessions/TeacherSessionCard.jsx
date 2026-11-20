@@ -26,9 +26,13 @@ export const TeacherSessionCard = ({ session, onEdit, onDelete }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleEnterSession = () => {
-    toast.success(`Entering session: ${session.title}`);
-    navigate(`/teacher/sessions/${session.id}`);
+  const handleEnterSession = async () => {
+    try {
+      await api.post(`/teacher/sessions/${session.id}/start`, { title: session.title });
+    } catch (err) {
+      console.warn("Auto start on enter:", err);
+    }
+    navigate(`/meeting/${session.id}`);
   };
 
   return (

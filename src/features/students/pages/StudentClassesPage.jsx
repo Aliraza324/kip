@@ -99,6 +99,16 @@ export const StudentClassesPage = () => {
     fetchStudentClasses();
   }, [fetchStudentClasses]);
 
+  const handleEnterClass = async (classItem) => {
+    try {
+      const res = await api.post(`/student/classes/${classItem.id}/join`);
+      const targetRoom = res?.data?.roomId || res?.data?.sessionId || classItem.id;
+      navigate(`/meeting/${targetRoom}`);
+    } catch {
+      navigate(`/meeting/${classItem.id}`);
+    }
+  };
+
   if (isLiveClassOpen) {
     return <LiveClassroomView onLeaveClass={() => setIsLiveClassOpen(false)} />;
   }
@@ -111,19 +121,11 @@ export const StudentClassesPage = () => {
         onJoinLiveClass={async () => {
           try {
             const classId = selectedClass.id;
-            const data = await api.post(`/student/classes/${classId}/join`);
-            const roomId = data?.data?.roomId || data?.data?.lectureId || data?.roomId || classId;
-            if (roomId) {
-              navigate(`/meeting/${roomId}`);
-            } else {
-              setIsLiveClassOpen(true);
-            }
+            const res = await api.post(`/student/classes/${classId}/join`);
+            const roomId = res?.data?.roomId || res?.data?.sessionId || classId;
+            navigate(`/meeting/${roomId}`);
           } catch {
-            if (selectedClass?.id) {
-              navigate(`/meeting/${selectedClass.id}`);
-            } else {
-              setIsLiveClassOpen(true);
-            }
+            navigate(`/meeting/${selectedClass.id}`);
           }
         }}
       />
@@ -242,7 +244,7 @@ export const StudentClassesPage = () => {
             <StudentClassCard
               key={classItem.id}
               classItem={classItem}
-              onEnterClass={(item) => setSelectedClass(item)}
+              onEnterClass={handleEnterClass}
             />
           ))
         ) : (

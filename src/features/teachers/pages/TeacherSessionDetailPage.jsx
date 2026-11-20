@@ -87,22 +87,11 @@ export const TeacherSessionDetailPage = () => {
 
   const handleStartLive = async (title) => {
     try {
-      const data = await api.post(`/teacher/sessions/${sessionId}/start`, { title: title || session.title });
-      const roomId = data?.data?.roomId || data?.data?.lectureId || data?.roomId || sessionId;
-      if (roomId) {
-        navigate(`/meeting/${roomId}`);
-      } else {
-        setActiveLiveTitle(title || session.title);
-        setIsLiveClassOpen(true);
-      }
-    } catch {
-      if (sessionId) {
-        navigate(`/meeting/${sessionId}`);
-      } else {
-        setActiveLiveTitle(title || session.title);
-        setIsLiveClassOpen(true);
-      }
+      await api.post(`/teacher/sessions/${sessionId}/start`, { title: title || session.title });
+    } catch (err) {
+      console.warn("Start live session:", err);
     }
+    navigate(`/meeting/${sessionId}`);
   };
 
   const handleSaveEditedSession = () => {
