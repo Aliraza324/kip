@@ -33,42 +33,38 @@ export const VideoTile = ({
         )
     );
 
-  const setVideoRef = (node) => {
-    videoRef.current = node;
-    if (node && stream) {
-      if (node.srcObject !== stream) {
-        node.srcObject = stream;
-      }
-      node.play().catch(() => {});
-    }
-  };
-
-  const setAudioRef = (node) => {
-    audioRef.current = node;
-    if (node && stream && !isLocal) {
-      if (node.srcObject !== stream) {
-        node.srcObject = stream;
-      }
-      node.play().catch(() => {});
-    }
-  };
-
   useEffect(() => {
-    if (videoRef.current && stream) {
-      if (videoRef.current.srcObject !== stream) {
-        videoRef.current.srcObject = stream;
-      }
-      videoRef.current.play().catch(() => {});
+    const node = videoRef.current;
+    if (node && stream && node.srcObject !== stream) {
+      node.srcObject = stream;
+      node.onloadedmetadata = () => {
+        node.play().catch(() => {});
+      };
+      node.play().catch(() => {});
     }
   }, [stream, isVideoOn]);
 
   useEffect(() => {
-    if (audioRef.current && stream && !isLocal) {
-      if (audioRef.current.srcObject !== stream) {
-        audioRef.current.srcObject = stream;
-      }
-      audioRef.current.play().catch(() => {});
+    const node = audioRef.current;
+    if (node && stream && !isLocal && node.srcObject !== stream) {
+      node.srcObject = stream;
+      node.play().catch(() => {});
     }
+  }, [stream, isLocal]);
+
+  // Unlock remote audio on any user gesture if initially blocked by browser autoplay policy
+  useEffect(() => {
+    const handleGesture = () => {
+      if (audioRef.current && stream && !isLocal) {
+        audioRef.current.play().catch(() => {});
+      }
+    };
+    window.addEventListener("click", handleGesture, { once: true });
+    window.addEventListener("touchstart", handleGesture, { once: true });
+    return () => {
+      window.removeEventListener("click", handleGesture);
+      window.removeEventListener("touchstart", handleGesture);
+    };
   }, [stream, isLocal]);
 
   const initials = name
@@ -86,25 +82,28 @@ export const VideoTile = ({
     >
       {/* Remote Audio output guarantee */}
       {!isLocal && stream && (
-        <audio ref={setAudioRef} autoPlay playsInline />
+        <audio ref={audioRef} autoPlay playsInline />
       )}
 
-      {/* Video element */}
-      {stream && isVideoOn ? (
-        <video
-          ref={setVideoRef}
-          autoPlay
-          playsInline
-          muted={isLocal}
-          className={`w-full h-full ${
-            isScreenTrack || (isMain && !isLocal)
-              ? "object-contain bg-black"
-              : isLocal
-              ? "object-cover scale-x-[-1]"
-              : "object-cover"
-          }`}
-        />
-      ) : (
+      {/* Video element: always kept mounted in DOM to prevent React re-mount blinking */}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        className={`w-full h-full ${
+          stream && isVideoOn ? "block" : "hidden"
+        } ${
+          isScreenTrack || (isMain && !isLocal)
+            ? "object-contain bg-black"
+            : isLocal
+            ? "object-cover scale-x-[-1]"
+            : "object-cover"
+        }`}
+      />
+
+      {/* Fallback avatar when stream not ready or camera off */}
+      {(!stream || !isVideoOn) && (
         <div className="flex flex-col items-center gap-2">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
             <span className="text-white font-bold text-xl">{initials}</span>

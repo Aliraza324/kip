@@ -6,6 +6,7 @@ import { MeetingControls } from "../components/MeetingControls";
 import { ParticipantsList } from "../components/ParticipantsList";
 import { MeetingChat } from "../components/MeetingChat";
 import { getSocket } from "@/service/socket";
+import { api } from "@/service/apiClient";
 import { Mic, MicOff, Video, VideoOff, Check, X, UserPlus, AlertCircle } from "lucide-react";
 
 const getStoredUser = () => {
@@ -20,14 +21,17 @@ const getStoredUser = () => {
 export const MeetingRoomPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
-  const storedUser = getStoredUser();
+  const storedUser = useMemo(() => getStoredUser(), []);
 
   const isTeacher = storedUser?.role?.toLowerCase() === "teacher";
-  const userInfo = {
-    userId: storedUser?.id || storedUser?._id || "unknown",
-    name: storedUser?.fullName || "Unknown",
-    role: storedUser?.role?.toLowerCase() || "student",
-  };
+  const userInfo = useMemo(
+    () => ({
+      userId: storedUser?.id || storedUser?._id || "unknown",
+      name: storedUser?.fullName || "Unknown",
+      role: storedUser?.role?.toLowerCase() || "student",
+    }),
+    [storedUser]
+  );
 
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -69,6 +73,13 @@ export const MeetingRoomPage = () => {
     });
   }, []);
 
+  // Auto-start live class session on backend if teacher joins
+  useEffect(() => {
+    if (isTeacher && roomId) {
+      api.post(`/teacher/sessions/${roomId}/start`, { title: "Live Class" }).catch(() => {});
+    }
+  }, [isTeacher, roomId]);
+
   // Handle kicked / meeting ended
   useEffect(() => {
     if (isKicked) {
@@ -89,9 +100,15 @@ export const MeetingRoomPage = () => {
     navigate(-1);
   }, [leaveRoom, navigate]);
 
-  const handleEnd = useCallback(() => {
-    endMeeting();
-  }, [endMeeting]);
+  const handleEnd = useCallback(async () => {
+    try {
+      if (isTeacher && roomId) {
+        await api.post(`/teacher/sessions/${roomId}/end`).catch(() => {});
+      }
+    } finally {
+      endMeeting();
+    }
+  }, [isTeacher, roomId, endMeeting]);
 
   // ── ERROR SCREEN ────────────────────────────────────────────────────────
   if (error) {
