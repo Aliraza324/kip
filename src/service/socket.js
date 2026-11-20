@@ -15,6 +15,9 @@ export const getSocket = () => {
       transports: ["websocket", "polling"],
       reconnectionAttempts: 10,
       reconnectionDelay: 2000,
+      extraHeaders: {
+        "ngrok-skip-browser-warning": "true",
+      },
     });
 
     socketInstance.on("connect", () => {
