@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { X, BookOpen } from "lucide-react";
-import { teacherGradesAndSubjectsMock } from "@/mocks";
+import { X, BookOpen, Layers, ChevronDown } from "lucide-react";
+import { api } from "@/service/apiClient";
 import { SessionMaterialUploadInput } from "./SessionMaterialUploadInput";
 import { SessionSchedulePicker } from "./SessionSchedulePicker";
 import toast from "react-hot-toast";
@@ -8,65 +8,116 @@ import toast from "react-hot-toast";
 export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEdit }) => {
   const [title, setTitle] = useState("");
   const [type, setType] = useState("scheduled");
-  const [selectedGrade, setSelectedGrade] = useState("Grade 9");
-  const [selectedSubject, setSelectedSubject] = useState("Mathematics");
+  const [teacherClasses, setTeacherClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedDays, setSelectedDays] = useState(["Mon", "Wed", "Fri"]);
   const [startTime, setStartTime] = useState("10:00 AM");
   const [endTime, setEndTime] = useState("10:45 AM");
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch teacher's real assigned classes
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchClasses = async () => {
+      try {
+        const res = await api.get("/teacher/classes");
+        const list = Array.isArray(res?.data) ? res.data : [];
+        setTeacherClasses(list);
+
+        if (list.length > 0) {
+          if (sessionToEdit?.raw?.classId) {
+            const rawClassId = sessionToEdit.raw.classId?.id || sessionToEdit.raw.classId?._id || sessionToEdit.raw.classId;
+            setSelectedClassId(String(rawClassId));
+            setSelectedSubject(sessionToEdit.raw.subject || list[0].subjects?.[0] || list[0].name);
+          } else {
+            setSelectedClassId(String(list[0].id));
+            const firstSubjects = list[0].subjects?.length ? list[0].subjects : [list[0].name];
+            setSelectedSubject(firstSubjects[0] || list[0].name);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch assigned classes:", err);
+      }
+    };
+    fetchClasses();
+  }, [isOpen, sessionToEdit]);
 
   useEffect(() => {
     if (sessionToEdit) {
       setTitle(sessionToEdit.title || "");
       setType(sessionToEdit.type === "instant" ? "instant" : "scheduled");
-      setSelectedGrade(sessionToEdit.grade || "Grade 9");
-      setSelectedSubject(sessionToEdit.course || "Mathematics");
-      setSelectedDays(sessionToEdit.scheduleDays ? sessionToEdit.scheduleDays.split(", ") : ["Mon", "Wed", "Fri"]);
-      const [sTime, eTime] = (sessionToEdit.duration || "10:00 AM – 10:45 AM").split(" – ");
-      setStartTime(sTime || "10:00 AM");
-      setEndTime(eTime || "10:45 AM");
+      setSelectedDays(sessionToEdit.raw?.days?.length ? sessionToEdit.raw.days : ["Mon", "Wed", "Fri"]);
+      setStartTime(sessionToEdit.raw?.startTime || "10:00 AM");
+      setEndTime(sessionToEdit.raw?.endTime || "10:45 AM");
       setAttachedFiles(sessionToEdit.materials || []);
     } else {
-      setTitle(""); setType("scheduled"); setSelectedGrade("Grade 9"); setSelectedSubject("Mathematics");
-      setSelectedDays(["Mon", "Wed", "Fri"]); setStartTime("10:00 AM"); setEndTime("10:45 AM"); setAttachedFiles([]);
+      setTitle("");
+      setType("scheduled");
+      setSelectedDays(["Mon", "Wed", "Fri"]);
+      setStartTime("10:00 AM");
+      setEndTime("10:45 AM");
+      setAttachedFiles([]);
     }
   }, [sessionToEdit, isOpen]);
 
-  const activeGradeConfig = teacherGradesAndSubjectsMock.find((g) => g.grade === selectedGrade);
-  const availableSubjects = activeGradeConfig ? activeGradeConfig.subjects : [];
+  const activeClass = teacherClasses.find((c) => String(c.id) === String(selectedClassId)) || teacherClasses[0];
+  const availableSubjects = activeClass?.subjects?.length ? activeClass.subjects : (activeClass ? [activeClass.name] : []);
 
-  const handleGradeChange = (grade) => {
-    setSelectedGrade(grade);
-    const cfg = teacherGradesAndSubjectsMock.find((g) => g.grade === grade);
-    if (cfg && cfg.subjects.length > 0) setSelectedSubject(cfg.subjects[0]);
+  const handleClassChange = (classId) => {
+    setSelectedClassId(classId);
+    const cls = teacherClasses.find((c) => String(c.id) === String(classId));
+    const subs = cls?.subjects?.length ? cls.subjects : [cls?.name || "General"];
+    setSelectedSubject(subs[0] || cls?.name || "General");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error("Please enter a session name.");
-    const durationString = type === "instant" ? "Instant Live" : `${startTime} – ${endTime}`;
-    const sessionData = {
-      id: sessionToEdit ? sessionToEdit.id : `sess_${Date.now()}`,
-      title: title.trim(),
-      grade: selectedGrade,
-      course: selectedSubject,
-      type,
-      statusBadge: type === "instant" ? "Instant" : "Scheduled",
-      duration: durationString,
-      scheduleDays: type === "scheduled" ? selectedDays.join(", ") : "Instant",
-      repeatRule: type === "scheduled" ? `Weekly (${selectedDays.join(", ")})` : "One-time Live",
-      studentsCount: sessionToEdit ? sessionToEdit.studentsCount : 0,
-      materialsCount: (sessionToEdit?.materialsCount || 0) + attachedFiles.length,
-      scheduledCount: type === "scheduled" ? 1 : 0,
-      iconType: selectedSubject.toLowerCase().includes("math") ? "sqrt" : "book",
-      colorClass: selectedSubject.toLowerCase().includes("math")
-        ? "bg-purple-100 text-purple-600"
-        : "bg-blue-100 text-blue-600",
-      materials: attachedFiles,
-    };
-    onSave(sessionData);
-    toast.success(sessionToEdit ? "Session updated successfully!" : "Session created successfully!");
-    onClose();
+    if (!selectedClassId && !activeClass?.id) {
+      return toast.error("No class assigned. Please contact administrator.");
+    }
+
+    try {
+      setIsSubmitting(true);
+      const targetClassId = selectedClassId || activeClass?.id;
+      const targetSubject = selectedSubject || availableSubjects[0] || activeClass?.name || "General";
+
+      const payload = {
+        title: title.trim(),
+        classId: targetClassId,
+        subject: targetSubject,
+        type,
+        ...(type === "scheduled"
+          ? {
+              days: selectedDays,
+              startTime: startTime,
+              endTime: endTime,
+            }
+          : {
+              days: [],
+              startTime: undefined,
+              endTime: undefined,
+            }),
+      };
+
+      let res;
+      if (sessionToEdit?.id) {
+        res = await api.patch(`/teacher/sessions/${sessionToEdit.id}`, payload);
+        toast.success("Session updated successfully!");
+      } else {
+        res = await api.post("/teacher/sessions", payload);
+        toast.success("Session created successfully!");
+      }
+
+      onSave?.(res?.data);
+      onClose();
+    } catch (err) {
+      toast.error(err?.message || "Failed to save session.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -124,28 +175,40 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700">Grade *</label>
-              <select
-                value={selectedGrade}
-                onChange={(e) => handleGradeChange(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
-              >
-                {teacherGradesAndSubjectsMock.map((g) => (
-                  <option key={g.grade} value={g.grade}>{g.grade}</option>
-                ))}
-              </select>
+              <label className="text-xs font-bold text-slate-700">Assigned Class *</label>
+              <div className="relative">
+                <select
+                  value={selectedClassId}
+                  onChange={(e) => handleClassChange(e.target.value)}
+                  className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl pl-3.5 pr-8 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] cursor-pointer"
+                >
+                  {teacherClasses.length === 0 ? (
+                    <option value="">No Assigned Classes</option>
+                  ) : (
+                    teacherClasses.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} {c.section ? `(${c.section})` : ""} {c.grade && c.grade !== c.name ? `– ${c.grade}` : ""}
+                      </option>
+                    ))
+                  )}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700">Class / Subject *</label>
-              <select
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6]"
-              >
-                {availableSubjects.map((sub) => (
-                  <option key={sub} value={sub}>{sub}</option>
-                ))}
-              </select>
+              <label className="text-xs font-bold text-slate-700">Subject *</label>
+              <div className="relative">
+                <select
+                  value={selectedSubject}
+                  onChange={(e) => setSelectedSubject(e.target.value)}
+                  className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl pl-3.5 pr-8 py-2 sm:py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#0080f6] cursor-pointer"
+                >
+                  {availableSubjects.map((sub) => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
             </div>
           </div>
 
@@ -173,15 +236,17 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 active:scale-95"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#0080f6] hover:bg-[#006fd6] text-white text-xs font-bold shadow-md shadow-blue-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
             >
-              {sessionToEdit ? "Save Changes" : "Create session"}
+              {isSubmitting ? "Saving..." : sessionToEdit ? "Save Changes" : "Create session"}
             </button>
           </div>
         </form>

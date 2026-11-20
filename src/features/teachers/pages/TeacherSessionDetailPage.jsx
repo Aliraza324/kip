@@ -1,13 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  teacherInitialSessionsMock,
-  teacherSessionStudentsMock,
-  teacherSessionMaterialsMock,
-  teacherSessionScheduleListMock,
-} from "@/mocks";
-import { LiveClassroomView } from "@/features/students/components/classroom";
 import { api } from "@/service/apiClient";
+import toast from "react-hot-toast";
+import { formatTeacherSession } from "./TeacherSessionsPage";
+import { LiveClassroomView } from "@/features/students/components/classroom";
 import {
   TeacherSessionDetailHeader,
   TeacherSessionOverviewTab,
@@ -24,14 +20,28 @@ export const TeacherSessionDetailPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const initialSession =
-    teacherInitialSessionsMock.find((s) => s.id === sessionId) ||
-    teacherInitialSessionsMock[0];
-
-  const [session, setSession] = useState(initialSession);
+  const [session, setSession] = useState({
+    id: sessionId,
+    title: "Loading Session...",
+    type: "scheduled",
+    statusBadge: "Scheduled",
+    duration: "10:00 AM – 10:45 AM",
+    scheduleDays: "Weekly",
+    repeatRule: "Weekly",
+    studentsCount: 0,
+    materialsCount: 0,
+    scheduledCount: 1,
+    course: "Class",
+    grade: "Grade",
+    iconType: "book",
+    colorClass: "bg-blue-100 text-[#0080f6]",
+  });
   const [activeTab, setActiveTab] = useState("overview");
-  const [students, setStudents] = useState(teacherSessionStudentsMock);
-  const [materials, setMaterials] = useState(teacherSessionMaterialsMock);
+  const [students, setStudents] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [isLiveClassOpen, setIsLiveClassOpen] = useState(
     searchParams.get("live") === "true"
   );
@@ -45,10 +55,35 @@ export const TeacherSessionDetailPage = () => {
 
   const tabs = [
     { id: "overview", label: "Overview" },
-    { id: "students", label: "Students" },
-    { id: "materials", label: "Materials" },
+    { id: "students", label: `Students (${students.length})` },
+    { id: "materials", label: `Materials (${materials.length})` },
     { id: "schedule", label: "Schedule" },
   ];
+
+  const fetchSessionData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const res = await api.get(`/teacher/sessions/${sessionId}`);
+      const data = res?.data;
+      if (data) {
+        const formatted = formatTeacherSession(data);
+        setSession(formatted);
+        setActiveLiveTitle(data.title);
+        if (Array.isArray(data.students)) setStudents(data.students);
+        if (Array.isArray(data.materials)) setMaterials(data.materials);
+        if (Array.isArray(data.schedule)) setSchedules(data.schedule);
+      }
+    } catch (err) {
+      console.warn("Could not fetch session detail:", err);
+      toast.error("Failed to load session details.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    fetchSessionData();
+  }, [fetchSessionData]);
 
   const handleStartLive = async (title) => {
     try {
@@ -61,7 +96,6 @@ export const TeacherSessionDetailPage = () => {
         setIsLiveClassOpen(true);
       }
     } catch {
-      // Fallback to meeting room using sessionId or inline classroom
       if (sessionId) {
         navigate(`/meeting/${sessionId}`);
       } else {
@@ -71,24 +105,36 @@ export const TeacherSessionDetailPage = () => {
     }
   };
 
-  const handleSaveEditedSession = (updatedData) => {
-    setSession((prev) => ({ ...prev, ...updatedData }));
+  const handleSaveEditedSession = () => {
+    fetchSessionData();
   };
 
-  const handleAddStudent = (newStudent) => {
-    setStudents((prev) => [newStudent, ...prev]);
-    setSession((prev) => ({
-      ...prev,
-      studentsCount: (prev.studentsCount || 0) + 1,
-    }));
+  const handleAddStudent = async (newStudent) => {
+    try {
+      await api.post(`/teacher/sessions/${sessionId}/students`, {
+        roll: newStudent.rollNumber || newStudent.code,
+        email: newStudent.email,
+        name: newStudent.name || newStudent.fullName,
+      });
+      fetchSessionData();
+      toast.success("Student added to session!");
+    } catch (err) {
+      toast.error(err?.message || "Failed to add student.");
+    }
   };
 
-  const handleRemoveStudent = (studentId) => {
-    setStudents((prev) => prev.filter((s) => s.id !== studentId));
-    setSession((prev) => ({
-      ...prev,
-      studentsCount: Math.max(0, (prev.studentsCount || 1) - 1),
-    }));
+  const handleRemoveStudent = async (studentId) => {
+    try {
+      await api.delete(`/teacher/sessions/${sessionId}/students/${studentId}`);
+      setStudents((prev) => prev.filter((s) => s.id !== studentId && s._id !== studentId));
+      setSession((prev) => ({
+        ...prev,
+        studentsCount: Math.max(0, (prev.studentsCount || 1) - 1),
+      }));
+      toast.success("Student removed from session.");
+    } catch (err) {
+      toast.error(err?.message || "Failed to remove student.");
+    }
   };
 
   const handleInviteSuccess = (studentName) => {
@@ -101,7 +147,7 @@ export const TeacherSessionDetailPage = () => {
     return (
       <LiveClassroomView
         title={`${activeLiveTitle} – Live Class`}
-        participantsCount={session.studentsCount || 28}
+        participantsCount={session.studentsCount || 1}
         onLeaveClass={() => setIsLiveClassOpen(false)}
       />
     );
@@ -158,7 +204,7 @@ export const TeacherSessionDetailPage = () => {
       )}
 
       {activeTab === "schedule" && (
-        <TeacherSessionScheduleTab schedules={teacherSessionScheduleListMock} />
+        <TeacherSessionScheduleTab schedules={schedules} />
       )}
 
       {/* Edit Session Modal */}
@@ -188,4 +234,3 @@ export const TeacherSessionDetailPage = () => {
 };
 
 export default TeacherSessionDetailPage;
-
