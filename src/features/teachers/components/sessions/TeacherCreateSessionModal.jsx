@@ -127,6 +127,20 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
         toast.success("Session created successfully!");
       }
 
+      const createdSessionId = res?.data?.id || res?.data?._id || sessionToEdit?.id;
+
+      // Upload attached files if any
+      const filesToUpload = attachedFiles.filter((f) => f.file instanceof File).map((f) => f.file);
+      if (createdSessionId && filesToUpload.length > 0) {
+        try {
+          const formData = new FormData();
+          filesToUpload.forEach((f) => formData.append("files", f));
+          await api.post(`/teacher/sessions/${createdSessionId}/materials`, formData);
+        } catch (uploadErr) {
+          console.warn("Failed to upload attached materials:", uploadErr);
+        }
+      }
+
       onSave?.(res?.data);
       onClose();
     } catch (err) {
@@ -269,16 +283,22 @@ export const TeacherCreateSessionModal = ({ isOpen, onClose, onSave, sessionToEd
 
           {/* Scheduled Details: Week Days + Durations Dropdown */}
           {type === "scheduled" && (
-            <SessionSchedulePicker
-              selectedDays={selectedDays}
-              onDaysChange={setSelectedDays}
-              startTime={startTime}
-              endTime={endTime}
-              onTimeChange={(start, end) => {
-                setStartTime(start);
-                setEndTime(end);
-              }}
-            />
+            <div className="space-y-2.5">
+              <SessionSchedulePicker
+                selectedDays={selectedDays}
+                onDaysChange={setSelectedDays}
+                startTime={startTime}
+                endTime={endTime}
+                onTimeChange={(start, end) => {
+                  setStartTime(start);
+                  setEndTime(end);
+                }}
+              />
+              <div className="flex items-center justify-between text-[11px] text-[#0080f6] bg-blue-50/70 border border-blue-100 rounded-xl px-3.5 py-2 font-semibold">
+                <span>🗓️ Repeats: {selectedDays.length ? selectedDays.join(", ") : "Weekly"}</span>
+                <span>🕒 {startTime} – {endTime}</span>
+              </div>
+            </div>
           )}
 
           <SessionMaterialUploadInput

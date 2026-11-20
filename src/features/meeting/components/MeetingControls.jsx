@@ -1,7 +1,7 @@
 import {
   Mic, MicOff, Video, VideoOff, MonitorUp, MonitorOff,
   Hand, PhoneOff, MessageSquare, Users, Circle,
-  CircleStop,
+  CircleStop, BookOpen,
 } from "lucide-react";
 
 const ControlBtn = ({ onClick, active, danger, disabled, title, children }) => (
@@ -36,6 +36,9 @@ export const MeetingControls = ({
   onStopRecording,
   onToggleChat,
   onToggleParticipants,
+  onToggleMaterials,
+  showMaterials = false,
+  materialsCount = 0,
   onLeave,
   onEnd,
   participantsCount = 0,
@@ -106,6 +109,23 @@ export const MeetingControls = ({
         )}
       </div>
       <span className="text-[10px] hidden sm:block">Chat</span>
+    </ControlBtn>
+
+    {/* Class Notes / Materials */}
+    <ControlBtn
+      onClick={onToggleMaterials}
+      active={showMaterials}
+      title="Class Notes & Materials"
+    >
+      <div className="relative">
+        <BookOpen className={`w-5 h-5 ${showMaterials ? "text-amber-400" : ""}`} />
+        {materialsCount > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+            {materialsCount}
+          </span>
+        )}
+      </div>
+      <span className="text-[10px] hidden sm:block">Notes</span>
     </ControlBtn>
 
     {/* Divider */}

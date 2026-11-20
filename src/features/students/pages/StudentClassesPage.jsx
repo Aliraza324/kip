@@ -40,12 +40,15 @@ const formatStudentClass = (c) => {
     ? "bg-slate-100 text-slate-600 border border-slate-200"
     : "bg-blue-50 text-[#0080f6] border border-blue-200/60";
 
+  const daysText = c.days?.length ? c.days.join(", ") : isInstant ? "Today" : "Weekly";
   const scheduleTime =
     c.startTime && c.endTime
-      ? `${c.startTime} – ${c.endTime}`
+      ? isInstant
+        ? `${c.startTime} – ${c.endTime}`
+        : `${daysText} • ${c.startTime} – ${c.endTime}`
       : isInstant
       ? "Instant Session"
-      : "10:00 AM – 10:45 AM";
+      : `${daysText} • 10:00 AM – 10:45 AM`;
 
   return {
     id: c.id || String(c._id),

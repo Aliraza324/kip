@@ -6,6 +6,7 @@ export const SessionMaterialUploadInput = ({ attachedFiles, onAttach, onRemove }
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     const newItems = files.map((f) => ({
+      file: f,
       name: f.name,
       size: `${(f.size / (1024 * 1024)).toFixed(1)} MB`,
     }));

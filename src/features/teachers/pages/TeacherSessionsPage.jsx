@@ -43,12 +43,15 @@ export const formatTeacherSession = (s) => {
     ? "bg-emerald-100 text-emerald-600"
     : "bg-blue-100 text-blue-600";
 
+  const daysText = s.days?.length ? s.days.join(", ") : isInstant ? "Instant" : "Weekly";
   const timingText =
     s.startTime && s.endTime
-      ? `${s.startTime} – ${s.endTime}`
+      ? isInstant
+        ? `${s.startTime} – ${s.endTime}`
+        : `${daysText} • ${s.startTime} – ${s.endTime}`
       : isInstant
       ? "Instant Session"
-      : "10:00 AM – 10:45 AM";
+      : `${daysText} • 10:00 AM – 10:45 AM`;
 
   return {
     id: s.id || String(s._id),

@@ -5,6 +5,7 @@ import { VideoGrid } from "../components/VideoGrid";
 import { MeetingControls } from "../components/MeetingControls";
 import { ParticipantsList } from "../components/ParticipantsList";
 import { MeetingChat } from "../components/MeetingChat";
+import { MeetingMaterialsPanel } from "../components/MeetingMaterialsPanel";
 import { getSocket } from "@/service/socket";
 import { api } from "@/service/apiClient";
 import { Mic, MicOff, Video, VideoOff, Check, X, UserPlus, AlertCircle } from "lucide-react";
@@ -35,6 +36,7 @@ export const MeetingRoomPage = () => {
 
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [showMaterials, setShowMaterials] = useState(false);
   const [unreadChat, setUnreadChat] = useState(0);
 
   const {
@@ -340,7 +342,7 @@ export const MeetingRoomPage = () => {
         </div>
 
         {/* Side Panels */}
-        {(showParticipants || showChat) && (
+        {(showParticipants || showChat || showMaterials) && (
           <div className="w-72 sm:w-80 border-l border-white/5 flex flex-col p-3 gap-3 overflow-hidden">
             {showParticipants && (
               <div className="flex-1 min-h-0">
@@ -361,8 +363,20 @@ export const MeetingRoomPage = () => {
                 <MeetingChat
                   messages={chatMessages}
                   onSend={sendChat}
-                  onClose={handleToggleChat}
                   currentUserId={getSocket()?.id}
+                  onClose={handleToggleChat}
+                />
+              </div>
+            )}
+            {showMaterials && (
+              <div className="flex-1 min-h-0">
+                <MeetingMaterialsPanel
+                  roomId={roomId}
+                  isTeacher={isTeacher}
+                  onClose={() => setShowMaterials(false)}
+                  onShareToChat={(material) => {
+                    sendChat(`Shared Class Note: ${material.title} - ${material.url || ""}`);
+                  }}
                 />
               </div>
             )}
@@ -386,6 +400,8 @@ export const MeetingRoomPage = () => {
         onStopRecording={stopRecording}
         onToggleChat={handleToggleChat}
         onToggleParticipants={() => setShowParticipants((p) => !p)}
+        onToggleMaterials={() => setShowMaterials((m) => !m)}
+        showMaterials={showMaterials}
         onLeave={handleLeave}
         onEnd={handleEnd}
         participantsCount={participants.length}
