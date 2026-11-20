@@ -121,6 +121,7 @@ export async function apiRequest(path, { method = "GET", params, body, headers =
   }
 
   const requestHeaders = {
+    "ngrok-skip-browser-warning": "true",
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...customHeaders,
