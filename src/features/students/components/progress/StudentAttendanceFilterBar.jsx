@@ -8,6 +8,7 @@ export const StudentAttendanceFilterBar = ({
   selectedStatus,
   onStatusChange,
   onReset,
+  subjects = [],
 }) => {
   return (
     <div className="space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-3 text-xs sm:text-sm">
@@ -53,10 +54,18 @@ export const StudentAttendanceFilterBar = ({
             className="w-full appearance-none bg-white border border-slate-200/90 rounded-full pl-7 pr-6 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs outline-none truncate"
           >
             <option value="all">All Subjects</option>
-            <option value="Mathematics">Mathematics</option>
-            <option value="Science">Science</option>
-            <option value="English">English</option>
-            <option value="Physics">Physics</option>
+            {subjects.length > 0 ? (
+              subjects.map((sub) => (
+                <option key={sub} value={sub}>{sub}</option>
+              ))
+            ) : (
+              <>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science</option>
+                <option value="English">English</option>
+                <option value="Physics">Physics</option>
+              </>
+            )}
           </select>
           <Layers className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>

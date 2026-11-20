@@ -838,6 +838,18 @@ export const studentProfileService = {
   },
 };
 
+export const studentProgressService = {
+  async getProgress(params = {}) {
+    try {
+      const res = await api.get(STUDENT_ROUTES.PROGRESS.BASE, { params });
+      return res?.data !== undefined ? res.data : res;
+    } catch (err) {
+      console.error("studentProgressService.getProgress error:", err);
+      throw err;
+    }
+  },
+};
+
 export default {
   auth: authService,
   dashboard: adminDashboardService,
@@ -849,6 +861,7 @@ export default {
   teacherAssignments: teacherAssignmentService,
   teacherProfile: teacherProfileService,
   studentProfile: studentProfileService,
+  studentProgress: studentProgressService,
   teacherDashboard: teacherDashboardService,
   studentAssignments: studentAssignmentService,
   content: contentService,

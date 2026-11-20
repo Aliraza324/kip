@@ -5,6 +5,7 @@ const getSubjectIcon = (iconType) => {
   if (iconType === "sqrt") return <span className="text-sm sm:text-base font-black text-purple-600">√x</span>;
   if (iconType === "flask") return <FlaskConical className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 stroke-[2.2]" />;
   if (iconType === "book") return <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 stroke-[2.2]" />;
+  if (iconType === "code") return <span className="text-xs sm:text-sm font-mono font-bold text-blue-600">&lt;/&gt;</span>;
   return <Atom className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 stroke-[2.2]" />;
 };
 
@@ -30,35 +31,41 @@ export const StudentSubjectProgressBar = ({ subjectProgress }) => {
 
       {/* Progress Bars List */}
       <div className="space-y-4 sm:space-y-5">
-        {subjectProgress.map((item) => (
-          <div key={item.id} className="space-y-2">
-            {/* Subject Info Row: Icon + Title on left, Percentage on right */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div
-                  className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-2xs ${item.colorClass}`}
-                >
-                  {getSubjectIcon(item.iconType)}
+        {subjectProgress.length === 0 ? (
+          <div className="py-8 text-center text-slate-400 text-xs sm:text-sm">
+            No subjects enrolled yet.
+          </div>
+        ) : (
+          subjectProgress.map((item) => (
+            <div key={item.id} className="space-y-2">
+              {/* Subject Info Row: Icon + Title on left, Percentage on right */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div
+                    className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-2xs ${item.colorClass || "bg-purple-100 text-purple-600"}`}
+                  >
+                    {getSubjectIcon(item.iconType)}
+                  </div>
+                  <span className="text-xs sm:text-base font-bold text-slate-800 truncate">
+                    {item.subject}
+                  </span>
                 </div>
-                <span className="text-xs sm:text-base font-bold text-slate-800 truncate">
-                  {item.subject}
+
+                <span className="text-xs sm:text-base font-black text-slate-900 shrink-0 ml-2">
+                  {item.percentage}%
                 </span>
               </div>
 
-              <span className="text-xs sm:text-base font-black text-slate-900 shrink-0 ml-2">
-                {item.percentage}%
-              </span>
+              {/* Progress Bar Track: Full Width */}
+              <div className="w-full bg-slate-100 rounded-full h-2.5 sm:h-3 overflow-hidden">
+                <div
+                  className="bg-[#0080f6] h-full rounded-full transition-all duration-700 ease-out"
+                  style={{ width: `${item.percentage}%` }}
+                />
+              </div>
             </div>
-
-            {/* Progress Bar Track: Full Width */}
-            <div className="w-full bg-slate-100 rounded-full h-2.5 sm:h-3 overflow-hidden">
-              <div
-                className="bg-[#0080f6] h-full rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${item.percentage}%` }}
-              />
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

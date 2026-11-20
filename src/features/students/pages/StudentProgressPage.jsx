@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowLeft, BarChart2, ClipboardList } from "lucide-react";
-import { studentProgressMock } from "@/mocks";
+import { ArrowLeft, BarChart2, ClipboardList, Loader2 } from "lucide-react";
+import { useStudentProgress } from "@/hooks/student";
 import {
   StudentProgressKpiCards,
   StudentSubjectProgressBar,
@@ -12,17 +12,29 @@ import {
 
 export const StudentProgressPage = () => {
   const [activeTab, setActiveTab] = useState("progress"); // "progress" | "attendance"
-  const [selectedMonth, setSelectedMonth] = useState("October 2026");
-  const [selectedSubject, setSelectedSubject] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
 
-  const { kpiStats, subjectProgress, attendance } = studentProgressMock;
+  const {
+    isLoading,
+    kpiStats,
+    subjectProgress,
+    allSubjectNames,
+    attendance,
+    selectedMonth,
+    setSelectedMonth,
+    selectedSubject,
+    setSelectedSubject,
+    selectedStatus,
+    setSelectedStatus,
+    handleResetFilters,
+  } = useStudentProgress();
 
-  const handleResetFilters = () => {
-    setSelectedMonth("October 2026");
-    setSelectedSubject("all");
-    setSelectedStatus("all");
-  };
+  if (isLoading && !kpiStats) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 text-[#0080f6] animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -116,11 +128,17 @@ export const StudentProgressPage = () => {
             selectedStatus={selectedStatus}
             onStatusChange={setSelectedStatus}
             onReset={handleResetFilters}
+            subjects={allSubjectNames}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-8">
-              <StudentAttendanceCalendar attendance={attendance} />
+              <StudentAttendanceCalendar
+                attendance={attendance}
+                selectedMonth={selectedMonth}
+                onMonthChange={setSelectedMonth}
+                selectedStatus={selectedStatus}
+              />
             </div>
             <div className="lg:col-span-4">
               <StudentAttendanceOverviewCard attendance={attendance} />
@@ -133,4 +151,3 @@ export const StudentProgressPage = () => {
 };
 
 export default StudentProgressPage;
-
