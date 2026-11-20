@@ -1,8 +1,11 @@
-import { X, MicOff, Hand, Shield } from "lucide-react";
+import { X, MicOff, Hand, Shield, Check, UserPlus } from "lucide-react";
 
 export const ParticipantsList = ({
   participants = [],
+  joinRequests = [],
   isTeacher = false,
+  onAdmit,
+  onDeny,
   onMuteUser,
   onKickUser,
   onClose,
@@ -18,7 +21,49 @@ export const ParticipantsList = ({
       </button>
     </div>
 
-    {/* List */}
+    {/* Teacher: Waiting Room Requests Section */}
+    {isTeacher && joinRequests.length > 0 && (
+      <div className="p-3 bg-blue-500/15 border-b border-blue-500/20 space-y-2">
+        <div className="flex items-center gap-1.5 text-blue-400">
+          <UserPlus className="w-3.5 h-3.5" />
+          <span className="font-bold text-xs uppercase tracking-wider">
+            Waiting to Join ({joinRequests.length})
+          </span>
+        </div>
+        <div className="space-y-1.5">
+          {joinRequests.map((req) => (
+            <div
+              key={req.socketId}
+              className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-900/60 border border-white/5"
+            >
+              <div className="min-w-0">
+                <p className="text-white text-xs font-semibold truncate">{req.name}</p>
+                <span className="text-white/40 text-[10px]">Student</span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => onDeny?.(req.socketId)}
+                  className="px-2 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-[11px] font-bold rounded-lg transition-colors cursor-pointer"
+                >
+                  Deny
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onAdmit?.(req.socketId)}
+                  className="px-2.5 py-1 bg-[#0080f6] hover:bg-blue-600 text-white text-[11px] font-bold rounded-lg transition-colors shadow-xs cursor-pointer flex items-center gap-1"
+                >
+                  <Check className="w-3 h-3 stroke-[2.5]" />
+                  <span>Admit</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* In-Call Participants List */}
     <div className="flex-1 overflow-y-auto p-3 space-y-2">
       {participants.length === 0 ? (
         <p className="text-white/40 text-xs text-center pt-8">No participants yet</p>

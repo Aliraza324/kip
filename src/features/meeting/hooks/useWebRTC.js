@@ -25,10 +25,18 @@ const MEETING_EVENTS = {
   ENDED:              "meeting:ended",
   RECORDING_STARTED:  "meeting:recording-started",
   RECORDING_STOPPED:  "meeting:recording-stopped",
+  REQUEST_JOIN:       "meeting:request-join",
+  JOIN_REQUEST:       "meeting:join-request",
+  ADMIT_USER:         "meeting:admit-user",
+  DENY_USER:          "meeting:deny-user",
+  ADMITTED:           "meeting:admitted",
+  DENIED:             "meeting:denied",
+  WAITING_LIST:       "meeting:waiting-list",
 };
 
 /**
- * Core WebRTC hook — manages peer connections, local/remote streams, ICE, offers/answers.
+ * Core WebRTC hook — manages peer connections, local/remote streams, ICE, offers/answers,
+ * plus student waiting room (knock-knock) and teacher admit/deny host controls.
  *
  * @param {string}  roomId      - The lecture/room ID
  * @param {object}  userInfo    - { userId, name, role }
@@ -36,18 +44,23 @@ const MEETING_EVENTS = {
  * @returns WebRTC state and controls
  */
 export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
-  const [localStream, setLocalStream]       = useState(null);
-  const [remoteStreams, setRemoteStreams]    = useState({}); // { socketId: MediaStream }
-  const [participants, setParticipants]     = useState([]); // from server
-  const [chatMessages, setChatMessages]     = useState([]);
-  const [isAudioOn, setIsAudioOn]           = useState(true);
-  const [isVideoOn, setIsVideoOn]           = useState(true);
+  const [localStream, setLocalStream]         = useState(null);
+  const [remoteStreams, setRemoteStreams]      = useState({}); // { socketId: MediaStream }
+  const [participants, setParticipants]       = useState([]); // from server
+  const [chatMessages, setChatMessages]       = useState([]);
+  const [isAudioOn, setIsAudioOn]             = useState(true);
+  const [isVideoOn, setIsVideoOn]             = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [isRecording, setIsRecording]       = useState(false);
-  const [handRaised, setHandRaised]         = useState(false);
-  const [isKicked, setIsKicked]             = useState(false);
-  const [meetingEnded, setMeetingEnded]     = useState(false);
-  const [error, setError]                   = useState(null);
+  const [isRecording, setIsRecording]         = useState(false);
+  const [handRaised, setHandRaised]           = useState(false);
+  const [isKicked, setIsKicked]               = useState(false);
+  const [meetingEnded, setMeetingEnded]       = useState(false);
+  const [error, setError]                     = useState(null);
+
+  // ── Waiting Room State ──────────────────────────────────────────────────
+  const [waitingToJoin, setWaitingToJoin]     = useState(!isTeacher);
+  const [wasDenied, setWasDenied]             = useState(false);
+  const [joinRequests, setJoinRequests]       = useState([]); // For teacher
 
   const peerConnections  = useRef({}); // { socketId: RTCPeerConnection }
   const localStreamRef   = useRef(null);
@@ -62,15 +75,14 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       localStreamRef.current = stream;
       setLocalStream(stream);
       return stream;
-    } catch (err) {
-      // Try audio only if camera not found
+    } catch {
       try {
         const audioOnly = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
         localStreamRef.current = audioOnly;
         setLocalStream(audioOnly);
         setIsVideoOn(false);
         return audioOnly;
-      } catch (e) {
+      } catch {
         setError("Could not access camera or microphone. Please check permissions.");
         return null;
       }
@@ -145,7 +157,6 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
   // ── Screen sharing ──────────────────────────────────────────────────────
   const toggleScreenShare = useCallback(async () => {
     if (isScreenSharing) {
-      // Stop screen share → revert to camera
       if (screenStreamRef.current) {
         screenStreamRef.current.getTracks().forEach((t) => t.stop());
         screenStreamRef.current = null;
@@ -166,13 +177,11 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
         screenStreamRef.current = screenStream;
         const screenTrack = screenStream.getVideoTracks()[0];
 
-        // Replace video track in all peer connections
         Object.values(peerConnections.current).forEach((pc) => {
           const sender = pc.getSenders().find((s) => s.track?.kind === "video");
           if (sender) sender.replaceTrack(screenTrack);
         });
 
-        // Update local stream display (keep audio from original)
         const displayStream = new MediaStream([
           screenTrack,
           ...(localStreamRef.current?.getAudioTracks() ?? []),
@@ -193,7 +202,6 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     if (!stream) return;
     recordingChunks.current = [];
 
-    // Combine local video + audio
     const combinedStream = new MediaStream([
       ...stream.getVideoTracks(),
       ...stream.getAudioTracks(),
@@ -222,7 +230,6 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       mediaRecorderRef.current.start(1000);
       setIsRecording(true);
 
-      // Notify others
       const socket = getSocket();
       socket.emit(MEETING_EVENTS.RECORDING_STARTED, { roomId });
     } catch (e) {
@@ -257,6 +264,19 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     const socket = getSocket();
     socket.emit(MEETING_EVENTS.CHAT, { roomId, message, name: userInfo.name });
   }, [roomId, userInfo.name]);
+
+  // ── Teacher: Admit / Deny waiting student ───────────────────────────────
+  const admitStudent = useCallback((targetSocketId) => {
+    const socket = getSocket();
+    socket.emit(MEETING_EVENTS.ADMIT_USER, { roomId, targetSocketId });
+    setJoinRequests((prev) => prev.filter((r) => r.socketId !== targetSocketId));
+  }, [roomId]);
+
+  const denyStudent = useCallback((targetSocketId) => {
+    const socket = getSocket();
+    socket.emit(MEETING_EVENTS.DENY_USER, { roomId, targetSocketId });
+    setJoinRequests((prev) => prev.filter((r) => r.socketId !== targetSocketId));
+  }, [roomId]);
 
   // ── Teacher: mute a user ────────────────────────────────────────────────
   const muteUser = useCallback((targetUserId, mute = true) => {
@@ -294,6 +314,17 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     setMeetingEnded(true);
   }, [roomId, isRecording, stopRecording, leaveRoom]);
 
+  // ── Enter Room directly after being admitted ───────────────────────────
+  const enterRoomNow = useCallback(async () => {
+    const socket = getSocket();
+    socket.emit(MEETING_EVENTS.JOIN, {
+      roomId,
+      userId: userInfo.userId,
+      name: userInfo.name,
+      role: userInfo.role,
+    });
+  }, [roomId, userInfo]);
+
   // ── Main Socket.io effect ───────────────────────────────────────────────
   useEffect(() => {
     if (!roomId || !userInfo?.userId) return;
@@ -305,20 +336,55 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       await initLocalStream();
       if (!mounted) return;
 
-      // Join the meeting room
-      socket.emit(MEETING_EVENTS.JOIN, {
-        roomId,
-        userId: userInfo.userId,
-        name: userInfo.name,
-        role: userInfo.role,
-      });
+      if (isTeacher) {
+        // Teacher is the host, enters immediately
+        socket.emit(MEETING_EVENTS.JOIN, {
+          roomId,
+          userId: userInfo.userId,
+          name: userInfo.name,
+          role: userInfo.role,
+        });
+      } else {
+        // Student requests to join (Waiting Room)
+        socket.emit(MEETING_EVENTS.REQUEST_JOIN, {
+          roomId,
+          userId: userInfo.userId,
+          name: userInfo.name,
+          role: userInfo.role,
+        });
+      }
     };
 
     // ── Event Handlers ──────────────────────────────────────────────────
+    const onJoinRequest = (req) => {
+      if (!mounted || !isTeacher) return;
+      setJoinRequests((prev) => {
+        if (prev.some((r) => r.socketId === req.socketId)) return prev;
+        return [...prev, req];
+      });
+    };
+
+    const onWaitingList = (list) => {
+      if (!mounted || !isTeacher) return;
+      setJoinRequests(list || []);
+    };
+
+    const onAdmitted = () => {
+      if (!mounted) return;
+      setWaitingToJoin(false);
+      setWasDenied(false);
+      enterRoomNow();
+    };
+
+    const onDenied = () => {
+      if (!mounted) return;
+      setWaitingToJoin(false);
+      setWasDenied(true);
+    };
+
     const onParticipants = (list) => {
       if (!mounted) return;
       setParticipants(list);
-      // If teacher joins and there are already students, make offers to them
       if (isTeacher) {
         list.forEach(({ socketId }) => {
           if (socketId !== socket.id) makeOffer(socketId);
@@ -332,7 +398,6 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
         if (prev.some((p) => p.socketId === info.socketId)) return prev;
         return [...prev, info];
       });
-      // Teacher makes offer to the new joiner
       if (isTeacher) makeOffer(info.socketId);
     };
 
@@ -407,12 +472,11 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       );
     };
 
-    const onParticipantsUpdate = (list) => {
-      if (!mounted) return;
-      setParticipants(list);
-    };
-
     // Register events
+    socket.on(MEETING_EVENTS.JOIN_REQUEST,       onJoinRequest);
+    socket.on(MEETING_EVENTS.WAITING_LIST,       onWaitingList);
+    socket.on(MEETING_EVENTS.ADMITTED,           onAdmitted);
+    socket.on(MEETING_EVENTS.DENIED,             onDenied);
     socket.on(MEETING_EVENTS.PARTICIPANTS,       onParticipants);
     socket.on(MEETING_EVENTS.PARTICIPANT_JOINED, onParticipantJoined);
     socket.on(MEETING_EVENTS.PARTICIPANT_LEFT,   onParticipantLeft);
@@ -425,12 +489,15 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     socket.on(MEETING_EVENTS.CHAT,               onChat);
     socket.on(MEETING_EVENTS.RAISE_HAND,         onRaiseHand);
     socket.on(MEETING_EVENTS.LOWER_HAND,         onLowerHand);
-    socket.on(MEETING_EVENTS.PARTICIPANTS,       onParticipantsUpdate);
 
     setup();
 
     return () => {
       mounted = false;
+      socket.off(MEETING_EVENTS.JOIN_REQUEST,       onJoinRequest);
+      socket.off(MEETING_EVENTS.WAITING_LIST,       onWaitingList);
+      socket.off(MEETING_EVENTS.ADMITTED,           onAdmitted);
+      socket.off(MEETING_EVENTS.DENIED,             onDenied);
       socket.off(MEETING_EVENTS.PARTICIPANTS,       onParticipants);
       socket.off(MEETING_EVENTS.PARTICIPANT_JOINED, onParticipantJoined);
       socket.off(MEETING_EVENTS.PARTICIPANT_LEFT,   onParticipantLeft);
@@ -443,10 +510,9 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
       socket.off(MEETING_EVENTS.CHAT,               onChat);
       socket.off(MEETING_EVENTS.RAISE_HAND,         onRaiseHand);
       socket.off(MEETING_EVENTS.LOWER_HAND,         onLowerHand);
-      socket.off(MEETING_EVENTS.PARTICIPANTS,       onParticipantsUpdate);
       leaveRoom();
     };
-  }, [roomId, userInfo?.userId]);
+  }, [roomId, userInfo?.userId, isTeacher, initLocalStream, makeOffer, createPeerConnection, enterRoomNow, leaveRoom]);
 
   return {
     // State
@@ -454,6 +520,9 @@ export const useWebRTC = ({ roomId, userInfo, isTeacher }) => {
     chatMessages, isAudioOn, isVideoOn,
     isScreenSharing, isRecording, handRaised,
     isKicked, meetingEnded, error,
+    // Waiting Room
+    waitingToJoin, wasDenied, joinRequests,
+    admitStudent, denyStudent,
     // Controls
     toggleAudio, toggleVideo, toggleScreenShare,
     startRecording, stopRecording,
